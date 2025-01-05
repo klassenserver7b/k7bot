@@ -8,6 +8,8 @@ import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionTarget;
 import de.klassenserver7b.k7bot.util.*;
 import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
+import de.klassenserver7b.k7bot.util.tablemessage.Cell;
+import de.klassenserver7b.k7bot.util.tablemessage.TableMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;

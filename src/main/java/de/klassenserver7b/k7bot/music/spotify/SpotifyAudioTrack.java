@@ -67,7 +67,7 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
             return null;
         }
 
-        return new File(sasm.getTempdir().getAbsolutePath() + "/" + String.join(".", identifier, audioFileExtension));
+        return new File(sasm.getTempdir().getAbsolutePath() + "/" + String.join(".", identifier, "tmp", audioFileExtension));
 
     }
 }

@@ -37,19 +37,18 @@ public class LoopThread implements Runnable {
 
     @Override
     public void run() {
-        Klassenserver7bbot instance = Klassenserver7bbot.getInstance();
-
-        instance.getLoopedEventManager().checkForUpdates();
+        Klassenserver7bbot INSTANCE = Klassenserver7bbot.getInstance();
 
         if ((!this.hasstarted)) {
-            StatsCategoryUtil.onStartup(instance.isDevMode());
+            StatsCategoryUtil.onStartup(INSTANCE.isDevMode());
             this.hasstarted = true;
         }
-        Random rand = new Random();
 
-        int i = rand.nextInt(this.status.length);
+        INSTANCE.getLoopedEventManager().checkForUpdates();
 
-        instance.getShardManager().getShards().forEach(jda -> jda.getPresence().setActivity(Activity.listening(this.status[i])));
+        int i = new Random().nextInt(this.status.length);
+
+        INSTANCE.getShardManager().getShards().forEach(jda -> jda.getPresence().setActivity(Activity.listening(this.status[i])));
     }
 
 

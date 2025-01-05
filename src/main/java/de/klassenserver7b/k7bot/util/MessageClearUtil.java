@@ -6,6 +6,7 @@ package de.klassenserver7b.k7bot.util;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.requests.restaction.pagination.MessagePaginationAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +33,7 @@ public class MessageClearUtil {
 
 	public static List<Message> getMessages(MessageChannel channel, int amount) {
 		List<Message> messages = new ArrayList<>();
+
 		int i = 0;
 
 		for (Message message : channel.getIterableHistory().cache(false)) {

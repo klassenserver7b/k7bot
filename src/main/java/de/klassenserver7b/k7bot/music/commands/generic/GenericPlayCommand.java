@@ -17,7 +17,7 @@ import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;
 import de.klassenserver7b.k7bot.music.utilities.AudioLoadOption;
 import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
-import de.klassenserver7b.k7bot.util.SupportedPlayQueries;
+import de.klassenserver7b.k7bot.music.SupportedPlayQueries;
 import de.klassenserver7b.k7bot.util.errorhandler.SyntaxError;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import net.dv8tion.jda.api.entities.Member;
@@ -114,13 +114,12 @@ public abstract class GenericPlayCommand implements ServerCommand {
         if (!message.getAttachments().isEmpty()) {
             int status = loadAttachments(message.getAttachments(), controller);
 
-            if (status == 0) {
-                return;
+            if (status != 0) {
+                channel.sendMessage(
+                                "Invalid file attached to this message! - allowed are ." + SUPPORTED_AUDIO_FORMATS + " files")
+                        .complete().delete().queueAfter(10L, TimeUnit.SECONDS);
             }
 
-            channel.sendMessage(
-                            "Invalid file attached to this message! - allowed are ." + SUPPORTED_AUDIO_FORMATS + " files")
-                    .complete().delete().queueAfter(10L, TimeUnit.SECONDS);
             return;
         }
 
@@ -214,15 +213,10 @@ public abstract class GenericPlayCommand implements ServerCommand {
 
         String url = q.strip();
 
-        if (url.startsWith("lf: ")) {
-
-            url = url.substring(4);
-
-        } else if (!url.matches("ytsearch: .*|scsearch: .*|spsearch: .*|http(s)?://.*")) {
-            url = "ytsearch: " + url;
+        if (url.matches("ytsearch: .*|scsearch: .*|spsearch: .*|http(s)?://.*|/run/media/data/.*")) {
+            return url;
         }
-
-        return url;
+        return "ytsearch: " + url;
     }
 
     @Override
