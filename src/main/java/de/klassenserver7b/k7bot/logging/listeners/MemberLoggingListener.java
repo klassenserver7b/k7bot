@@ -19,7 +19,6 @@ import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.stream.Collectors;
 
-import static de.klassenserver7b.k7bot.util.ChannelUtil.getDefaultChannel;
 import static de.klassenserver7b.k7bot.util.ChannelUtil.getSystemChannel;
 
 public class MemberLoggingListener extends ListenerAdapter {
@@ -36,8 +35,6 @@ public class MemberLoggingListener extends ListenerAdapter {
         }
 
         GuildMessageChannel system = getSystemChannel(event);
-        GuildMessageChannel def = getDefaultChannel(event);
-        String guildname = event.getGuild().getName();
         Member memb = event.getMember();
 
         EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
@@ -48,8 +45,6 @@ public class MemberLoggingListener extends ListenerAdapter {
         embbuild.setThumbnail(memb.getUser().getEffectiveAvatarUrl());
 
         system.sendMessageEmbeds(embbuild.build()).queue();
-
-        def.sendMessage("Welcome to " + guildname + " " + memb.getAsMention()).queue();
     }
 
     @Override
@@ -61,8 +56,6 @@ public class MemberLoggingListener extends ListenerAdapter {
 
         GuildMessageChannel system = getSystemChannel(event);
 
-        GuildMessageChannel def = getDefaultChannel(event);
-
         User usr = event.getUser();
 
         EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
@@ -73,7 +66,6 @@ public class MemberLoggingListener extends ListenerAdapter {
         embbuild.setThumbnail(usr.getEffectiveAvatarUrl());
 
         system.sendMessageEmbeds(embbuild.build()).queue();
-        def.sendMessage("It's a pity you're leaving " + usr.getEffectiveName()).queue();
     }
 
     @Override
