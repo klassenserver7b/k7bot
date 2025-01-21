@@ -15,7 +15,7 @@ on:
   push:
     branches: [ "master" ]
   pull_request:
-    branches: [ "Development", "master" ]
+    branches: [ "dev", "master" ]
 
 jobs:
   analyze:

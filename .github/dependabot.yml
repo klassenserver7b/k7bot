@@ -7,7 +7,7 @@ version: 2
 updates:
   - package-ecosystem: "maven"
     directory: "/" # Location of package manifests
-    target-branch: "Development"
+    target-branch: "dev"
     schedule:
       interval: "weekly"
     ignore:
@@ -15,6 +15,6 @@ updates:
     - dependency-name: org.apache.maven:*
   - package-ecosystem: "github-actions"
     directory: "/"
-    target-branch: "Development"
+    target-branch: "dev"
     schedule:
       interval: "weekly"
