@@ -1,6 +1,6 @@
 package de.klassenserver7b.k7bot.util.customapis;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.manage.PropertiesManager;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionTarget;
@@ -56,7 +56,7 @@ public class LernsaxInteractions implements LoopedEvent {
      */
     public boolean connect() {
 
-        PropertiesManager propMgr = Klassenserver7bbot.getInstance().getPropertiesManager();
+        PropertiesManager propMgr = K7Bot.getInstance().getPropertiesManager();
 
         this.client = new WebWeaverClient();
         Credentials cred = new Credentials(propMgr.getProperty("lsaxemail"), propMgr.getProperty("lsaxtoken"),
@@ -278,7 +278,7 @@ public class LernsaxInteractions implements LoopedEvent {
 
             for (MessageCreateData data : messageData) {
 
-                Klassenserver7bbot.getInstance().getSubscriptionManager()
+                K7Bot.getInstance().getSubscriptionManager()
                         .provideSubscriptionNotification(SubscriptionTarget.LERNPLAN, data);
 
             }

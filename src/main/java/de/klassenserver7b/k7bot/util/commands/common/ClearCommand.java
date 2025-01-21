@@ -2,7 +2,7 @@
 package de.klassenserver7b.k7bot.util.commands.common;
 
 import de.klassenserver7b.k7bot.HelpCategories;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.MessageClearUtil;
@@ -48,7 +48,7 @@ public class ClearCommand implements ServerCommand {
 
 				MessageClearUtil.onclear(amount, channel);
 
-				GuildMessageChannel system = Klassenserver7bbot.getInstance().getSysChannelMgr()
+				GuildMessageChannel system = K7Bot.getInstance().getSysChannelMgr()
 						.getSysChannel(channel.getGuild());
 
 				EmbedBuilder builder = EmbedUtils.getBuilderOf(Color.orange,

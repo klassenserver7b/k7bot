@@ -3,7 +3,7 @@
  */
 package de.klassenserver7b.k7bot.commands.slash;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.listener.VoteReactionListener;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
@@ -44,7 +44,7 @@ public class VotingCommand implements TopLevelSlashCommand {
 	public void performSlashCommand(SlashCommandInteraction event) {
 
 		if (!(event.getUser().getIdLong() == 675828196389683223L || event.getUser().getIdLong() == 672514862101954570L
-				|| event.getUser().getIdLong() == Klassenserver7bbot.getInstance().getOwnerId())) {
+				|| event.getUser().getIdLong() == K7Bot.getInstance().getOwnerId())) {
 			event.replyEmbeds(EmbedUtils.getErrorEmbed("You are not allowed to do this").build()).setEphemeral(true)
 					.queue();
 			return;
@@ -81,7 +81,7 @@ public class VotingCommand implements TopLevelSlashCommand {
 
 		event.getUser().openPrivateChannel().complete().sendMessageEmbeds(builder.build()).queue();
 
-		Klassenserver7bbot.getInstance().getShardManager().addEventListener(new VoteReactionListener(mess.getIdLong(),
+		K7Bot.getInstance().getShardManager().addEventListener(new VoteReactionListener(mess.getIdLong(),
 				event.getUser(), names, new GenericMessageSendHandler(hook)));
 
 	}
@@ -93,7 +93,7 @@ public class VotingCommand implements TopLevelSlashCommand {
 		ArrayList<OptionData> options = new ArrayList<>();
 
 		for (int i = 0; i < Integer
-				.parseInt(Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("votinglimit")); i++) {
+				.parseInt(K7Bot.getInstance().getPropertiesManager().getProperty("votinglimit")); i++) {
 			options.add(new OptionData(OptionType.USER, "user" + i, "an user"));
 		}
 

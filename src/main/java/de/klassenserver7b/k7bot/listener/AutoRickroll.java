@@ -3,7 +3,7 @@ package de.klassenserver7b.k7bot.listener;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.music.asms.ExtendedLocalAudioSourceManager;
 import de.klassenserver7b.k7bot.music.lavaplayer.AudioLoadResult;
 import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;
@@ -39,7 +39,7 @@ public class AutoRickroll extends ListenerAdapter {
         AudioChannel vc = event.getChannelJoined();
         assert vc != null;
 
-        MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
+        MusicController controller = K7Bot.getInstance().getPlayerUtil()
                 .getController(vc.getGuild().getIdLong());
         AudioManager manager = vc.getGuild().getAudioManager();
 

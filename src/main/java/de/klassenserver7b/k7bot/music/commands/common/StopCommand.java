@@ -2,7 +2,7 @@ package de.klassenserver7b.k7bot.music.commands.common;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import de.klassenserver7b.k7bot.HelpCategories;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;
 import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
@@ -44,7 +44,7 @@ public class StopCommand implements ServerCommand {
 
         AudioChannel vc = MusicUtil.getMembVcConnection(m);
 
-        MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
+        MusicController controller = K7Bot.getInstance().getPlayerUtil()
                 .getController(Objects.requireNonNull(vc).getGuild().getIdLong());
         AudioManager manager = vc.getGuild().getAudioManager();
         AudioPlayer player = controller.getPlayer();

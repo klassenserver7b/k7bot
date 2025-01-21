@@ -12,7 +12,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.music.spotify.SpotifyAudioTrack;
 import de.klassenserver7b.k7bot.music.spotify.SpotifyInteractions;
 import de.klassenserver7b.k7bot.music.spotify.SpotifySearchProvider;
@@ -115,7 +115,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     public SpotifyAudioSourceManager() {
 
         this(HttpClientTools.createDefaultThreadLocalManager(), new DefaultSpotifyPlaylistLoader(),
-                new DefaultSpotifyTrackLoader(), Klassenserver7bbot.getInstance().getSpotifyinteractions());
+                new DefaultSpotifyTrackLoader(), K7Bot.getInstance().getSpotifyinteractions());
 
     }
 

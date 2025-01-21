@@ -6,7 +6,7 @@ package de.klassenserver7b.k7bot.threads;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -48,7 +48,7 @@ public class SpotifyTokenRefresher implements AutoCloseable {
 
     public void start() {
 
-        if (Klassenserver7bbot.getInstance().isInExit()) {
+        if (K7Bot.getInstance().isInExit()) {
             return;
         }
 
@@ -88,7 +88,7 @@ public class SpotifyTokenRefresher implements AutoCloseable {
             final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
             JsonElement elem = JsonParser.parseString(response);
 
-            Klassenserver7bbot.getInstance().getSpotifyinteractions().getSpotifyApi()
+            K7Bot.getInstance().getSpotifyinteractions().getSpotifyApi()
                     .setAccessToken(elem.getAsJsonObject().get("accessToken").getAsString());
 
             lifetimeMs = elem.getAsJsonObject().get("accessTokenExpirationTimestampMs").getAsLong() - System.currentTimeMillis();

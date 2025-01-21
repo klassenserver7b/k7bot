@@ -11,9 +11,9 @@ public class Main {
         try {
 
             if (args.length == 0) {
-                Klassenserver7bbot.getInstance(false);
+                K7Bot.getInstance(false);
             } else {
-                Klassenserver7bbot.getInstance(args[0].equals("--devmode") || args[0].equals("-d"));
+                K7Bot.getInstance(args[0].equals("--devmode") || args[0].equals("-d"));
 
             }
 

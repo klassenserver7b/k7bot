@@ -4,7 +4,7 @@
 package de.klassenserver7b.k7bot.util.customapis;
 
 import com.google.gson.*;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionTarget;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
@@ -63,8 +63,8 @@ public class GourmettaInteractions implements LoopedEvent {
      */
     public boolean login() {
 
-        String username = Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("gourmettauserid");
-        String password = Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("gourmettapassword");
+        String username = K7Bot.getInstance().getPropertiesManager().getProperty("gourmettauserid");
+        String password = K7Bot.getInstance().getPropertiesManager().getProperty("gourmettapassword");
 
         if (username == null || password == null || username.isBlank() || password.isBlank()) {
             return false;
@@ -234,7 +234,7 @@ public class GourmettaInteractions implements LoopedEvent {
      *             {@link GourmettaInteractions#buildMessage(JsonArray, OffsetDateTime)}
      */
     private void providePlanMessage(MessageCreateData data) {
-        Klassenserver7bbot.getInstance().getSubscriptionManager()
+        K7Bot.getInstance().getSubscriptionManager()
                 .provideSubscriptionNotification(SubscriptionTarget.GOURMETTA, data);
     }
 

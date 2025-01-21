@@ -2,7 +2,7 @@ package de.klassenserver7b.k7bot.music.commands.common;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import de.klassenserver7b.k7bot.HelpCategories;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;
 import de.klassenserver7b.k7bot.music.lavaplayer.Queue;
@@ -38,7 +38,7 @@ public class QueuelistCommand implements ServerCommand {
     @Override
     public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
-        MusicController contr = Klassenserver7bbot.getInstance().getPlayerUtil()
+        MusicController contr = K7Bot.getInstance().getPlayerUtil()
                 .getController(channel.getGuild().getIdLong());
         Queue queue = contr.getQueue();
         List<AudioTrack> queuelist = queue.getQueuelist();

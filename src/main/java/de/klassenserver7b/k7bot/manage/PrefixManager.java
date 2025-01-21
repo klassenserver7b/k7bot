@@ -3,7 +3,7 @@
  */
 package de.klassenserver7b.k7bot.manage;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import net.dv8tion.jda.api.entities.Guild;
 import org.slf4j.Logger;
@@ -48,7 +48,7 @@ public class PrefixManager {
             log.error(e.getMessage(), e);
         }
 
-        Klassenserver7bbot.getInstance().getShardManager().getShards().forEach(jda -> {
+        K7Bot.getInstance().getShardManager().getShards().forEach(jda -> {
 
             for (Guild g : jda.getGuilds()) {
 

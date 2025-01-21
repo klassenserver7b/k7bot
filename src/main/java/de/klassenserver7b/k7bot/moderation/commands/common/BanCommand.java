@@ -1,7 +1,7 @@
 package de.klassenserver7b.k7bot.moderation.commands.common;
 
 import de.klassenserver7b.k7bot.HelpCategories;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
@@ -80,7 +80,7 @@ public class BanCommand implements ServerCommand {
         builder.setThumbnail(u.getUser().getEffectiveAvatarUrl());
         builder.setTitle("@" + u.getEffectiveName() + " was banned");
 
-        GuildMessageChannel system = Klassenserver7bbot.getInstance().getSysChannelMgr().getSysChannel(channel.getGuild());
+        GuildMessageChannel system = K7Bot.getInstance().getSysChannelMgr().getSysChannel(channel.getGuild());
 
         try {
             u.ban(7, TimeUnit.DAYS).reason(grund).queue();

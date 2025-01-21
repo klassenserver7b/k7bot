@@ -4,7 +4,7 @@
 package de.klassenserver7b.k7bot.threads;
 
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.slash.StableDiffusionCommand;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
@@ -69,7 +69,7 @@ public class ConsoleReadThread implements Runnable {
         switch (commandargs[0].toLowerCase()) {
             case "exit", "stop" -> {
 
-                Klassenserver7bbot.getInstance().setExit(true);
+                K7Bot.getInstance().setExit(true);
                 t.interrupt();
                 this.onShutdown();
             }
@@ -102,9 +102,9 @@ public class ConsoleReadThread implements Runnable {
                 }
 
                 if (enable) {
-                    Klassenserver7bbot.getInstance().getCmdMan().enableCommandsByClass(insertedClassName);
+                    K7Bot.getInstance().getCmdMan().enableCommandsByClass(insertedClassName);
                 } else {
-                    Klassenserver7bbot.getInstance().getCmdMan().disableCommandsByClass(insertedClassName);
+                    K7Bot.getInstance().getCmdMan().disableCommandsByClass(insertedClassName);
                 }
 
             } catch (IllegalArgumentException | SecurityException e) {
@@ -125,9 +125,9 @@ public class ConsoleReadThread implements Runnable {
 
         log.info("Bot is shutting down!");
 
-        ShardManager shardMgr = Klassenserver7bbot.getInstance().getShardManager();
+        ShardManager shardMgr = K7Bot.getInstance().getShardManager();
 
-        for (AudioSourceManager m : Klassenserver7bbot.getInstance().getAudioPlayerManager().getSourceManagers()) {
+        for (AudioSourceManager m : K7Bot.getInstance().getAudioPlayerManager().getSourceManagers()) {
             m.shutdown();
         }
 
@@ -141,11 +141,11 @@ public class ConsoleReadThread implements Runnable {
 
             shardMgr.removeEventListener(listeners.toArray());
 
-            Klassenserver7bbot.getInstance().stopLoop();
+            K7Bot.getInstance().stopLoop();
 
-            Klassenserver7bbot.getInstance().getLoopedEventManager().shutdownLoopedEvents();
+            K7Bot.getInstance().getLoopedEventManager().shutdownLoopedEvents();
 
-            StatsCategoryUtil.onShutdown(Klassenserver7bbot.getInstance().isDevMode());
+            StatsCategoryUtil.onShutdown(K7Bot.getInstance().isDevMode());
 
             shardMgr.setStatus(OnlineStatus.OFFLINE);
 
@@ -175,7 +175,7 @@ public class ConsoleReadThread implements Runnable {
     }
 
     protected void disableCommandByStr(String name) {
-        if (Klassenserver7bbot.getInstance().getCmdMan().disableCommand(name)) {
+        if (K7Bot.getInstance().getCmdMan().disableCommand(name)) {
             log.info("successfully disabled {}", name);
             return;
         }
@@ -184,7 +184,7 @@ public class ConsoleReadThread implements Runnable {
     }
 
     protected void enableCommandByStr(String name) {
-        if (Klassenserver7bbot.getInstance().getCmdMan().enableCommand(name)) {
+        if (K7Bot.getInstance().getCmdMan().enableCommand(name)) {
             log.info("successfully enabled {}", name);
             return;
         }

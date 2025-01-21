@@ -4,7 +4,7 @@
 package de.klassenserver7b.k7bot.util.customapis;
 
 import com.google.gson.*;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.music.utilities.SongJson;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.apache.hc.client5.http.HttpHostConnectException;
@@ -106,7 +106,7 @@ public class DiscogsAPI {
 
         assert this.isApiEnabled();
 
-        String token = Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("discogs-token");
+        String token = K7Bot.getInstance().getPropertiesManager().getProperty("discogs-token");
 
         String preparedquery = URLEncoder.encode(searchquery, StandardCharsets.UTF_8);
         final HttpGet httpget = new HttpGet(
@@ -145,11 +145,11 @@ public class DiscogsAPI {
 
     public boolean isApiEnabled() {
 
-        if (!Klassenserver7bbot.getInstance().getPropertiesManager().isApiEnabled("discogs")) {
+        if (!K7Bot.getInstance().getPropertiesManager().isApiEnabled("discogs")) {
             log.error("Invalid Discogs Token - API Disabled", new Throwable().fillInStackTrace());
         }
 
-        return Klassenserver7bbot.getInstance().getPropertiesManager().isApiEnabled("discogs");
+        return K7Bot.getInstance().getPropertiesManager().isApiEnabled("discogs");
 
     }
 

@@ -4,7 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import de.klassenserver7b.k7bot.HelpCategories;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;
 import de.klassenserver7b.k7bot.music.lavaplayer.Queue;
@@ -38,7 +38,7 @@ public class CurrentTrackInfoCommand implements ServerCommand {
     @Override
     public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
-        MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
+        MusicController controller = K7Bot.getInstance().getPlayerUtil()
                 .getController(channel.getGuild().getIdLong());
         AudioPlayer player = controller.getPlayer();
 

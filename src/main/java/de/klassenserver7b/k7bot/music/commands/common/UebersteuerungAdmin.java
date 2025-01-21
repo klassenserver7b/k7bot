@@ -2,7 +2,7 @@ package de.klassenserver7b.k7bot.music.commands.common;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import de.klassenserver7b.k7bot.HelpCategories;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;
 import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
@@ -47,7 +47,7 @@ public class UebersteuerungAdmin implements ServerCommand {
                     int volume = Integer.parseInt(args[1]);
                     MusicUtil.updateChannel(channel);
                     Guild guild = channel.getGuild();
-                    MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
+                    MusicController controller = K7Bot.getInstance().getPlayerUtil()
                             .getController(guild.getIdLong());
                     AudioPlayer player = controller.getPlayer();
                     player.setVolume(volume);

@@ -8,7 +8,7 @@ import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import de.klassenserver7b.k7bot.HelpCategories;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.music.asms.ExtendedLocalAudioSourceManager;
 import de.klassenserver7b.k7bot.music.asms.SpotifyAudioSourceManager;
@@ -78,7 +78,7 @@ public abstract class GenericPlayCommand implements ServerCommand {
         assert vc != null;
 
         MusicUtil.updateChannel(hook);
-        MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
+        MusicController controller = K7Bot.getInstance().getPlayerUtil()
                 .getController(vc.getGuild().getIdLong());
 
         playQueriedItem(SupportedPlayQueries.fromId(Objects.requireNonNull(event.getOption("target")).getAsInt()), vc,
@@ -106,7 +106,7 @@ public abstract class GenericPlayCommand implements ServerCommand {
         assert vc != null;
 
         MusicUtil.updateChannel(channel);
-        MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
+        MusicController controller = K7Bot.getInstance().getPlayerUtil()
                 .getController(vc.getGuild().getIdLong());
 
         StringBuilder strBuilder = new StringBuilder();

@@ -1,7 +1,7 @@
 package de.klassenserver7b.k7bot.moderation.commands.common;
 
 import de.klassenserver7b.k7bot.HelpCategories;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
@@ -81,7 +81,7 @@ public class KickCommand implements ServerCommand {
         builder.setTitle("@" + u.getEffectiveName() + " was kicked");
 
         Guild guild = channel.getGuild();
-        GuildMessageChannel system = Klassenserver7bbot.getInstance().getSysChannelMgr().getSysChannel(guild);
+        GuildMessageChannel system = K7Bot.getInstance().getSysChannelMgr().getSysChannel(guild);
 
         try {
             u.kick().reason(grund).queue();

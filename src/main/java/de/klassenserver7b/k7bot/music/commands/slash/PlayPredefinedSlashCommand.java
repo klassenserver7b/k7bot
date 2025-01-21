@@ -3,7 +3,7 @@
  */
 package de.klassenserver7b.k7bot.music.commands.slash;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.SubSlashCommand;
 import de.klassenserver7b.k7bot.music.commands.generic.GenericPlayCommand;
 import de.klassenserver7b.k7bot.music.lavaplayer.AudioLoadResult;
@@ -62,7 +62,7 @@ public class PlayPredefinedSlashCommand extends GenericPlayCommand implements Su
         if (super.membFailsInternalChecks(m, vc, new GenericMessageSendHandler(hook))) {
             return;
         }
-        MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
+        MusicController controller = K7Bot.getInstance().getPlayerUtil()
                 .getController(vc.getGuild().getIdLong());
 
         OptionMapping predef = event.getOption("playlist");

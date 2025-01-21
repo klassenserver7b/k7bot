@@ -3,7 +3,7 @@ package de.klassenserver7b.k7bot.util;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -30,7 +30,7 @@ public class TeacherDB {
             JsonElement json = JsonParser.parseString(jsonstring);
             teachersList = json.getAsJsonObject();
         } catch (IOException e) {
-            Klassenserver7bbot.getInstance().getMainLogger()
+            K7Bot.getInstance().getMainLogger()
                     .error("Could not load teachers file", e);
         }
     }

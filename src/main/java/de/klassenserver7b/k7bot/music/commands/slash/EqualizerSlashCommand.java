@@ -3,7 +3,7 @@
  */
 package de.klassenserver7b.k7bot.music.commands.slash;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.music.utilities.BotAudioEffectsManager;
 import de.klassenserver7b.k7bot.music.utilities.BotEqualizer;
@@ -42,7 +42,7 @@ public class EqualizerSlashCommand implements TopLevelSlashCommand {
             return;
         }
 
-        BotAudioEffectsManager effman = BotAudioEffectsManager.getAudioEffectsManager(Klassenserver7bbot.getInstance()
+        BotAudioEffectsManager effman = BotAudioEffectsManager.getAudioEffectsManager(K7Bot.getInstance()
                 .getPlayerUtil().getController(event.getGuild().getIdLong()).getPlayer());
 
         EqualizerPreset[] vals = EqualizerPreset.values();

@@ -3,7 +3,7 @@
  */
 package de.klassenserver7b.k7bot.logging;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.KAutoCloseable;
 import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
@@ -50,7 +50,7 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
         }
 
         timeoutCheckEvent = new HookTimeoutLoop("logging-config-" + guildId + "-" + System.currentTimeMillis(), this);
-        Klassenserver7bbot.getInstance().getLoopedEventManager().registerEvent(timeoutCheckEvent, true);
+        K7Bot.getInstance().getLoopedEventManager().registerEvent(timeoutCheckEvent, true);
     }
 
     @Override
@@ -126,8 +126,8 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
         try (KAutoCloseable ignored = LoggingFilter.getInstance().blockEventExecution(hook.retrieveOriginal().complete().getIdLong())) {
             hook.deleteOriginal().queue();
         }
-        Klassenserver7bbot.getInstance().getShardManager().removeEventListener(this);
-        Klassenserver7bbot.getInstance().getLoopedEventManager().removeEvent(timeoutCheckEvent);
+        K7Bot.getInstance().getShardManager().removeEventListener(this);
+        K7Bot.getInstance().getLoopedEventManager().removeEvent(timeoutCheckEvent);
     }
 
     protected void sendCatSelectEmbed() {
@@ -282,8 +282,8 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
         }
 
         private void exit() {
-            Klassenserver7bbot.getInstance().getShardManager().removeEventListener(listener);
-            Klassenserver7bbot.getInstance().getLoopedEventManager().removeEvent(this);
+            K7Bot.getInstance().getShardManager().removeEventListener(listener);
+            K7Bot.getInstance().getLoopedEventManager().removeEvent(this);
         }
 
         @Override

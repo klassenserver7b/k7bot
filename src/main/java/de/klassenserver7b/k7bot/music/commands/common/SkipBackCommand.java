@@ -1,7 +1,7 @@
 package de.klassenserver7b.k7bot.music.commands.common;
 
 import de.klassenserver7b.k7bot.HelpCategories;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;
 import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
@@ -44,7 +44,7 @@ public class SkipBackCommand implements ServerCommand {
             return;
         }
 
-        MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
+        MusicController controller = K7Bot.getInstance().getPlayerUtil()
                 .getController(m.getGuild().getIdLong());
         int pos = Integer.parseInt(args[1]);
         controller.back(pos * 1000);

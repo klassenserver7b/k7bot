@@ -3,7 +3,7 @@
  */
 package de.klassenserver7b.k7bot.logging.commands.slash;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.logging.LoggingConfigEmbedProvider;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -34,7 +34,7 @@ public class LoggingConfigSlashCommand implements TopLevelSlashCommand {
     public void performSlashCommand(SlashCommandInteraction event) {
         InteractionHook hook = event.deferReply().complete();
 
-        Klassenserver7bbot.getInstance().getShardManager().addEventListener(new LoggingConfigEmbedProvider(hook));
+        K7Bot.getInstance().getShardManager().addEventListener(new LoggingConfigEmbedProvider(hook));
 
     }
 

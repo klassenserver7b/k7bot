@@ -4,7 +4,7 @@ import com.jagrosh.jlyrics.Lyrics;
 import com.jagrosh.jlyrics.LyricsClient;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import de.klassenserver7b.k7bot.HelpCategories;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;
 import de.klassenserver7b.k7bot.music.lavaplayer.Queue;
@@ -63,7 +63,7 @@ public class LyricsCommand implements ServerCommand {
 
         AudioChannel vc = MusicUtil.getMembVcConnection(m);
 
-        MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
+        MusicController controller = K7Bot.getInstance().getPlayerUtil()
                 .getController(vc.getGuild().getIdLong());
         Queue queue = controller.getQueue();
         SongJson data = queue.getCurrentSongData();
@@ -87,7 +87,7 @@ public class LyricsCommand implements ServerCommand {
                 return;
             }
 
-            LyricsClient lapi = Klassenserver7bbot.getInstance().getLyricsAPI();
+            LyricsClient lapi = K7Bot.getInstance().getLyricsAPI();
 
             Lyrics lyrics = lapi.getLyrics(query).get();
 
@@ -153,7 +153,7 @@ public class LyricsCommand implements ServerCommand {
 
     private GLACustomSongSearch getGeniusLyrics(String query) throws IOException {
 
-        GLAWrapper lapi = Klassenserver7bbot.getInstance().getLyricsAPIold();
+        GLAWrapper lapi = K7Bot.getInstance().getLyricsAPIold();
 
         return lapi.search(query);
 

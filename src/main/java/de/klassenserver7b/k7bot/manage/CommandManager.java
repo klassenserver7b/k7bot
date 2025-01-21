@@ -1,6 +1,6 @@
 package de.klassenserver7b.k7bot.manage;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.common.*;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.logging.commands.common.SystemChannelCommand;
@@ -87,7 +87,7 @@ public class CommandManager {
         this.commands.add(new UebersteuerungAdmin());
         this.commands.add(new TeacherCommand());
 
-        if (Klassenserver7bbot.getInstance().isDevMode()) {
+        if (K7Bot.getInstance().isDevMode()) {
             this.commands.add(new TestCommand());
             this.commands.add(new VTestCommand());
         }

@@ -1,7 +1,7 @@
 package de.klassenserver7b.k7bot.music.commands.common;
 
 import de.klassenserver7b.k7bot.HelpCategories;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;
 import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
@@ -42,7 +42,7 @@ public class ShuffleCommand implements ServerCommand {
             return;
         }
         AudioChannel vc = MusicUtil.getMembVcConnection(m);
-        MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
+        MusicController controller = K7Bot.getInstance().getPlayerUtil()
                 .getController(vc.getGuild().getIdLong());
 
         controller.getQueue().shuffle();

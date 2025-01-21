@@ -1,7 +1,7 @@
 package de.klassenserver7b.k7bot.commands.common;
 
 import de.klassenserver7b.k7bot.HelpCategories;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.util.errorhandler.PermissionError;
 import net.dv8tion.jda.api.entities.Member;
@@ -30,10 +30,10 @@ public class ShutdownCommand implements ServerCommand {
 	@Override
 	public void performCommand(Member caller, GuildMessageChannel channel, Message message) {
 
-		if (caller.getIdLong() == Klassenserver7bbot.getInstance().getOwnerId()) {
+		if (caller.getIdLong() == K7Bot.getInstance().getOwnerId()) {
 
-			Klassenserver7bbot.getInstance().setExit(true);
-			Klassenserver7bbot.getInstance().getShutdownThread().onShutdown();
+			K7Bot.getInstance().setExit(true);
+			K7Bot.getInstance().getShutdownThread().onShutdown();
 			return;
 
 		}

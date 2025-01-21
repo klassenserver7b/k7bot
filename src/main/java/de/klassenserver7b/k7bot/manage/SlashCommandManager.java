@@ -1,6 +1,6 @@
 package de.klassenserver7b.k7bot.manage;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.slash.*;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.logging.commands.slash.LoggingConfigSlashCommand;
@@ -60,7 +60,7 @@ public class SlashCommandManager {
         registerschedule.add(new LoggingConfigSlashCommand());
         registerschedule.add(new SystemChannelSlashCommand());
 
-        for (JDA shard : Klassenserver7bbot.getInstance().getShardManager().getShards()) {
+        for (JDA shard : K7Bot.getInstance().getShardManager().getShards()) {
             CommandListUpdateAction commup = shard.updateCommands();
 
             for (TopLevelSlashCommand command : registerschedule) {

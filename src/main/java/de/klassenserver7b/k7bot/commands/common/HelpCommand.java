@@ -1,7 +1,7 @@
 package de.klassenserver7b.k7bot.commands.common;
 
 import de.klassenserver7b.k7bot.HelpCategories;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -86,7 +86,7 @@ public class HelpCommand implements ServerCommand {
         if (guild != null) {
             ret.addField("**General**",
                     "Befehle auf diesem Server beginnen mit `"
-                            + Klassenserver7bbot.getInstance().getPrefixMgr().getPrefix(guild.getIdLong()) + "`\r\n"
+                            + K7Bot.getInstance().getPrefixMgr().getPrefix(guild.getIdLong()) + "`\r\n"
                             + "[TEXT] stellt benötigte Commandargumente dar.\r\n"
                             + "<TEXT> stellt optionale Commandargumente dar.\r\n" + "\r\n\r\n",
                     false);
@@ -132,7 +132,7 @@ public class HelpCommand implements ServerCommand {
      */
     public MessageEmbed generateHelpforCategory(String catstr, Guild guild) {
 
-        ArrayList<ServerCommand> commands = (Klassenserver7bbot.getInstance().getCmdMan()).getCommands();
+        ArrayList<ServerCommand> commands = (K7Bot.getInstance().getCmdMan()).getCommands();
         List<ServerCommand> searchresults = new ArrayList<>();
 
         int limitmultiplicator = 1;
@@ -158,10 +158,10 @@ public class HelpCommand implements ServerCommand {
 
         if (guild != null) {
 
-            prefix = Klassenserver7bbot.getInstance().getPrefixMgr().getPrefix(guild.getIdLong());
+            prefix = K7Bot.getInstance().getPrefixMgr().getPrefix(guild.getIdLong());
             ret.addField("**General**",
                     "Befehle auf diesem Server beginnen mit `"
-                            + Klassenserver7bbot.getInstance().getPrefixMgr().getPrefix(guild.getIdLong()) + "`\n"
+                            + K7Bot.getInstance().getPrefixMgr().getPrefix(guild.getIdLong()) + "`\n"
                             + "[TEXT] stellt benötigte Commandargumente dar.\n"
                             + "<TEXT> stellt optionale Commandargumente dar.\n",
                     false);

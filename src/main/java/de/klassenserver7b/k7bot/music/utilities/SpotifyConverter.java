@@ -10,7 +10,7 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.music.lavaplayer.Queue;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -272,7 +272,7 @@ public class SpotifyConverter {
 
             AudioPlayerManager manager = new DefaultAudioPlayerManager();
             manager.registerSourceManager(new YoutubeAudioSourceManager());
-            Queue queue = Klassenserver7bbot.getInstance().getPlayerUtil().getController(vc.getGuild().getIdLong())
+            Queue queue = K7Bot.getInstance().getPlayerUtil().getController(vc.getGuild().getIdLong())
                     .getQueue();
 
             AudioLoadResultHandler handler = new AudioLoadResultHandler() {

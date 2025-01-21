@@ -1,6 +1,6 @@
 package de.klassenserver7b.k7bot.commands.slash;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
@@ -48,7 +48,7 @@ public class WhitelistSlashCommand implements TopLevelSlashCommand {
 		LiteSQL.onUpdate("INSERT INTO ha3users(ingamename,realname,dcname,dcId,approved) VALUES(?, ?, ?, ?, ?);",
 				gamename, realname, dcname, dcid, 3);
 
-		Guild g = Klassenserver7bbot.getInstance().getShardManager().getGuildById(701341683325075477L);
+		Guild g = K7Bot.getInstance().getShardManager().getGuildById(701341683325075477L);
 
 		if (g != null) {
 			GuildMessageChannel requestChannel = g.getTextChannelById(1016819796190445758L);

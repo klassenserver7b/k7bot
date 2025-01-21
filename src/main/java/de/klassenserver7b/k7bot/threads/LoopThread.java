@@ -3,7 +3,7 @@
  */
 package de.klassenserver7b.k7bot.threads;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.util.StatsCategoryUtil;
 import net.dv8tion.jda.api.entities.Activity;
 import org.slf4j.Logger;
@@ -37,7 +37,7 @@ public class LoopThread implements Runnable {
 
     @Override
     public void run() {
-        Klassenserver7bbot INSTANCE = Klassenserver7bbot.getInstance();
+        K7Bot INSTANCE = K7Bot.getInstance();
 
         if ((!this.hasstarted)) {
             StatsCategoryUtil.onStartup(INSTANCE.isDevMode());
@@ -54,7 +54,7 @@ public class LoopThread implements Runnable {
 
     public void restart() {
         refreshTask.cancel(true);
-        Klassenserver7bbot.getInstance().getLoopedEventManager().restartAll();
+        K7Bot.getInstance().getLoopedEventManager().restartAll();
         start();
         log.info("restarted");
     }

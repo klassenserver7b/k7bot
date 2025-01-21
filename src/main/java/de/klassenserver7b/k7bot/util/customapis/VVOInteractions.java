@@ -1,7 +1,7 @@
 package de.klassenserver7b.k7bot.util.customapis;
 
 import com.google.gson.*;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionTarget;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.InternalStatusCodes;
@@ -59,7 +59,7 @@ public class VVOInteractions implements LoopedEvent {
 
         try (MessageCreateData data = getMessage(getEmbed(lines))) {
 
-            Klassenserver7bbot.getInstance().getSubscriptionManager()
+            K7Bot.getInstance().getSubscriptionManager()
                     .provideSubscriptionNotification(SubscriptionTarget.DVB, data);
         }
 

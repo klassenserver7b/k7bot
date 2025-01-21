@@ -4,7 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.music.utilities.AudioLoadOption;
 import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
@@ -29,7 +29,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
     public void trackLoaded(AudioTrack track) {
 
         Queue queue = this.controller.getQueue();
-        Klassenserver7bbot.getInstance().getMainLogger().info("Bot AudioLoadResult loaded a single track");
+        K7Bot.getInstance().getMainLogger().info("Bot AudioLoadResult loaded a single track");
         addTrackToQueue(queue, track);
 
         EmbedBuilder builder = EmbedUtils.getBuilderOf(Color.decode("#4D05E8"), controller.getGuild().getIdLong())
@@ -44,7 +44,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 
         Queue queue = this.controller.getQueue();
 
-        Klassenserver7bbot.getInstance().getMainLogger().info("Bot AudioLoadResult loaded a playlist");
+        K7Bot.getInstance().getMainLogger().info("Bot AudioLoadResult loaded a playlist");
 
         if (playlist.getTracks().isEmpty()) {
             noMatches();
@@ -54,7 +54,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
         List<AudioTrack> playlistTracks = playlist.getTracks();
 
         if (this.uri.startsWith("ytsearch: ") || this.uri.startsWith("scsearch: ")) {
-            Klassenserver7bbot.getInstance().getMainLogger().debug("url starts with ytsearch:");
+            K7Bot.getInstance().getMainLogger().debug("url starts with ytsearch:");
 
             // search liefert Liste an vorgeschlagenen Videos - nur das erste wird zur
             // Queue hinzugefügt
@@ -108,7 +108,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 
     @Override
     public void noMatches() {
-        Klassenserver7bbot.getInstance().getMainLogger()
+        K7Bot.getInstance().getMainLogger()
                 .info("Bot AudioLoadResult couldn't find a matching audio track (uri={})", uri);
         EmbedBuilder builder = EmbedUtils.getErrorEmbed("Couldn't find the Song you Searched for! :sob:",
                 controller.getGuild().getIdLong());
@@ -117,7 +117,7 @@ public class AudioLoadResult implements AudioLoadResultHandler {
 
     @Override
     public void loadFailed(FriendlyException exception) {
-        Klassenserver7bbot.getInstance().getMainLogger().info(" - error: {}", exception.getLocalizedMessage());
+        K7Bot.getInstance().getMainLogger().info(" - error: {}", exception.getLocalizedMessage());
         EmbedBuilder builder = EmbedUtils.getErrorEmbed(exception.getMessage(), controller.getGuild().getIdLong());
         MusicUtil.sendEmbed(this.controller.getGuild().getIdLong(), builder);
     }

@@ -2,7 +2,7 @@ package de.klassenserver7b.k7bot.music.commands.common;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import de.klassenserver7b.k7bot.HelpCategories;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;
 import de.klassenserver7b.k7bot.music.lavaplayer.Queue;
@@ -45,7 +45,7 @@ public class SkipCommand implements ServerCommand {
 
         String[] args = message.getContentDisplay().split(" ");
         long guildid = channel.getGuild().getIdLong();
-        MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil().getController(guildid);
+        MusicController controller = K7Bot.getInstance().getPlayerUtil().getController(guildid);
         Queue queue = controller.getQueue();
         AudioTrack lastTrack = controller.getPlayer().getPlayingTrack();
 

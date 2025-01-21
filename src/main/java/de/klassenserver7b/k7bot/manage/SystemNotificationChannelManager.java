@@ -1,6 +1,6 @@
 package de.klassenserver7b.k7bot.manage;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
@@ -38,7 +38,7 @@ public class SystemNotificationChannelManager {
                     continue;
                 }
 
-                Guild g = Klassenserver7bbot.getInstance().getShardManager().getGuildById(guildid);
+                Guild g = K7Bot.getInstance().getShardManager().getGuildById(guildid);
 
                 if (g == null) {
                     continue;
@@ -120,7 +120,7 @@ public class SystemNotificationChannelManager {
     @SuppressWarnings("unused")
     public GuildMessageChannel getSysChannel(@Nonnull Long guildId) throws NullPointerException {
 
-        Guild guild = Klassenserver7bbot.getInstance().getShardManager().getGuildById(guildId);
+        Guild guild = K7Bot.getInstance().getShardManager().getGuildById(guildId);
 
         return systemchannellist.get(guild);
     }
