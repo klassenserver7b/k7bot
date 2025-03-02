@@ -11,8 +11,18 @@ updates:
     schedule:
       interval: "weekly"
     ignore:
-    # ignore Maven APIs/SPIs
     - dependency-name: org.apache.maven:*
+    groups:
+      java-deps:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "org.apache.maven.plugins:*"
+          - "org.codehaus.mojo:versions-maven-plugin"
+      mvn-deps:
+        patterns:
+          - "org.apache.maven.plugins:*"
+          - "org.codehaus.mojo:versions-maven-plugin"
   - package-ecosystem: "github-actions"
     directory: "/"
     target-branch: "dev"
