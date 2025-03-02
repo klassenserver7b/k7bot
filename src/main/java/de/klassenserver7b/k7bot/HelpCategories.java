@@ -41,11 +41,6 @@ public enum HelpCategories {
     MUSIC(4),
 
     /**
-     * This category is used for all games commands. These are commands that are used to play games.
-     */
-    GAMES(5);
-
-    /**
      * The id of the category.
      */
     private final int id;
