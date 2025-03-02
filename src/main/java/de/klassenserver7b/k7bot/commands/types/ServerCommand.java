@@ -25,6 +25,7 @@ public interface ServerCommand {
 
     /**
      * @return The Command Strings for the {@link de.klassenserver7b.k7bot.commands.types.ServerCommand
+     * ServerCommand}
      */
     String[] getCommandStrings();
 

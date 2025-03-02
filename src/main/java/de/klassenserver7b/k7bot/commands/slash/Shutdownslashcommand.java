@@ -1,6 +1,6 @@
 package de.klassenserver7b.k7bot.commands.slash;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.errorhandler.PermissionError;
@@ -25,15 +25,15 @@ public class Shutdownslashcommand implements TopLevelSlashCommand {
 		Member m = event.getMember();
 		GuildMessageChannel channel = event.getChannel().asGuildMessageChannel();
 
-		if (m.getIdLong() == Klassenserver7bbot.getInstance().getOwnerId()) {
+		if (m.getIdLong() == K7Bot.getInstance().getOwnerId()) {
 
 			EmbedBuilder build = EmbedUtils.getBuilderOf(Color.orange,
 					"# Bot is shutting down! #" + "\n \n Requested by @" + event.getMember().getEffectiveName());
 
 			event.replyEmbeds(build.build()).complete().deleteOriginal().completeAfter(10, TimeUnit.SECONDS);
 
-			Klassenserver7bbot.getInstance().setExit(true);
-			Klassenserver7bbot.getInstance().getShutdownThread().onShutdown();
+			K7Bot.getInstance().setExit(true);
+			K7Bot.getInstance().getShutdownThread().onShutdown();
 			return;
 
 		}

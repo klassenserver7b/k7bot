@@ -1,7 +1,7 @@
 package de.klassenserver7b.k7bot.commands.common;
 
 import de.klassenserver7b.k7bot.HelpCategories;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
@@ -42,7 +42,7 @@ public class PrefixCommand implements ServerCommand {
 
 			if (args.length > 1) {
 
-				Klassenserver7bbot.getInstance().getPrefixMgr().setPrefix(channel.getGuild().getIdLong(), args[1]);
+				K7Bot.getInstance().getPrefixMgr().setPrefix(channel.getGuild().getIdLong(), args[1]);
 				EmbedBuilder builder = EmbedUtils.getDefault(channel.getGuild().getIdLong());
 				builder.setFooter("Requested by @" + caller.getEffectiveName());
 				builder.setTitle("Prefix was set to \"" + args[1] + "\"");

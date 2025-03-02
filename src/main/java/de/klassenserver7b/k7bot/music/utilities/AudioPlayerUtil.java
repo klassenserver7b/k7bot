@@ -1,6 +1,6 @@
 package de.klassenserver7b.k7bot.music.utilities;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,7 +18,7 @@ public class AudioPlayerUtil {
 			mc = this.controller.get(guildid);
 		} else {
 
-			mc = new MusicController(Klassenserver7bbot.getInstance().getShardManager().getGuildById(guildid));
+			mc = new MusicController(K7Bot.getInstance().getShardManager().getGuildById(guildid));
 
 			this.controller.put(guildid, mc);
 		}

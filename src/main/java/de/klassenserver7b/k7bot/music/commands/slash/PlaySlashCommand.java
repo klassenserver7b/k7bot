@@ -8,7 +8,7 @@ import de.klassenserver7b.k7bot.music.commands.generic.GenericPlayCommand;
 import de.klassenserver7b.k7bot.music.lavaplayer.AudioLoadResult;
 import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;
 import de.klassenserver7b.k7bot.music.utilities.AudioLoadOption;
-import de.klassenserver7b.k7bot.util.SupportedPlayQueries;
+import de.klassenserver7b.k7bot.music.SupportedPlayQueries;
 import net.dv8tion.jda.api.interactions.commands.Command.Choice;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -36,13 +36,13 @@ public class PlaySlashCommand extends GenericPlayCommand implements SubSlashComm
 		OptionData url = new OptionData(OptionType.STRING, "url", "The url/search query for the selected target")
 				.setRequired(true);
 
-		return new SubcommandData("imediately", "plays the selected AudioItem replacing the whole queue")
+		return new SubcommandData("immediately", "plays the selected AudioItem replacing the whole queue")
 				.addOptions(target, url);
 	}
 
 	@Override
 	public String getSubPath() {
-		return "imediately";
+		return "immediately";
 	}
 
 	@Override

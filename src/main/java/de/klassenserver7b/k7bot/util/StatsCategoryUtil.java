@@ -3,7 +3,7 @@
  */
 package de.klassenserver7b.k7bot.util;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.logging.LoggingFilter;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import net.dv8tion.jda.api.Permission;
@@ -38,7 +38,7 @@ public class StatsCategoryUtil {
     }
 
     public static void onStartup(boolean devmode) {
-        Klassenserver7bbot.getInstance().getShardManager().getGuilds().forEach(guild -> {
+        K7Bot.getInstance().getShardManager().getGuilds().forEach(guild -> {
             try (ResultSet set = LiteSQL.onQuery("SELECT categoryId FROM statschannels WHERE guildId = ?;",
                     guild.getIdLong())) {
 
@@ -64,7 +64,7 @@ public class StatsCategoryUtil {
     }
 
     public static void onShutdown(boolean devmode) {
-        Klassenserver7bbot.getInstance().getShardManager().getGuilds().forEach(guild -> {
+        K7Bot.getInstance().getShardManager().getGuilds().forEach(guild -> {
 
             try (ResultSet set = LiteSQL.onQuery("SELECT categoryId FROM statschannels WHERE guildId = ?;",
                     guild.getIdLong())) {

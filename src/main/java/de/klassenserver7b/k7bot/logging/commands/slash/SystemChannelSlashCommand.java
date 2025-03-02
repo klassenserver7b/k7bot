@@ -1,6 +1,6 @@
 package de.klassenserver7b.k7bot.logging.commands.slash;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.manage.SystemNotificationChannelManager;
 import net.dv8tion.jda.api.Permission;
@@ -25,7 +25,7 @@ public class SystemChannelSlashCommand implements TopLevelSlashCommand {
         assert event.getOption("syschannel") != null;
         GuildMessageChannel chan = event.getOption("syschannel").getAsChannel().asGuildMessageChannel();
 
-        SystemNotificationChannelManager sys = Klassenserver7bbot.getInstance().getSysChannelMgr();
+        SystemNotificationChannelManager sys = K7Bot.getInstance().getSysChannelMgr();
         sys.insertChannel(chan);
 
         hook.sendMessage("Systemchannel was sucsessful set to " + chan.getAsMention()).queue();

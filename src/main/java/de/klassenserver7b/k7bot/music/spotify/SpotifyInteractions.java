@@ -3,7 +3,7 @@
  */
 package de.klassenserver7b.k7bot.music.spotify;
 
-import de.klassenserver7b.k7bot.threads.TokenFetchThread;
+import de.klassenserver7b.k7bot.threads.SpotifyTokenRefresher;
 import se.michaelthelin.spotify.SpotifyApi;
 
 /**
@@ -13,32 +13,32 @@ public class SpotifyInteractions {
 
     private boolean apienabled;
     private SpotifyApi spotifyApi;
-    public TokenFetchThread fetchthread;
+    public SpotifyTokenRefresher tokenRefresher;
 
     public SpotifyInteractions() {
         apienabled = false;
-        startfetchcycle();
-
     }
 
     public void initialize() {
         this.spotifyApi = new SpotifyApi.Builder().build();
         this.apienabled = true;
+
+        startfetchcycle();
     }
 
     /**
      *
      */
     public void startfetchcycle() {
-        this.fetchthread = TokenFetchThread.getINSTANCE();
+        this.tokenRefresher = SpotifyTokenRefresher.getINSTANCE();
     }
 
     public void shutdown() {
-        fetchthread.shutdown();
+        tokenRefresher.close();
     }
 
     public void restart() {
-        fetchthread.restart();
+        tokenRefresher.restart();
     }
 
     public boolean isApienabled() {

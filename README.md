@@ -1,8 +1,8 @@
 # Klassenserver7bBot
-[![CodeFactor](https://www.codefactor.io/repository/github/klassenserver7b/klassenserver7bbot/badge)](https://www.codefactor.io/repository/github/klassenserver7b/klassenserver7bbot)
-[![License](https://img.shields.io/github/license/klassenserver7b/Klassenserver7bBot.svg)](https://github.com//klassenserver7b/Klassenserver7bBot/blob/master/LICENSE)
-[![Build Status](https://jitci.com/gh/klassenserver7b/Klassenserver7bBot/svg)](https://jitci.com/gh/klassenserver7b/Klassenserver7bBot)
-[![Latest Release](https://jitpack.io/v/Klassenserver7b/Klassenserver7bbot.svg)](https://jitpack.io/#Klassenserver7b/Klassenserver7bbot)
+[![CodeFactor](https://www.codefactor.io/repository/github/klassenserver7b/k7bot/badge)](https://www.codefactor.io/repository/github/klassenserver7b/k7bot)
+[![License](https://img.shields.io/github/license/klassenserver7b/k7bot.svg)](https://github.com//klassenserver7b/k7bot/blob/master/LICENSE)
+[![Build Status](https://jitci.com/gh/klassenserver7b/k7bot/svg)](https://jitci.com/gh/klassenserver7b/k7bot)
+[![Latest Release](https://jitpack.io/v/Klassenserver7b/k7bot.svg)](https://jitpack.io/#Klassenserver7b/k7bot)
 
 This is my Discord Bot written in Java with the Java-Discord-API ([JDA](https://github.com/discord-jda/JDA)).
 
@@ -25,7 +25,7 @@ This is my Discord Bot written in Java with the Java-Discord-API ([JDA](https://
 - Download/Use [Maven 3.6+](https://maven.apache.org/download.cgi) (Tested on Maven 3.9.6)
 
 ### Compile and package
-1. Clone the project `git clone https://github.com/klassenserver7b/klassenserver7bbot.git && cd klassenserver7bbot`
+1. Clone the project `git clone https://github.com/klassenserver7b/k7bot.git && cd k7bot`
 2. run 'mvn package'
 3. you can now find your jar at ./target/k7bot-$VERSION-full.jar
 4. run it with `java -jar YOUR_JAR_FILE_NAME`
@@ -43,13 +43,13 @@ This is my Discord Bot written in Java with the Java-Discord-API ([JDA](https://
 
 **Creating a "normal" Discord Chat-Command:**
 
-1. Create a new command by creating a new class and adding `implements ServerCommand` or `implements HypixelCommand` (whether it is a Music/Tool/Moderation command or depends it on "Hypixel" and their API)
-2. Insert new commands in the [CommandManager](https://github.com/klassenserver7b/Klassenserver7bBot/blob/master/src/de/k7bot/manage/CommandManager.java) or the [HypixelCommandManager](https://github.com/klassenserver7b/Klassenserver7bBot/blob/master/src/de/k7bot/hypixel/HypixelCommandManager.java)
+1. Create a new command by creating a new class and adding `implements ServerCommand`
+2. Insert new commands in the [CommandManager](https://github.com/klassenserver7b/k7bot/blob/master/src/de/k7bot/manage/CommandManager.java)
 
 **Creating a SlashCommand**
 
 1. Create a new command by creating a new class and adding `implements TopLevelSlashCommand`
-2. Insert new commands in the [SlashCommandManager](https://github.com/klassenserver7b/Klassenserver7bBot/blob/master/src/de/k7bot/manage/SlashCommandManager.java)
-3. Add your required options in the [SlashCommandManager](https://github.com/klassenserver7b/Klassenserver7bBot/blob/master/src/de/k7bot/manage/SlashCommandManager.java) and your option-previews in [ChartsAutoComplete](https://github.com/klassenserver7b/Klassenserver7bBot/blob/master/src/de/k7bot/listener/ChartsAutocomplete.java)
+2. Insert new commands in the [SlashCommandManager](https://github.com/klassenserver7b/k7bot/blob/master/src/de/k7bot/manage/SlashCommandManager.java)
+3. Add your required options in the [SlashCommandManager](https://github.com/klassenserver7b/k7bot/blob/master/src/de/k7bot/manage/SlashCommandManager.java) and your option-previews in [ChartsAutoComplete](https://github.com/klassenserver7b/k7bot/blob/master/src/de/k7bot/listener/ChartsAutocomplete.java)
 
 ### A DiscordBot by @Klassenserver7b

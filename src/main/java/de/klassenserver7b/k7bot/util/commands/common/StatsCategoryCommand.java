@@ -1,7 +1,7 @@
 package de.klassenserver7b.k7bot.util.commands.common;
 
 import de.klassenserver7b.k7bot.HelpCategories;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.util.StatsCategoryUtil;
@@ -58,7 +58,7 @@ public class StatsCategoryCommand implements ServerCommand {
                     LiteSQL.onUpdate("INSERT INTO statschannels(guildId, categoryId) VALUES(?, ?);", guild.getIdLong(),
                             catid);
 
-                    StatsCategoryUtil.fillCategory(cat, Klassenserver7bbot.getInstance().isDevMode());
+                    StatsCategoryUtil.fillCategory(cat, K7Bot.getInstance().isDevMode());
 
                 } else {
 
@@ -67,7 +67,7 @@ public class StatsCategoryCommand implements ServerCommand {
                     Category cat = guild.getCategoryById(catid);
                     cat.getChannels().forEach(chan -> chan.delete().complete());
                     StatsCategoryUtil.fillCategory(guild.getCategoryById(catid),
-                            Klassenserver7bbot.getInstance().isDevMode());
+                            K7Bot.getInstance().isDevMode());
 
                 }
             } catch (SQLException e) {

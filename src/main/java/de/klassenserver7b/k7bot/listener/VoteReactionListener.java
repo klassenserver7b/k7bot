@@ -1,6 +1,6 @@
 package de.klassenserver7b.k7bot.listener;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.entities.User;
@@ -64,7 +64,7 @@ public class VoteReactionListener extends ListenerAdapter {
             gameMaster.openPrivateChannel().complete()
                     .sendMessageEmbeds(EmbedUtils.getBuilderOf(build.toString()).build()).queue();
 
-            Klassenserver7bbot.getInstance().getShardManager().removeEventListener(this);
+            K7Bot.getInstance().getShardManager().removeEventListener(this);
 
         }
 

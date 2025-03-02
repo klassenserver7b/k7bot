@@ -1,6 +1,6 @@
 package de.klassenserver7b.k7bot.subscriptions.commands;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionDeliveryType;
 import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionTarget;
@@ -37,7 +37,7 @@ public class SubscribeSlashCommand implements TopLevelSlashCommand {
 
         SubscriptionTarget target = SubscriptionTarget.valueOf(event.getOption("target").getAsString());
 
-        if (target.isprivileged() && event.getUser().getIdLong() != Klassenserver7bbot.getInstance().getOwnerId()) {
+        if (target.isprivileged() && event.getUser().getIdLong() != K7Bot.getInstance().getOwnerId()) {
             hook.sendMessageEmbeds(EmbedUtils.getErrorEmbed(
                             "You must be the Botowner to access this target! - please ask him to create the subscription\nIf you are the Botowner check if you have inserted your discord userid in the configfile!")
                     .build()).queue();
@@ -48,7 +48,7 @@ public class SubscribeSlashCommand implements TopLevelSlashCommand {
 
             try {
 
-                Klassenserver7bbot.getInstance().getSubscriptionManager().createSubscription(
+                K7Bot.getInstance().getSubscriptionManager().createSubscription(
                         SubscriptionDeliveryType.PRIVATE_CHANNEL, target,
                         event.getUser().openPrivateChannel().complete().getIdLong());
 
@@ -68,7 +68,7 @@ public class SubscribeSlashCommand implements TopLevelSlashCommand {
             GuildChannelUnion union = event.getOption("channel").getAsChannel();
             SubscriptionDeliveryType delivery;
 
-            if (!Klassenserver7bbot.getInstance().isDevMode()) {
+            if (!K7Bot.getInstance().isDevMode()) {
                 switch (union.getType()) {
 
                     case TEXT -> delivery = SubscriptionDeliveryType.TEXT_CHANNEL;
@@ -88,7 +88,7 @@ public class SubscribeSlashCommand implements TopLevelSlashCommand {
 
             if (delivery != SubscriptionDeliveryType.UNKNOWN) {
 
-                Klassenserver7bbot.getInstance().getSubscriptionManager().createSubscription(delivery, target,
+                K7Bot.getInstance().getSubscriptionManager().createSubscription(delivery, target,
                         union.getIdLong());
                 hook.sendMessageEmbeds(EmbedUtils.getSuccessEmbed("The subscription was created successfull!").build())
                         .queue();

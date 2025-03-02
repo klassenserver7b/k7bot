@@ -65,7 +65,6 @@ public class PropertiesManager {
         String token = prop.getProperty("token");
 
         if (token != null && !token.isBlank()) {
-
             return token.split("\\.").length == 3;
         }
 

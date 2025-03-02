@@ -1,6 +1,6 @@
 package de.klassenserver7b.k7bot.listener;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
@@ -133,7 +133,7 @@ public class ReactRoleListener extends ListenerAdapter implements InitRequiringL
                      * (can't create reactions in other than that)
                      */
 
-                    GuildMessageChannel msgChannel = (GuildMessageChannel) Klassenserver7bbot.getInstance()
+                    GuildMessageChannel msgChannel = (GuildMessageChannel) K7Bot.getInstance()
                             .getShardManager().getGuildChannelById(reactRoles.getLong("channelId"));
 
                     // get Objects from db data

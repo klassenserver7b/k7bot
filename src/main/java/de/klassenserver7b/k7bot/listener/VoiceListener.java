@@ -1,6 +1,6 @@
 package de.klassenserver7b.k7bot.listener;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.logging.LoggingFilter;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.util.KAutoCloseable;
@@ -72,7 +72,7 @@ public class VoiceListener extends ListenerAdapter {
             LiteSQL.onUpdate("INSERT INTO createdprivatevcs(guildId, channelId) VALUES(?, ?);",
                     vc.getGuild().getIdLong(), vc.getIdLong());
 
-            Klassenserver7bbot.getInstance().getMainLogger().info("Created custom VoiceChannel for Member: {} with the following Channel-ID: {}", member.getEffectiveName(), vc.getIdLong());
+            K7Bot.getInstance().getMainLogger().info("Created custom VoiceChannel for Member: {} with the following Channel-ID: {}", member.getEffectiveName(), vc.getIdLong());
         }
     }
 
@@ -94,7 +94,7 @@ public class VoiceListener extends ListenerAdapter {
                     LiteSQL.onUpdate("DELETE FROM createdprivatevcs WHERE channelId = ? AND guildId=?;",
                             audioChannel.getIdLong(), audioChannel.getGuild().getIdLong());
                     this.tempchannels.clear();
-                    Klassenserver7bbot.getInstance().getMainLogger().info("Removed custom VoiceChannel with the Name: {} and the following ID: {}", audioChannel.getName(), audioChannel.getIdLong());
+                    K7Bot.getInstance().getMainLogger().info("Removed custom VoiceChannel with the Name: {} and the following ID: {}", audioChannel.getName(), audioChannel.getIdLong());
                 }
 
             } catch (SQLException e) {

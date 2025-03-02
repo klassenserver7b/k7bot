@@ -36,8 +36,7 @@ public class SongDataUtils {
 
         strippedtitle = strippedtitle.replaceAll("\\|", "");
 
-        //noinspection EscapedSpace
-        strippedtitle = strippedtitle.replaceAll("(\s)?(\\(|\\[)((?!(sped|slow|speed|reverb|nightcore)).)*(\\)|\\])/i", "");
+        strippedtitle = strippedtitle.replaceAll("( )?([(\\[])((?!(sped|slow|speed|reverb|nightcore)).)*([)\\]])/i", "");
 
         return strippedtitle.trim();
     }
@@ -72,7 +71,7 @@ public class SongDataUtils {
         String newtitle = title;
 
         if (!titleContainsAuthor(title)) {
-            newtitle += " " + channel;
+            newtitle = String.format("%s - %s", channel, title);
         }
 
         try {

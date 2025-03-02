@@ -10,7 +10,7 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.music.lavaplayer.Queue;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -164,7 +164,7 @@ public class SpotifyConverter {
      * @param mess       Message
      * @param vc         AudioChannel
      */
-    private void loadSpotifyData(String playlistId, String acctkn, Message mess, AudioChannel vc) {
+    protected void loadSpotifyData(String playlistId, String acctkn, Message mess, AudioChannel vc) {
         long delay = System.currentTimeMillis();
         final SpotifyApi spotifyapi = new SpotifyApi.Builder().setClientId(clientId).setAccessToken(acctkn).build();
 
@@ -262,7 +262,7 @@ public class SpotifyConverter {
      * @param vc          AudioChannel
      * @return List of AudioTracks
      */
-    private List<AudioTrack> loadtYTSearchQuery(List<String> searchquery, AudioChannel vc) {
+    protected List<AudioTrack> loadtYTSearchQuery(List<String> searchquery, AudioChannel vc) {
 
         List<AudioTrack> yttracks = new ArrayList<>();
 
@@ -272,7 +272,7 @@ public class SpotifyConverter {
 
             AudioPlayerManager manager = new DefaultAudioPlayerManager();
             manager.registerSourceManager(new YoutubeAudioSourceManager());
-            Queue queue = Klassenserver7bbot.getInstance().getPlayerUtil().getController(vc.getGuild().getIdLong())
+            Queue queue = K7Bot.getInstance().getPlayerUtil().getController(vc.getGuild().getIdLong())
                     .getQueue();
 
             AudioLoadResultHandler handler = new AudioLoadResultHandler() {

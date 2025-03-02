@@ -3,7 +3,7 @@
  */
 package de.klassenserver7b.k7bot.util;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 
@@ -61,7 +61,7 @@ public abstract class EmbedUtils {
 
 	public static EmbedBuilder getDefault(Long guildId) {
 		return new EmbedBuilder().setTimestamp(OffsetDateTime.now())
-				.setFooter("@" + Klassenserver7bbot.getInstance().getSelfName(guildId));
+				.setFooter("@" + K7Bot.getInstance().getSelfName(guildId));
 	}
 
 	public static EmbedBuilder getDefault(Guild guild) {

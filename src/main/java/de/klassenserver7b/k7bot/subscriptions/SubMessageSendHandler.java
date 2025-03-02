@@ -1,6 +1,6 @@
 package de.klassenserver7b.k7bot.subscriptions;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.subscriptions.types.Subscription;
 import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionDeliveryType;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
@@ -20,7 +20,7 @@ public class SubMessageSendHandler {
     public void provideSubscriptionMessage(Subscription s, MessageCreateData d) {
 
         SubscriptionDeliveryType type = s.getDeliveryType();
-        if (Klassenserver7bbot.getInstance().isDevMode()) {
+        if (K7Bot.getInstance().isDevMode()) {
             type = SubscriptionDeliveryType.CANARY;
         }
 
@@ -51,7 +51,7 @@ public class SubMessageSendHandler {
     private void sendGuildMessageChannelMessage(Subscription s, MessageCreateData data) {
         Long chanid = s.getTargetDiscordId();
 
-        GuildChannel gchan = Klassenserver7bbot.getInstance().getShardManager().getGuildChannelById(chanid);
+        GuildChannel gchan = K7Bot.getInstance().getShardManager().getGuildChannelById(chanid);
         GuildMessageChannel channel;
 
         if (gchan instanceof GuildMessageChannel) {
@@ -68,7 +68,7 @@ public class SubMessageSendHandler {
 
         Long chanid = s.getTargetDiscordId();
 
-        PrivateChannel ch = Klassenserver7bbot.getInstance().getShardManager().getPrivateChannelById(chanid);
+        PrivateChannel ch = K7Bot.getInstance().getShardManager().getPrivateChannelById(chanid);
 
         if (ch != null) {
 
@@ -82,13 +82,13 @@ public class SubMessageSendHandler {
 
     private void sendCanaryMessage(Subscription s, MessageCreateData data) {
 
-        if (!Klassenserver7bbot.getInstance().isDevMode() || (s.getDeliveryType() != SubscriptionDeliveryType.CANARY)) {
+        if (!K7Bot.getInstance().isDevMode() || (s.getDeliveryType() != SubscriptionDeliveryType.CANARY)) {
             return;
         }
 
         Long chanid = s.getTargetDiscordId();
 
-        GuildChannel gchan = Klassenserver7bbot.getInstance().getShardManager().getGuildChannelById(chanid);
+        GuildChannel gchan = K7Bot.getInstance().getShardManager().getGuildChannelById(chanid);
         GuildMessageChannel channel;
 
         if (gchan instanceof GuildMessageChannel) {

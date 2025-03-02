@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;
 import de.klassenserver7b.k7bot.music.spotify.SpotifyAudioTrack;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
@@ -130,7 +130,7 @@ public class MusicUtil {
             long channelid = set.getLong("channelId");
             Guild guild;
 
-            if ((guild = Klassenserver7bbot.getInstance().getShardManager().getGuildById(guildid)) == null) {
+            if ((guild = K7Bot.getInstance().getShardManager().getGuildById(guildid)) == null) {
                 return null;
             }
 
@@ -277,7 +277,7 @@ public class MusicUtil {
      */
     public static boolean isPlayingSong(GuildMessageChannel c, Member m) {
 
-        MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
+        MusicController controller = K7Bot.getInstance().getPlayerUtil()
                 .getController(c.getGuild().getIdLong());
 
         if (controller == null) {

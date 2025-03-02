@@ -4,7 +4,7 @@
 package de.klassenserver7b.k7bot.threads;
 
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.slash.StableDiffusionCommand;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
@@ -15,9 +15,7 @@ import net.dv8tion.jda.api.sharding.ShardManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -30,13 +28,13 @@ public class ConsoleReadThread implements Runnable {
 
     private final Thread t;
     private final Logger log;
-    private final BufferedReader reader;
+    private final Console console;
 
     public ConsoleReadThread() {
         log = LoggerFactory.getLogger(this.getClass());
 
-        InputStreamReader sysinr = new InputStreamReader(System.in);
-        reader = new BufferedReader(sysinr);
+        console = System.console();
+
         t = new Thread(this, "ConsoleReadThread");
         t.start();
     }
@@ -48,8 +46,7 @@ public class ConsoleReadThread implements Runnable {
             try {
 
                 String line;
-
-                if ((line = reader.readLine()) != null) {
+                if ((line = console.readLine()) != null) {
                     interpretConsoleContent(line);
                 }
 
@@ -72,9 +69,8 @@ public class ConsoleReadThread implements Runnable {
         switch (commandargs[0].toLowerCase()) {
             case "exit", "stop" -> {
 
-                Klassenserver7bbot.getInstance().setExit(true);
+                K7Bot.getInstance().setExit(true);
                 t.interrupt();
-                reader.close();
                 this.onShutdown();
             }
 
@@ -106,9 +102,9 @@ public class ConsoleReadThread implements Runnable {
                 }
 
                 if (enable) {
-                    Klassenserver7bbot.getInstance().getCmdMan().enableCommandsByClass(insertedClassName);
+                    K7Bot.getInstance().getCmdMan().enableCommandsByClass(insertedClassName);
                 } else {
-                    Klassenserver7bbot.getInstance().getCmdMan().disableCommandsByClass(insertedClassName);
+                    K7Bot.getInstance().getCmdMan().disableCommandsByClass(insertedClassName);
                 }
 
             } catch (IllegalArgumentException | SecurityException e) {
@@ -129,9 +125,9 @@ public class ConsoleReadThread implements Runnable {
 
         log.info("Bot is shutting down!");
 
-        ShardManager shardMgr = Klassenserver7bbot.getInstance().getShardManager();
+        ShardManager shardMgr = K7Bot.getInstance().getShardManager();
 
-        for (AudioSourceManager m : Klassenserver7bbot.getInstance().getAudioPlayerManager().getSourceManagers()) {
+        for (AudioSourceManager m : K7Bot.getInstance().getAudioPlayerManager().getSourceManagers()) {
             m.shutdown();
         }
 
@@ -145,11 +141,11 @@ public class ConsoleReadThread implements Runnable {
 
             shardMgr.removeEventListener(listeners.toArray());
 
-            Klassenserver7bbot.getInstance().stopLoop();
+            K7Bot.getInstance().stopLoop();
 
-            Klassenserver7bbot.getInstance().getLoopedEventManager().shutdownLoopedEvents();
+            K7Bot.getInstance().getLoopedEventManager().shutdownLoopedEvents();
 
-            StatsCategoryUtil.onShutdown(Klassenserver7bbot.getInstance().isDevMode());
+            StatsCategoryUtil.onShutdown(K7Bot.getInstance().isDevMode());
 
             shardMgr.setStatus(OnlineStatus.OFFLINE);
 
@@ -158,11 +154,6 @@ public class ConsoleReadThread implements Runnable {
 
             LiteSQL.disconnect();
             t.interrupt();
-            try {
-                reader.close();
-            } catch (IOException e) {
-                log.error(e.getMessage(), e);
-            }
             return;
 
         }
@@ -184,7 +175,7 @@ public class ConsoleReadThread implements Runnable {
     }
 
     protected void disableCommandByStr(String name) {
-        if (Klassenserver7bbot.getInstance().getCmdMan().disableCommand(name)) {
+        if (K7Bot.getInstance().getCmdMan().disableCommand(name)) {
             log.info("successfully disabled {}", name);
             return;
         }
@@ -193,7 +184,7 @@ public class ConsoleReadThread implements Runnable {
     }
 
     protected void enableCommandByStr(String name) {
-        if (Klassenserver7bbot.getInstance().getCmdMan().enableCommand(name)) {
+        if (K7Bot.getInstance().getCmdMan().enableCommand(name)) {
             log.info("successfully enabled {}", name);
             return;
         }

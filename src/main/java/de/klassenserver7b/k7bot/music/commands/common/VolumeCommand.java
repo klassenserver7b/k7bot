@@ -2,7 +2,7 @@ package de.klassenserver7b.k7bot.music.commands.common;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import de.klassenserver7b.k7bot.HelpCategories;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;
 import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
@@ -66,7 +66,7 @@ public class VolumeCommand implements ServerCommand {
 
             channel.sendMessage(
                             "Brudi was willst den du? Wenn du nix hören willst dann lefte doch den channel oder gebe `"
-                                    + Klassenserver7bbot.getInstance().getPrefixMgr().getPrefix(channel.getGuild().getIdLong())
+                                    + K7Bot.getInstance().getPrefixMgr().getPrefix(channel.getGuild().getIdLong())
                                     + "stop ` ein :rage:")
                     .complete().delete().queueAfter(10L, TimeUnit.SECONDS);
             return;
@@ -82,7 +82,7 @@ public class VolumeCommand implements ServerCommand {
 
         Guild guild = channel.getGuild();
 
-        MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil().getController(guild.getIdLong());
+        MusicController controller = K7Bot.getInstance().getPlayerUtil().getController(guild.getIdLong());
         AudioPlayer player = controller.getPlayer();
         player.setVolume(volume);
 

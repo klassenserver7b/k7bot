@@ -1,6 +1,6 @@
 package de.klassenserver7b.k7bot.listener;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.common.HelpCommand;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import net.dv8tion.jda.api.entities.Guild;
@@ -25,7 +25,7 @@ public class CommandListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        if (!Klassenserver7bbot.getInstance().isInExit()) {
+        if (!K7Bot.getInstance().isInExit()) {
 
             switch (event.getChannelType()) {
 
@@ -37,7 +37,7 @@ public class CommandListener extends ListenerAdapter {
 
                 default -> {
                     try {
-                        String prefix = Klassenserver7bbot.getInstance().getPrefixMgr()
+                        String prefix = K7Bot.getInstance().getPrefixMgr()
                                 .getPrefix(event.getGuild().getIdLong());
 
                         if (prefix == null) {
@@ -75,7 +75,7 @@ public class CommandListener extends ListenerAdapter {
         switch (messstr) {
 
             case "-help" -> {
-                Klassenserver7bbot.getInstance().getCmdMan().perform("help", event.getMember(), channel,
+                K7Bot.getInstance().getCmdMan().perform("help", event.getMember(), channel,
                         event.getMessage());
 
                 inserttoLog("help", LocalDateTime.now(), event.getGuild(), event.getAuthor().getIdLong());
@@ -101,7 +101,7 @@ public class CommandListener extends ListenerAdapter {
                     return;
                 }
 
-                int status = Klassenserver7bbot.getInstance().getCmdMan().perform(args[0], event.getMember(), channel,
+                int status = K7Bot.getInstance().getCmdMan().perform(args[0], event.getMember(), channel,
                         event.getMessage());
 
                 switch (status) {
@@ -133,7 +133,7 @@ public class CommandListener extends ListenerAdapter {
 
     private void sendUnknownCommand(GuildMessageChannel chan, String command) {
 
-        String nearestComm = Klassenserver7bbot.getInstance().getCmdMan().getNearestCommand(command);
+        String nearestComm = K7Bot.getInstance().getCmdMan().getNearestCommand(command);
 
         String shortcommand = command;
 
@@ -152,7 +152,7 @@ public class CommandListener extends ListenerAdapter {
 
     private void inserttoLog(String command, LocalDateTime time, Long guildid, Long userid) {
 
-        if (!Klassenserver7bbot.getInstance().isInExit()) {
+        if (!K7Bot.getInstance().isInExit()) {
             LiteSQL.onUpdate("INSERT INTO commandlog(command, guildId, userId, timestamp) VALUES(?, ?, ?, ?);", command,
                     guildid, userid, time.format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss")));
         }

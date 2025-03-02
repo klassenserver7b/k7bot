@@ -8,7 +8,7 @@ import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import de.klassenserver7b.k7bot.HelpCategories;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.music.asms.ExtendedLocalAudioSourceManager;
 import de.klassenserver7b.k7bot.music.asms.SpotifyAudioSourceManager;
@@ -17,7 +17,7 @@ import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;
 import de.klassenserver7b.k7bot.music.utilities.AudioLoadOption;
 import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
-import de.klassenserver7b.k7bot.util.SupportedPlayQueries;
+import de.klassenserver7b.k7bot.music.SupportedPlayQueries;
 import de.klassenserver7b.k7bot.util.errorhandler.SyntaxError;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import net.dv8tion.jda.api.entities.Member;
@@ -78,7 +78,7 @@ public abstract class GenericPlayCommand implements ServerCommand {
         assert vc != null;
 
         MusicUtil.updateChannel(hook);
-        MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
+        MusicController controller = K7Bot.getInstance().getPlayerUtil()
                 .getController(vc.getGuild().getIdLong());
 
         playQueriedItem(SupportedPlayQueries.fromId(Objects.requireNonNull(event.getOption("target")).getAsInt()), vc,
@@ -106,7 +106,7 @@ public abstract class GenericPlayCommand implements ServerCommand {
         assert vc != null;
 
         MusicUtil.updateChannel(channel);
-        MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
+        MusicController controller = K7Bot.getInstance().getPlayerUtil()
                 .getController(vc.getGuild().getIdLong());
 
         StringBuilder strBuilder = new StringBuilder();
@@ -114,13 +114,12 @@ public abstract class GenericPlayCommand implements ServerCommand {
         if (!message.getAttachments().isEmpty()) {
             int status = loadAttachments(message.getAttachments(), controller);
 
-            if (status == 0) {
-                return;
+            if (status != 0) {
+                channel.sendMessage(
+                                "Invalid file attached to this message! - allowed are ." + SUPPORTED_AUDIO_FORMATS + " files")
+                        .complete().delete().queueAfter(10L, TimeUnit.SECONDS);
             }
 
-            channel.sendMessage(
-                            "Invalid file attached to this message! - allowed are ." + SUPPORTED_AUDIO_FORMATS + " files")
-                    .complete().delete().queueAfter(10L, TimeUnit.SECONDS);
             return;
         }
 
@@ -214,15 +213,10 @@ public abstract class GenericPlayCommand implements ServerCommand {
 
         String url = q.strip();
 
-        if (url.startsWith("lf: ")) {
-
-            url = url.substring(4);
-
-        } else if (!(url.startsWith("http") || url.startsWith("scsearch: ") || url.startsWith("ytsearch: "))) {
-            url = "ytsearch: " + url;
+        if (url.matches("ytsearch: .*|scsearch: .*|spsearch: .*|http(s)?://.*|/run/media/data/.*")) {
+            return url;
         }
-
-        return url;
+        return "ytsearch: " + url;
     }
 
     @Override

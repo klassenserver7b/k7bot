@@ -1,7 +1,7 @@
 package de.klassenserver7b.k7bot.logging.commands.common;
 
 import de.klassenserver7b.k7bot.HelpCategories;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.manage.SystemNotificationChannelManager;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
@@ -39,7 +39,7 @@ public class SystemChannelCommand implements ServerCommand {
 
                 GuildMessageChannel chan = message.getMentions().getChannels(GuildMessageChannel.class).getFirst();
 
-                SystemNotificationChannelManager sys = Klassenserver7bbot.getInstance().getSysChannelMgr();
+                SystemNotificationChannelManager sys = K7Bot.getInstance().getSysChannelMgr();
                 sys.insertChannel(chan);
 
                 channel.sendMessage("Systemchannel was sucsessful set to " + chan.getAsMention()).queue();

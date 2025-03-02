@@ -3,7 +3,7 @@
  */
 package de.klassenserver7b.k7bot.music.commands.slash;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.music.utilities.BotAudioEffectsManager;
 import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
@@ -44,7 +44,7 @@ public class ClearAudioFilterFilterSlashCommand implements TopLevelSlashCommand 
 		}
 
 		BotAudioEffectsManager effman = BotAudioEffectsManager.getAudioEffectsManager(
-				Klassenserver7bbot.getInstance().getPlayerUtil().getController(vc.getGuild().getIdLong()).getPlayer());
+				K7Bot.getInstance().getPlayerUtil().getController(vc.getGuild().getIdLong()).getPlayer());
 
 		effman.clearFilters();
 

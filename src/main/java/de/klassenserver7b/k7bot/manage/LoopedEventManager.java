@@ -3,7 +3,7 @@
  */
 package de.klassenserver7b.k7bot.manage;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.util.InternalStatusCodes;
 import de.klassenserver7b.k7bot.util.customapis.DBAutodelete;
 import de.klassenserver7b.k7bot.util.customapis.GourmettaInteractions;
@@ -241,7 +241,7 @@ public class LoopedEventManager {
     public void initializeDefaultEvents() {
 
         log.info("Await API-ready");
-        PropertiesManager propMgr = Klassenserver7bbot.getInstance().getPropertiesManager();
+        PropertiesManager propMgr = K7Bot.getInstance().getPropertiesManager();
 
         if (propMgr.isApiEnabled("lernsax")) {
             registerEvent(new LernsaxInteractions(), true);
@@ -249,7 +249,7 @@ public class LoopedEventManager {
         }
 
         if (propMgr.isApiEnabled("vplan")) {
-            registerEvent(new Stundenplan24Vplan("JG11"), true);
+            registerEvent(new Stundenplan24Vplan("JG12"), true);
             log.info("VplanAPI registered");
         }
 

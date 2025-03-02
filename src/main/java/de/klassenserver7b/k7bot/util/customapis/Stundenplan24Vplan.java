@@ -3,11 +3,13 @@
  */
 package de.klassenserver7b.k7bot.util.customapis;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionTarget;
 import de.klassenserver7b.k7bot.util.*;
 import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
+import de.klassenserver7b.k7bot.util.tablemessage.Cell;
+import de.klassenserver7b.k7bot.util.tablemessage.TableMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
@@ -65,8 +67,8 @@ public class Stundenplan24Vplan implements LoopedEvent {
         Collections.addAll(this.classes, klassen);
     }
 
-    public void registerKlassen(String... klassen) {
-        this.classes.addAll(Arrays.asList(klassen));
+    public void registerClasses(String... classes) {
+        this.classes.addAll(Arrays.asList(classes));
     }
 
     /**
@@ -97,18 +99,18 @@ public class Stundenplan24Vplan implements LoopedEvent {
     }
 
     /**
-     * @param klasse the class to send the vplan for
+     * @param clazz the class to send the vplan for
      * @since 1.15.0
      */
-    public boolean vplanNotify(String klasse) {
+    public boolean vplanNotify(String clazz) {
 
-        try (MessageCreateData d = getVplanMessage(false, klasse)) {
+        try (MessageCreateData d = getVplanMessage(false, clazz)) {
 
             if (d == null) {
                 return false;
             }
 
-            Klassenserver7bbot.getInstance().getSubscriptionManager()
+            K7Bot.getInstance().getSubscriptionManager()
                     .provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
         }
         return true;
@@ -120,7 +122,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
      * @return the message to send
      * @since 1.14.0
      */
-    private MessageCreateData getVplanMessage(boolean force, String klasse) {
+    protected MessageCreateData getVplanMessage(boolean force, String klasse) {
 
         OffsetDateTime d = checkDate();
         Document doc = read(d);
@@ -137,7 +139,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
             info = doc.getElementsByTagName("ZiZeile").item(0).getTextContent();
         }
 
-        log.info("sending Vplanmessage with following hash: {} and devmode = {}", classPlan.hashCode(), Klassenserver7bbot.getInstance().isDevMode());
+        log.info("sending Vplanmessage with following hash: {} and devmode = {}", classPlan.hashCode(), K7Bot.getInstance().isDevMode());
 
         EmbedBuilder embed = EmbedUtils.getBuilderOf(Color.decode("#038aff"));
 
@@ -157,7 +159,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
         return builder.build();
     }
 
-    private void putInDB(Document doc) {
+    protected void putInDB(Document doc) {
 
         NodeList stdList = doc.getElementsByTagName("Std");
 
@@ -185,7 +187,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
      * @return the appended TableMessage
      */
     @SuppressWarnings("unused")
-    private TableMessage appendLesson(Element e, TableMessage tablemess) {
+    protected TableMessage appendLesson(Element e, TableMessage tablemess) {
         TableMessage ret;
 
         boolean subjectChanged = e.getElementsByTagName("Fa").item(0).hasAttributes();
@@ -201,7 +203,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
                     (teacherChanged ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
 
             String teacherId = e.getElementsByTagName("Le").item(0).getTextContent();
-            TeacherDB.Teacher teacher = Klassenserver7bbot.getInstance().getTeacherDB().getTeacher(teacherId);
+            TeacherDB.Teacher teacher = K7Bot.getInstance().getTeacherDB().getTeacher(teacherId);
 
             if (teacher != null) {
                 teachercell.setLinkTitle(teacher.getDecoratedName());
@@ -238,7 +240,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
      * @return true if the plan was changed
      * @since 1.14.0
      */
-    private boolean checkPlanChanges(Document plan, Element classPlan) {
+    protected boolean checkPlanChanges(Document plan, Element classPlan) {
 
         log.debug("PLAN DB CHECK");
 
@@ -288,7 +290,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
      * @return the class element
      * @since 1.14.0
      */
-    private Element getYourClass(Document obj, String clazz) {
+    protected Element getYourClass(Document obj, String clazz) {
 
         if (obj == null) {
             return null;
@@ -320,7 +322,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
      * @return true if the plan was synchronized
      * @since 1.14.0
      */
-    private boolean synchronizePlanDB(Document plan) {
+    protected boolean synchronizePlanDB(Document plan) {
         if (plan == null) {
             return false;
         }
@@ -363,7 +365,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
      * @return the next date to check the vplan for
      * @since 1.14.0
      */
-    private OffsetDateTime checkDate() {
+    protected OffsetDateTime checkDate() {
 
         OffsetDateTime now = OffsetDateTime.now();
         int day = now.getDayOfWeek().getValue();
@@ -381,7 +383,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
      * @return the document of the vplan
      * @since 1.14.0
      */
-    private Document read(@Nonnull OffsetDateTime date) {
+    protected Document read(@Nonnull OffsetDateTime date) {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newDefaultInstance();
         try {
 
@@ -407,18 +409,18 @@ public class Stundenplan24Vplan implements LoopedEvent {
      * @return the vplan as xml
      * @since 1.14.0
      */
-    private String getVplanXML(OffsetDateTime date) {
+    protected String getVplanXML(OffsetDateTime date) {
 
         final BasicCredentialsProvider credProvider = new BasicCredentialsProvider();
         credProvider.setCredentials(new AuthScope("www.stundenplan24.de", 443),
                 new UsernamePasswordCredentials("schueler",
-                        Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("vplanpw").toCharArray()));
+                        K7Bot.getInstance().getPropertiesManager().getProperty("vplanpw").toCharArray()));
 
         try (final CloseableHttpClient httpclient = HttpClients.custom().setDefaultCredentialsProvider(credProvider)
                 .build()) {
 
             final HttpGet httpget = new HttpGet("https://www.stundenplan24.de/"
-                    + Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("schoolID")
+                    + K7Bot.getInstance().getPropertiesManager().getProperty("schoolID")
                     + "/wplan/wdatenk/WPlanKl_" + date.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + ".xml");
 
             final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());

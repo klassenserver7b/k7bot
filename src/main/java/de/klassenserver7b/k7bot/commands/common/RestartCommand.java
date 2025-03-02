@@ -1,7 +1,7 @@
 package de.klassenserver7b.k7bot.commands.common;
 
 import de.klassenserver7b.k7bot.HelpCategories;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import de.klassenserver7b.k7bot.util.RestartUtil;
@@ -34,8 +34,8 @@ public class RestartCommand implements ServerCommand {
     @Override
     public void performCommand(Member caller, GuildMessageChannel channel, Message message) {
 
-        if (caller.getIdLong() == Klassenserver7bbot.getInstance().getOwnerId()) {
-            Logger log = Klassenserver7bbot.getInstance().getMainLogger();
+        if (caller.getIdLong() == K7Bot.getInstance().getOwnerId()) {
+            Logger log = K7Bot.getInstance().getMainLogger();
             String[] args = message.getContentDisplay().split(" ");
 
             if (args.length > 1) {
@@ -44,7 +44,7 @@ public class RestartCommand implements ServerCommand {
 
                     RestartUtil.restart();
 
-                    Klassenserver7bbot.getInstance().getShardManager().restart(Integer.parseInt(args[1]));
+                    K7Bot.getInstance().getShardManager().restart(Integer.parseInt(args[1]));
                     log.info("Restarting Shard {}", args[1]);
 
                 } catch (NumberFormatException e) {
@@ -52,7 +52,7 @@ public class RestartCommand implements ServerCommand {
                 }
 
             } else {
-                Klassenserver7bbot.getInstance().getShardManager().restart();
+                K7Bot.getInstance().getShardManager().restart();
                 log.info("Restarting all Shards");
             }
 

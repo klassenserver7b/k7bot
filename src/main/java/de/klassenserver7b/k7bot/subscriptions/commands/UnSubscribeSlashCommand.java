@@ -3,7 +3,7 @@
  */
 package de.klassenserver7b.k7bot.subscriptions.commands;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionDeliveryType;
@@ -42,7 +42,7 @@ public class UnSubscribeSlashCommand extends ListenerAdapter implements TopLevel
 
     public UnSubscribeSlashCommand() {
         log = LoggerFactory.getLogger(this.getClass());
-        Klassenserver7bbot.getInstance().getShardManager().addEventListener(this);
+        K7Bot.getInstance().getShardManager().addEventListener(this);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class UnSubscribeSlashCommand extends ListenerAdapter implements TopLevel
                 return;
             }
 
-            Klassenserver7bbot.getInstance().getSubscriptionManager().removeSubscription(id);
+            K7Bot.getInstance().getSubscriptionManager().removeSubscription(id);
 
             hook.sendMessageEmbeds(
                             EmbedUtils.getSuccessEmbed("Successfully removed subscription with id `" + id + "`").build())
@@ -151,7 +151,7 @@ public class UnSubscribeSlashCommand extends ListenerAdapter implements TopLevel
 
                 long targetdcid = set.getLong("targetDcId");
 
-                GuildChannel ch = Klassenserver7bbot.getInstance().getShardManager().getGuildChannelById(targetdcid);
+                GuildChannel ch = K7Bot.getInstance().getShardManager().getGuildChannelById(targetdcid);
 
                 if ((ch == null) || (ch.getGuild().getIdLong() != guildid)) {
                     continue;

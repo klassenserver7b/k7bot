@@ -4,7 +4,7 @@
 package de.klassenserver7b.k7bot.music.commands.slash;
 
 import com.github.natanbc.lavadsp.timescale.TimescalePcmAudioFilter;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.music.utilities.BotAudioEffectsManager;
 import de.klassenserver7b.k7bot.music.utilities.BotAudioEffectsManager.FilterTypes;
@@ -58,7 +58,7 @@ public class SpeedChangeCommand implements TopLevelSlashCommand {
         boolean changepitch = (pitchmap == null || pitchmap.getAsBoolean());
 
         BotAudioEffectsManager effman = BotAudioEffectsManager.getAudioEffectsManager(
-                Klassenserver7bbot.getInstance().getPlayerUtil().getController(Objects.requireNonNull(vc).getGuild().getIdLong()).getPlayer());
+                K7Bot.getInstance().getPlayerUtil().getController(Objects.requireNonNull(vc).getGuild().getIdLong()).getPlayer());
 
         if (speedrate == 1.0) {
             effman.removeAudioFilterFunction(FilterTypes.SPEED);

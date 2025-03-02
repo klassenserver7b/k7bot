@@ -1,7 +1,7 @@
 
 package de.klassenserver7b.k7bot.util.commands.slash;
 
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.MessageClearUtil;
@@ -50,7 +50,7 @@ public class ClearSlashCommand implements TopLevelSlashCommand {
 							event.getGuild().getIdLong());
 
 			builder.setFooter("requested by @" + event.getMember().getEffectiveName());
-			GuildMessageChannel system = Klassenserver7bbot.getInstance().getSysChannelMgr()
+			GuildMessageChannel system = K7Bot.getInstance().getSysChannelMgr()
 					.getSysChannel(event.getGuild());
 
 			if (system != null) {

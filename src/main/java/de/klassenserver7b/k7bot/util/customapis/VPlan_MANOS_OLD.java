@@ -4,12 +4,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionTarget;
-import de.klassenserver7b.k7bot.util.Cell;
+import de.klassenserver7b.k7bot.util.tablemessage.Cell;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
-import de.klassenserver7b.k7bot.util.TableMessage;
+import de.klassenserver7b.k7bot.util.tablemessage.TableMessage;
 import de.klassenserver7b.k7bot.util.TeacherDB;
 import net.dv8tion.jda.annotations.DeprecatedSince;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -45,7 +45,7 @@ import java.util.Locale;
 @DeprecatedSince(value = "1.14.0")
 public class VPlan_MANOS_OLD {
 
-    private final Logger log = Klassenserver7bbot.getInstance().getMainLogger();
+    private final Logger log = K7Bot.getInstance().getMainLogger();
     private final String vplanpw;
 
     public VPlan_MANOS_OLD(String pw) {
@@ -76,7 +76,7 @@ public class VPlan_MANOS_OLD {
 
         try (MessageCreateData d = getVplanMessage()) {
             if (d != null) {
-                Klassenserver7bbot.getInstance().getSubscriptionManager()
+                K7Bot.getInstance().getSubscriptionManager()
                         .provideSubscriptionNotification(SubscriptionTarget.VPLAN, d);
             }
         }
@@ -97,7 +97,7 @@ public class VPlan_MANOS_OLD {
         }
 
         if (log != null) {
-            log.debug("sending Vplanmessage with following hash: {} and devmode = {}", fien.hashCode(), Klassenserver7bbot.getInstance().isDevMode());
+            log.debug("sending Vplanmessage with following hash: {} and devmode = {}", fien.hashCode(), K7Bot.getInstance().isDevMode());
         }
 
         EmbedBuilder builder = buildEmbed(fien.isEmpty(), plan);
@@ -182,7 +182,7 @@ public class VPlan_MANOS_OLD {
                 (teacherchange ? Cell.STYLE_BOLD : Cell.STYLE_NONE));
 
         String teacherId = entry.get("teacher").getAsString();
-        TeacherDB.Teacher teacher = Klassenserver7bbot.getInstance().getTeacherDB().getTeacher(teacherId);
+        TeacherDB.Teacher teacher = K7Bot.getInstance().getTeacherDB().getTeacher(teacherId);
         if (teacher != null) {
             teacherCell.setLinkTitle(teacher.getDecoratedName());
             teacherCell.setLinkURL("https://manos-dresden.de/lehrer");

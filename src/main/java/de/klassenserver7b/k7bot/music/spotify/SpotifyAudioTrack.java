@@ -3,13 +3,12 @@
  */
 package de.klassenserver7b.k7bot.music.spotify;
 
-import com.sedmelluq.discord.lavaplayer.container.mp3.Mp3AudioTrack;
+import com.sedmelluq.discord.lavaplayer.container.wav.WavAudioTrack;
 import com.sedmelluq.discord.lavaplayer.source.local.LocalSeekableInputStream;
 import com.sedmelluq.discord.lavaplayer.tools.io.SeekableInputStream;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import com.sedmelluq.discord.lavaplayer.track.DelegatedAudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
 import de.klassenserver7b.k7bot.music.asms.SpotifyAudioSourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +41,7 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 
         log.info("Downloaded spotifytrack {} to {}", super.getIdentifier(), decr.getAbsolutePath());
         try (SeekableInputStream stream = new LocalSeekableInputStream(decr)) {
-            new Mp3AudioTrack(trackInfo, stream).process(executor);
+            new WavAudioTrack(trackInfo, stream).process(executor);
         }
 
         //noinspection ResultOfMethodCallIgnored
@@ -54,11 +53,13 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 
         log.info("Tempdir: {}", sasm.getTempdir().getAbsolutePath());
 
-        String pathstr = new File("").getAbsolutePath() + "/resources/spotify-dl";
+        String audioFileExtension = "wav";
+
+        String pathstr = new File("resources/spotify-dl").getAbsolutePath();
 
         int exitCode = new ProcessBuilder()
                 .command(
-                        pathstr, "-d", sasm.getTempdir().getAbsolutePath(), "-n", identifier, "-u", Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("spotify-username"), "-p", Klassenserver7bbot.getInstance().getPropertiesManager().getProperty("spotify-password"), "-f", "mp3", "https://open.spotify.com/track/" + identifier)
+                        pathstr, "-d", sasm.getTempdir().getAbsolutePath(), "-n", identifier, "--auth", "file", "--credentials-file", "./resources", "-f", audioFileExtension, "https://open.spotify.com/track/" + identifier).redirectError(ProcessBuilder.Redirect.to(new File("spotify_errors.log")))
                 .inheritIO().start().waitFor();
 
         if (exitCode != 0) {
@@ -66,7 +67,7 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
             return null;
         }
 
-        return new File(sasm.getTempdir().getAbsolutePath() + "/" + identifier + ".mp3");
+        return new File(sasm.getTempdir().getAbsolutePath() + "/" + String.join(".", identifier, "tmp", audioFileExtension));
 
     }
 }

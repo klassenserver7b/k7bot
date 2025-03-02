@@ -5,7 +5,7 @@ package de.klassenserver7b.k7bot.commands.slash;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -64,9 +64,9 @@ public class StableDiffusionCommand implements TopLevelSlashCommand {
         log = LoggerFactory.getLogger(this.getClass());
         limits = new HashMap<>();
 
-        allowedUsers.add(Klassenserver7bbot.getInstance().getOwnerId());
-        Klassenserver7bbot.getInstance().getShardManager().getGuildById(779024287733776454L).loadMembers().onSuccess(members -> members.forEach(memb -> allowedUsers.add(memb.getUser().getIdLong())));
-        Klassenserver7bbot.getInstance().getShardManager().getGuildById(850697874147770368L).loadMembers().onSuccess(members -> members.forEach(memb -> allowedUsers.add(memb.getUser().getIdLong())));
+        allowedUsers.add(K7Bot.getInstance().getOwnerId());
+        K7Bot.getInstance().getShardManager().getGuildById(779024287733776454L).loadMembers().onSuccess(members -> members.forEach(memb -> allowedUsers.add(memb.getUser().getIdLong())));
+        K7Bot.getInstance().getShardManager().getGuildById(850697874147770368L).loadMembers().onSuccess(members -> members.forEach(memb -> allowedUsers.add(memb.getUser().getIdLong())));
     }
 
     @Override
@@ -177,7 +177,7 @@ public class StableDiffusionCommand implements TopLevelSlashCommand {
 
     protected boolean checkRateLimit(User u) {
 
-        if (u.getIdLong() == Klassenserver7bbot.getInstance().getOwnerId()) {
+        if (u.getIdLong() == K7Bot.getInstance().getOwnerId()) {
             return true;
         }
 

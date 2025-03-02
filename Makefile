@@ -7,19 +7,26 @@ package:
 	mvn package
 
 copy:
-	sudo cp target/k7bot-*-full.jar /opt/k7bot/Bot.jar
-	
-restart:
-	sudo systemctl restart k7bot
+	cp target/k7bot-*-full.jar docker/Bot.jar
 
-start:
-	sudo systemctl start k7bot
+dbuild:
+	docker build -t klassenserver7b/k7bot ./docker
 
-stop:
-	sudo systemctl stop k7bot
-	
-startb: clean package copy start
-	
-restartb: clean package copy restart
+dstart:
+	cd docker && docker compose up -d
 
+dstop:
+	cd docker && docker compose down
+	
+	
 release: clean package
+
+drelease: release copy dbuild
+
+startb: clean package copy dbuild dstart
+
+restartb: dstop clean package copy dbuild dstart
+
+stop: dstop
+
+remove: dstop dstop

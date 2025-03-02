@@ -3,7 +3,7 @@
  */
 package de.klassenserver7b.k7bot.music.utilities;
 
-import com.sedmelluq.discord.lavaplayer.filter.AudioFilter;
+import com.sedmelluq.discord.lavaplayer.filter.FloatPcmAudioFilter;
 import com.sedmelluq.discord.lavaplayer.filter.UniversalPcmAudioFilter;
 import com.sedmelluq.discord.lavaplayer.format.AudioDataFormat;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -11,9 +11,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import de.klassenserver7b.k7bot.util.TriFunction;
 import net.dv8tion.jda.api.entities.Guild;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Klassenserver7b
@@ -22,14 +20,14 @@ public class BotAudioEffectsManager {
 
     private final AudioPlayer player;
 
-    private final HashMap<FilterTypes, TriFunction<AudioTrack, AudioDataFormat, UniversalPcmAudioFilter, AudioFilter>> filterfuncs;
+    private final LinkedHashMap<FilterTypes, TriFunction<AudioTrack, AudioDataFormat, FloatPcmAudioFilter, FloatPcmAudioFilter>> filterfuncs;
     private static final HashMap<AudioPlayer, BotAudioEffectsManager> effmans = new HashMap<>();
 
     /**
      * @param player The {@link AudioPlayer} used for the {@link Guild}
      */
     private BotAudioEffectsManager(AudioPlayer player) {
-        this.filterfuncs = new HashMap<>();
+        this.filterfuncs = new LinkedHashMap<>();
         this.player = player;
     }
 
@@ -52,7 +50,7 @@ public class BotAudioEffectsManager {
      * @param filter The {@link TriFunction AudioFilterFunction} to add
      */
     public void addAudioFilterFunction(FilterTypes type,
-                                       TriFunction<AudioTrack, AudioDataFormat, UniversalPcmAudioFilter, AudioFilter> filter) {
+                                       TriFunction<AudioTrack, AudioDataFormat, FloatPcmAudioFilter, FloatPcmAudioFilter> filter) {
         filterfuncs.put(type, filter);
 
         applyFilters();
@@ -66,8 +64,9 @@ public class BotAudioEffectsManager {
      *               AudioFilterFunction}
      * @param filter The {@link TriFunction AudioFilterFunction} to use
      */
+    @SuppressWarnings("unused")
     public void setAudioFilterFunction(FilterTypes type,
-                                       TriFunction<AudioTrack, AudioDataFormat, UniversalPcmAudioFilter, AudioFilter> filter) {
+                                       TriFunction<AudioTrack, AudioDataFormat, FloatPcmAudioFilter, FloatPcmAudioFilter> filter) {
         filterfuncs.clear();
         filterfuncs.put(type, filter);
         applyFilters();
@@ -78,21 +77,15 @@ public class BotAudioEffectsManager {
      * {@link FilterTypes}
      *
      * @param type the {@link FilterTypes} to remove
-     * @return statuscode <br>
-     * 304 means nothing changed -> {@link FilterTypes} wasn't present in
-     * the current filters<br>
-     * 200 means sucessfully removed the matching filter
      */
-    public int removeAudioFilterFunction(FilterTypes type) {
-        TriFunction<AudioTrack, AudioDataFormat, UniversalPcmAudioFilter, AudioFilter> oldfilter = filterfuncs
-                .remove(type);
-        applyFilters();
+    public void removeAudioFilterFunction(FilterTypes type) {
+        TriFunction<AudioTrack, AudioDataFormat, FloatPcmAudioFilter, FloatPcmAudioFilter> oldfilter = filterfuncs.remove(type);
 
         if (oldfilter == null) {
-            return 304;
+            return;
         }
 
-        return 200;
+        applyFilters();
     }
 
     /**
@@ -103,8 +96,9 @@ public class BotAudioEffectsManager {
      *                     FilterTypes} and coresponding {@link TriFunction
      *                     AudioFilterFunctions}
      */
+    @SuppressWarnings("unused")
     public void addAudioFilterFunctions(
-            HashMap<FilterTypes, TriFunction<AudioTrack, AudioDataFormat, UniversalPcmAudioFilter, AudioFilter>> audiofilters) {
+            HashMap<FilterTypes, TriFunction<AudioTrack, AudioDataFormat, FloatPcmAudioFilter, FloatPcmAudioFilter>> audiofilters) {
 
         filterfuncs.putAll(audiofilters);
         applyFilters();
@@ -118,8 +112,9 @@ public class BotAudioEffectsManager {
      *                     FilterTypes} and coresponding {@link TriFunction
      *                     AudioFilterFunctions}
      */
+    @SuppressWarnings("unused")
     public void setAudioFilterFunctions(
-            HashMap<FilterTypes, TriFunction<AudioTrack, AudioDataFormat, UniversalPcmAudioFilter, AudioFilter>> audiofilters) {
+            HashMap<FilterTypes, TriFunction<AudioTrack, AudioDataFormat, FloatPcmAudioFilter, FloatPcmAudioFilter>> audiofilters) {
         filterfuncs.clear();
         filterfuncs.putAll(audiofilters);
         applyFilters();
@@ -137,40 +132,31 @@ public class BotAudioEffectsManager {
      *
      */
     protected void applyFilters() {
+        List<TriFunction<AudioTrack, AudioDataFormat, FloatPcmAudioFilter, FloatPcmAudioFilter>> filters = filterfuncs.values().stream().toList();
 
-        player.setFilterFactory((track, format, output) -> {
+        player.setFilterFactory((track, format, output) -> Collections.singletonList(recurseFilters(track, format, output, filters, 0)));
+    }
 
-            List<AudioFilter> audiofilters = new ArrayList<>();
+    protected FloatPcmAudioFilter recurseFilters(AudioTrack track, AudioDataFormat format, UniversalPcmAudioFilter ufilter, List<TriFunction<AudioTrack, AudioDataFormat, FloatPcmAudioFilter, FloatPcmAudioFilter>> filters, int index) {
 
-            for (TriFunction<AudioTrack, AudioDataFormat, UniversalPcmAudioFilter, AudioFilter> func : filterfuncs
-                    .values()) {
+        if (index == filters.size()) {
+            return ufilter;
+        }
 
-                audiofilters.add(func.apply(track, format, output));
-
-            }
-
-            return audiofilters;
-        });
+        return filters.get(index).apply(track, format, recurseFilters(track, format, ufilter, filters, index + 1));
     }
 
     public enum FilterTypes {
 
-        EQ(0), SPEED(1);
-
-        private final int id;
-
-        FilterTypes(int id) {
-            this.id = id;
-        }
+        EQ, SPEED;
 
         public static FilterTypes fromId(int id) {
             for (FilterTypes type : values()) {
-                if (type.id == id)
+                if (type.ordinal() == id)
                     return type;
             }
             throw new IllegalArgumentException("Invalid FilterType Id");
         }
-
     }
 
 }

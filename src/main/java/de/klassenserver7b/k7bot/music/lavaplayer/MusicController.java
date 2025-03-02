@@ -2,7 +2,7 @@ package de.klassenserver7b.k7bot.music.lavaplayer;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import net.dv8tion.jda.api.entities.Guild;
 import org.slf4j.Logger;
@@ -24,7 +24,7 @@ public class MusicController {
     public MusicController(Guild guild) {
         this.log = LoggerFactory.getLogger(this.getClass());
         this.guild = guild;
-        this.player = Klassenserver7bbot.getInstance().getAudioPlayerManager().createPlayer();
+        this.player = K7Bot.getInstance().getAudioPlayerManager().createPlayer();
         this.queue = new Queue(this);
 
         this.guild.getAudioManager().setSendingHandler(new AudioPlayerSendHandler(this.player));

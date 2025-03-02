@@ -6,7 +6,7 @@ package de.klassenserver7b.k7bot.music.commands.common;
 import com.github.natanbc.lavadsp.timescale.TimescalePcmAudioFilter;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import de.klassenserver7b.k7bot.HelpCategories;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;
 import net.dv8tion.jda.api.entities.Member;
@@ -42,7 +42,7 @@ public class NightcoreCommand implements ServerCommand {
 	@Override
 	public void performCommand(Member m, GuildMessageChannel channel, Message message) {
 
-		MusicController controller = Klassenserver7bbot.getInstance().getPlayerUtil()
+		MusicController controller = K7Bot.getInstance().getPlayerUtil()
 				.getController(channel.getGuild().getIdLong());
 		AudioPlayer player = controller.getPlayer();
 

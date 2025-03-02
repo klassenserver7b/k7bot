@@ -4,7 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import de.klassenserver7b.k7bot.Klassenserver7bbot;
+import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.music.utilities.SongDataUtils;
 import de.klassenserver7b.k7bot.music.utilities.SongJson;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
@@ -170,7 +170,7 @@ public class Queue {
 
     public void sheduleNextTrack(AudioTrack track) {
         if (this.controller.getPlayer().getPlayingTrack() == null) {
-            Klassenserver7bbot.getInstance().getMainLogger()
+            K7Bot.getInstance().getMainLogger()
                     .debug("Queue - setNextTrack: playing track = null -> next({}})", queuelist.getFirst().getInfo().title);
             next(track);
         }

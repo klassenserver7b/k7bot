@@ -3,7 +3,6 @@ Message Logging
 Poll System
 
 Equalizer Command und Speedchange zu AudioEffects Command mit Subcommands umbauen
-Equalizer und Speedchange gleichzeitig erlauben
 
 Mehr Interactions auf SlashCommands und Buttons umstellen
 
