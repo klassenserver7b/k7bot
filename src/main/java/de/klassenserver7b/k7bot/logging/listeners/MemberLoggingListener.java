@@ -61,8 +61,8 @@ public class MemberLoggingListener extends ListenerAdapter {
         EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
         embbuild.setColor(Color.red);
 
-        embbuild.setTitle("@" + usr.getName() + " leaved :sob:");
-        embbuild.setDescription(usr.getAsMention() + " known as " + usr.getEffectiveName() + " leaved");
+        embbuild.setTitle("@" + usr.getName() + " left :sob:");
+        embbuild.setDescription(usr.getAsMention() + " known as " + usr.getEffectiveName() + " left");
         embbuild.setThumbnail(usr.getEffectiveAvatarUrl());
 
         system.sendMessageEmbeds(embbuild.build()).queue();
