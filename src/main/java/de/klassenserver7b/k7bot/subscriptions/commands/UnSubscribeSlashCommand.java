@@ -26,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -104,7 +103,7 @@ public class UnSubscribeSlashCommand extends ListenerAdapter implements TopLevel
     }
 
     @Override
-    public void onCommandAutoCompleteInteraction(@Nonnull CommandAutoCompleteInteractionEvent event) {
+    public void onCommandAutoCompleteInteraction(@NotNull CommandAutoCompleteInteractionEvent event) {
 
         if (event.getFullCommandName().equalsIgnoreCase("unsubscribe")) {
 

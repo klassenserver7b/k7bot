@@ -11,7 +11,10 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import de.klassenserver7b.k7bot.util.TriFunction;
 import net.dv8tion.jda.api.entities.Guild;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * @author Klassenserver7b

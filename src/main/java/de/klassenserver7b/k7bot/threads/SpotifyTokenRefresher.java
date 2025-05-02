@@ -3,12 +3,9 @@
  */
 package de.klassenserver7b.k7bot.threads;
 
-import com.google.gson.JsonSyntaxException;
 import de.klassenserver7b.k7bot.K7Bot;
-import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.io.CloseMode;
 import org.slf4j.Logger;

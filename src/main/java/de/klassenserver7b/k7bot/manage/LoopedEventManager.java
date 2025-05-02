@@ -10,10 +10,10 @@ import de.klassenserver7b.k7bot.util.customapis.GourmettaInteractions;
 import de.klassenserver7b.k7bot.util.customapis.LernsaxInteractions;
 import de.klassenserver7b.k7bot.util.customapis.Stundenplan24Vplan;
 import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -172,11 +172,11 @@ public class LoopedEventManager {
     /**
      * @param identifiers the identifiers of the events to be removed
      */
-    public void removeEvents(@Nonnull String... identifiers) {
+    public void removeEvents(@NotNull String... identifiers) {
         removeEvents(Arrays.asList(identifiers));
     }
 
-    public void removeEvents(@Nonnull Collection<? extends String> identifiers) {
+    public void removeEvents(@NotNull Collection<? extends String> identifiers) {
 
         List<LoopedEvent> change = new ArrayList<>();
 

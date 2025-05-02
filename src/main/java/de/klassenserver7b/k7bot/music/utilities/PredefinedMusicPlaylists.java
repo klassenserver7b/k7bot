@@ -3,7 +3,7 @@
  */
 package de.klassenserver7b.k7bot.music.utilities;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Klassenserver7b
@@ -55,7 +55,7 @@ public enum PredefinedMusicPlaylists {
      * provided key. If the id key is unknown, {@link #YTCharts} is
      * returned.
      */
-    @Nonnull
+    @NotNull
     public static PredefinedMusicPlaylists fromId(int id) {
         for (PredefinedMusicPlaylists type : values()) {
             if (type.id == id)

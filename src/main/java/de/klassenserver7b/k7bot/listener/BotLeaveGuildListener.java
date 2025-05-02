@@ -4,13 +4,12 @@ import de.klassenserver7b.k7bot.sql.LiteSQL;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.guild.UnavailableGuildLeaveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class BotLeaveGuildListener extends ListenerAdapter {
 
 	@Override
-	public void onGuildLeave(@Nonnull GuildLeaveEvent event) {
+	public void onGuildLeave(@NotNull GuildLeaveEvent event) {
 		long guildid = event.getGuild().getIdLong();
 
 		LiteSQL.onUpdate("DELETE FROM musicutil WHERE guildId = ?;", guildid);
@@ -21,7 +20,7 @@ public class BotLeaveGuildListener extends ListenerAdapter {
 	}
 
 	@Override
-	public void onUnavailableGuildLeave(@Nonnull UnavailableGuildLeaveEvent event) {
+	public void onUnavailableGuildLeave(@NotNull UnavailableGuildLeaveEvent event) {
 		long guildid = event.getGuildIdLong();
 
 		LiteSQL.onUpdate("DELETE FROM musicutil WHERE guildId = ?;", guildid);

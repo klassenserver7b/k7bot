@@ -4,7 +4,6 @@
 package de.klassenserver7b.k7bot.music.spotify;
 
 import de.klassenserver7b.k7bot.K7Bot;
-import de.klassenserver7b.k7bot.manage.PropertiesManager;
 import de.klassenserver7b.k7bot.threads.SpotifyTokenRefresher;
 import se.michaelthelin.spotify.SpotifyApi;
 

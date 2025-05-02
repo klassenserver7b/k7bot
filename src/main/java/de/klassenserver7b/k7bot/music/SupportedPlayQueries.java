@@ -4,8 +4,7 @@
 package de.klassenserver7b.k7bot.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Klassenserver7b
@@ -62,7 +61,7 @@ public enum SupportedPlayQueries {
      * @return The {@link SupportedPlayQueries} that is referred to by the provided
      * key. If the id key is unknown, {@link #YouTubeSearch} is returned.
      */
-    @Nonnull
+    @NotNull
     public static SupportedPlayQueries fromId(int id) {
         for (SupportedPlayQueries type : values()) {
             if (type.id == id)

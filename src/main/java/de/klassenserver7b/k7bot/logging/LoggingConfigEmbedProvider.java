@@ -20,8 +20,8 @@ import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import net.dv8tion.jda.api.interactions.components.LayoutComponent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -81,7 +81,7 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
     }
 
     @Override
-    public void onButtonInteraction(@Nonnull ButtonInteractionEvent event) {
+    public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
 
         if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
             return;

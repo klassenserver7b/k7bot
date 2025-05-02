@@ -12,10 +12,10 @@ import net.dv8tion.jda.api.requests.FluentRestAction;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.util.*;
 
 /**
@@ -35,8 +35,8 @@ public class GenericMessageSendHandler {
     /**
      * @param hook InteractionHook
      */
-    public GenericMessageSendHandler(@Nonnull InteractionHook hook) {
-        Objects.requireNonNull(hook, "@Nonnull required parameter is null: GuildMessageChannel");
+    public GenericMessageSendHandler(@NotNull InteractionHook hook) {
+        Objects.requireNonNull(hook, "@NotNull required parameter is null: GuildMessageChannel");
         this.hook = hook;
         this.channel = null;
         selectedid = HookId;
@@ -45,20 +45,20 @@ public class GenericMessageSendHandler {
     /**
      * @param channel GuildMessageChannel
      */
-    public GenericMessageSendHandler(@Nonnull GuildMessageChannel channel) {
-        Objects.requireNonNull(channel, "@Nonnull required parameter is null: GuildMessageChannel");
+    public GenericMessageSendHandler(@NotNull GuildMessageChannel channel) {
+        Objects.requireNonNull(channel, "@NotNull required parameter is null: GuildMessageChannel");
         this.channel = channel;
         this.hook = null;
         selectedid = ChannelId;
     }
 
-    public FluentRestAction<Message, ?> sendMessage(@Nonnull CharSequence data) {
+    public FluentRestAction<Message, ?> sendMessage(@NotNull CharSequence data) {
         try (MessageCreateData messdata = new MessageCreateBuilder().addContent(data.toString()).build()) {
             return sendMessage(messdata);
         }
     }
 
-    public FluentRestAction<Message, ?> sendMessage(@Nonnull MessageCreateData data) {
+    public FluentRestAction<Message, ?> sendMessage(@NotNull MessageCreateData data) {
         try {
             switch (selectedid) {
                 case HookId -> {
@@ -76,18 +76,18 @@ public class GenericMessageSendHandler {
         return null;
     }
 
-    public FluentRestAction<Message, ?> sendMessageEmbeds(@Nonnull MessageEmbed embed) {
+    public FluentRestAction<Message, ?> sendMessageEmbeds(@NotNull MessageEmbed embed) {
         List<MessageEmbed> embedlist = new ArrayList<>();
         embedlist.add(embed);
         return sendMessageEmbeds(embedlist);
     }
 
-    public FluentRestAction<Message, ?> sendMessageEmbeds(@Nonnull MessageEmbed... embeds) {
+    public FluentRestAction<Message, ?> sendMessageEmbeds(@NotNull MessageEmbed... embeds) {
         List<MessageEmbed> embedlist = Arrays.asList(embeds);
         return sendMessageEmbeds(embedlist);
     }
 
-    public FluentRestAction<Message, ?> sendMessageEmbeds(@Nonnull Collection<? extends MessageEmbed> embeds) {
+    public FluentRestAction<Message, ?> sendMessageEmbeds(@NotNull Collection<? extends MessageEmbed> embeds) {
         try {
             switch (selectedid) {
                 case HookId -> {
@@ -105,13 +105,13 @@ public class GenericMessageSendHandler {
         return null;
     }
 
-    public FluentRestAction<Message, ?> sendFiles(@Nonnull FileUpload file, @Nonnull FileUpload... files) {
+    public FluentRestAction<Message, ?> sendFiles(@NotNull FileUpload file, @NotNull FileUpload... files) {
         List<FileUpload> list = Arrays.asList(files);
         list.addFirst(file);
         return sendFiles(list);
     }
 
-    public FluentRestAction<Message, ?> sendFiles(@Nonnull Collection<? extends FileUpload> files) {
+    public FluentRestAction<Message, ?> sendFiles(@NotNull Collection<? extends FileUpload> files) {
         try {
             switch (selectedid) {
                 case HookId -> {
@@ -129,7 +129,7 @@ public class GenericMessageSendHandler {
         return null;
     }
 
-    public FluentRestAction<Message, ?> sendMessageFormat(@Nonnull String format, @Nonnull Object... objects) {
+    public FluentRestAction<Message, ?> sendMessageFormat(@NotNull String format, @NotNull Object... objects) {
         try {
             switch (selectedid) {
                 case HookId -> {

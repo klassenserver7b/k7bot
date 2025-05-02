@@ -3,7 +3,7 @@
  */
 package de.klassenserver7b.k7bot;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Klassenserver7b
@@ -74,7 +74,7 @@ public enum HelpCategories {
      * @return The {@link HelpCategories} that is referred to by the provided key.
      * If the id key is unknown, {@link #UNKNOWN} is returned.
      */
-    @Nonnull
+    @NotNull
     public static HelpCategories fromId(int id) {
         for (HelpCategories type : values()) {
             if (type.id == id)

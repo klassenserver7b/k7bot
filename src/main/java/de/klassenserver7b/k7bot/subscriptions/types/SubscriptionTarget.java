@@ -2,8 +2,7 @@ package de.klassenserver7b.k7bot.subscriptions.types;
 
 import de.klassenserver7b.k7bot.util.customapis.LernsaxInteractions;
 import de.klassenserver7b.k7bot.util.customapis.Stundenplan24Vplan;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Klassenserver7b
@@ -98,7 +97,7 @@ public enum SubscriptionTarget {
      * @return The {@link SubscriptionTarget} that is referred to by the provided
      * key. If the id key is unknown, {@link #UNKNOWN} is returned.
      */
-    @Nonnull
+    @NotNull
     public static SubscriptionTarget fromId(int id) {
         for (SubscriptionTarget type : values()) {
             if (type.id == id)

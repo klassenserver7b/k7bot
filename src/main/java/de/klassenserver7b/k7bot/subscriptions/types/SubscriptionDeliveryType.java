@@ -3,8 +3,7 @@ package de.klassenserver7b.k7bot.subscriptions.types;
 import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Klassenserver7b
@@ -75,7 +74,7 @@ public enum SubscriptionDeliveryType {
      * @return The {@link SubscriptionDeliveryType} that is referred to by the
      * provided key. If the id key is unknown, {@link #UNKNOWN} is returned.
      */
-    @Nonnull
+    @NotNull
     public static SubscriptionDeliveryType fromId(int id) {
         for (SubscriptionDeliveryType type : values()) {
             if (type.id == id)

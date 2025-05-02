@@ -14,8 +14,8 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.stream.Collectors;
 
@@ -69,7 +69,7 @@ public class MemberLoggingListener extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMemberUpdateNickname(@Nonnull GuildMemberUpdateNicknameEvent event) {
+    public void onGuildMemberUpdateNickname(@NotNull GuildMemberUpdateNicknameEvent event) {
 
         if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.MEMBER_UPDATE_NICKNAME, event.getGuild())) {
             return;
@@ -92,7 +92,7 @@ public class MemberLoggingListener extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMemberRoleAdd(@Nonnull GuildMemberRoleAddEvent event) {
+    public void onGuildMemberRoleAdd(@NotNull GuildMemberRoleAddEvent event) {
 
         if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.MEMBER_ROLE_ADD, event.getGuild())) {
             return;
@@ -114,7 +114,7 @@ public class MemberLoggingListener extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMemberRoleRemove(@Nonnull GuildMemberRoleRemoveEvent event) {
+    public void onGuildMemberRoleRemove(@NotNull GuildMemberRoleRemoveEvent event) {
 
         if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.MEMBER_ROLE_REMOVE, event.getGuild())) {
             return;

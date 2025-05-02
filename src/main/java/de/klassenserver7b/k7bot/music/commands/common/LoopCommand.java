@@ -11,8 +11,8 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.awt.*;
 
 public class LoopCommand implements ServerCommand {
@@ -60,7 +60,7 @@ public class LoopCommand implements ServerCommand {
 
     }
 
-    public static void onLoop(@Nonnull MusicController controller) {
+    public static void onLoop(@NotNull MusicController controller) {
 
         controller.getQueue().loop();
 

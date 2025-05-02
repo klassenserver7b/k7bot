@@ -5,11 +5,10 @@ import de.klassenserver7b.k7bot.sql.LiteSQL;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -99,8 +98,7 @@ public class SystemNotificationChannelManager {
      * @return The {@link GuildMessageChannel SystemChannel} for the Guild or
      * {@code null} if no channel is listed.
      */
-    @Nullable
-    public GuildMessageChannel getSysChannel(@Nonnull Guild guild) {
+    public GuildMessageChannel getSysChannel(@NotNull Guild guild) {
 
         if (systemchannellist.get(guild) == null) {
             return guild.getSystemChannel();
@@ -116,9 +114,8 @@ public class SystemNotificationChannelManager {
      * @return The {@link GuildMessageChannel SystemChannel} for the Guild or
      * {@code null} if no channel is listed.
      */
-    @Nullable
     @SuppressWarnings("unused")
-    public GuildMessageChannel getSysChannel(@Nonnull Long guildId) throws NullPointerException {
+    public GuildMessageChannel getSysChannel(@NotNull Long guildId) throws NullPointerException {
 
         Guild guild = K7Bot.getInstance().getShardManager().getGuildById(guildId);
 

@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import de.klassenserver7b.k7bot.K7Bot;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -41,8 +40,8 @@ public class TeacherDB {
      * @param id The teacher's ID
      * @return The teacher's JSON object
      */
-    @Nullable
-    public JsonObject getTeacherJson(@Nullable String id) {
+    
+    public JsonObject getTeacherJson( String id) {
         if (id == null || id.isBlank()) return null;
 
         JsonElement element = teachersList.get(id);
@@ -57,8 +56,8 @@ public class TeacherDB {
      * @param id The teacher's ID
      * @return The teacher
      */
-    @Nullable
-    public Teacher getTeacher(@Nullable String id) {
+    
+    public Teacher getTeacher( String id) {
         JsonObject teacherJson = getTeacherJson(id);
         if (teacherJson == null) return null;
 

@@ -6,7 +6,9 @@ package de.klassenserver7b.k7bot.util.customapis;
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.subscriptions.types.SubscriptionTarget;
-import de.klassenserver7b.k7bot.util.*;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
+import de.klassenserver7b.k7bot.util.InternalStatusCodes;
+import de.klassenserver7b.k7bot.util.TeacherDB;
 import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
 import de.klassenserver7b.k7bot.util.tablemessage.Cell;
 import de.klassenserver7b.k7bot.util.tablemessage.TableMessage;
@@ -24,6 +26,7 @@ import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.io.CloseMode;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -32,7 +35,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.annotation.Nonnull;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -383,7 +385,7 @@ public class Stundenplan24Vplan implements LoopedEvent {
      * @return the document of the vplan
      * @since 1.14.0
      */
-    protected Document read(@Nonnull OffsetDateTime date) {
+    protected Document read(@NotNull OffsetDateTime date) {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newDefaultInstance();
         try {
 
