@@ -47,7 +47,6 @@ public class SlashCommandManager {
         registerschedule.add(new SubscribeSlashCommand());
         registerschedule.add(new UnSubscribeSlashCommand());
         registerschedule.add(new EqualizerSlashCommand());
-        registerschedule.add(new WhitelistSlashCommand());
         registerschedule.add(new VotingCommand());
         registerschedule.add(new SpeedChangeCommand());
         registerschedule.add(new ClearAudioFilterFilterSlashCommand());

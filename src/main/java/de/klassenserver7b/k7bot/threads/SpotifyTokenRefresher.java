@@ -3,18 +3,19 @@
  */
 package de.klassenserver7b.k7bot.threads;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import de.klassenserver7b.k7bot.K7Bot;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
-import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.io.CloseMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.michaelthelin.spotify.SpotifyApi;
+import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
+import se.michaelthelin.spotify.model_objects.credentials.ClientCredentials;
 
 import java.io.IOException;
 import java.util.Date;
@@ -30,7 +31,7 @@ public class SpotifyTokenRefresher implements AutoCloseable {
 
     private ScheduledFuture<?> refreshTask;
     private final Logger log;
-    private long lifetimeMs;
+    private long lifetime; // in seconds
     private static SpotifyTokenRefresher INSTANCE;
     private CloseableHttpClient httpclient;
 
@@ -57,7 +58,7 @@ public class SpotifyTokenRefresher implements AutoCloseable {
         refreshTask = Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
             refreshToken();
             log.debug("spotify_authcode_refresh");
-        }, 0, lifetimeMs - 500, TimeUnit.MILLISECONDS);
+        }, 0, lifetime - 5, TimeUnit.SECONDS);
     }
 
     public void restart() {
@@ -78,24 +79,16 @@ public class SpotifyTokenRefresher implements AutoCloseable {
      */
     public void refreshToken() {
 
-        String url = "https://open.spotify.com/get_access_token";
-
-
-        final HttpGet httpget = new HttpGet(url);
-        httpget.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+        final SpotifyApi spotifyApi = K7Bot.getInstance().getSpotifyinteractions().getSpotifyApi();
 
         try {
-            final String response = httpclient.execute(httpget, new BasicHttpClientResponseHandler());
-            JsonElement elem = JsonParser.parseString(response);
+            final ClientCredentials clientCredentials = spotifyApi.clientCredentials().build().execute();
+            spotifyApi.setAccessToken(clientCredentials.getAccessToken());
 
-            K7Bot.getInstance().getSpotifyinteractions().getSpotifyApi()
-                    .setAccessToken(elem.getAsJsonObject().get("accessToken").getAsString());
+            lifetime = clientCredentials.getExpiresIn();
+            log.debug("Token refreshed at " + new Date());
 
-            lifetimeMs = elem.getAsJsonObject().get("accessTokenExpirationTimestampMs").getAsLong() - System.currentTimeMillis();
-
-            log.debug("Token refreshed at " + new Date().toString());
-
-        } catch (IOException | JsonSyntaxException e) {
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
             log.error(e.getMessage(), e);
         }
 

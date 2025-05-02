@@ -3,6 +3,8 @@
  */
 package de.klassenserver7b.k7bot.music.spotify;
 
+import de.klassenserver7b.k7bot.K7Bot;
+import de.klassenserver7b.k7bot.manage.PropertiesManager;
 import de.klassenserver7b.k7bot.threads.SpotifyTokenRefresher;
 import se.michaelthelin.spotify.SpotifyApi;
 
@@ -20,7 +22,10 @@ public class SpotifyInteractions {
     }
 
     public void initialize() {
-        this.spotifyApi = new SpotifyApi.Builder().build();
+
+        this.spotifyApi = new SpotifyApi.Builder().setClientId(K7Bot.getInstance().getPropertiesManager().getProperty("spotify-client-id"))
+                .setClientSecret(K7Bot.getInstance().getPropertiesManager().getProperty("spotify-client-secret"))
+                .build();
         this.apienabled = true;
 
         startfetchcycle();

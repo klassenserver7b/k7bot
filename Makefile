@@ -1,8 +1,8 @@
 default: clean package
-	
+
 clean:
 	mvn clean
-	
+
 package:
 	mvn package
 
@@ -13,12 +13,11 @@ dbuild:
 	docker build -t klassenserver7b/k7bot ./docker
 
 dstart:
-	cd docker && docker compose up -d
+	docker compose -f /opt/docker-container/k7bot/docker-compose.yml up -d
 
 dstop:
-	cd docker && docker compose down
-	
-	
+	docker compose -f /opt/docker-container/k7bot/docker-compose.yml down
+
 release: clean package
 
 drelease: release copy dbuild
