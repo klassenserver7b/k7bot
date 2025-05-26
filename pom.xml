@@ -294,7 +294,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>5.5.0</version>
+            <version>5.5.1</version>
         </dependency>
         <dependency>
             <groupId>dev.arbjerg</groupId>
@@ -304,7 +304,7 @@
         <dependency>
             <groupId>dev.lavalink.youtube</groupId>
             <artifactId>v2</artifactId>
-            <version>1.13.0</version>
+            <version>1.13.2</version>
         </dependency>
         <dependency>
             <groupId>com.github.JustRed23</groupId>
@@ -342,7 +342,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
             <artifactId>httpclient5</artifactId>
-            <version>5.4.4</version>
+            <version>5.5</version>
         </dependency>
         <dependency>
             <groupId>com.github.KevinPriv</groupId>
@@ -364,7 +364,7 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.19.1</version>
+            <version>1.20.1</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-text -->
         <dependency>
