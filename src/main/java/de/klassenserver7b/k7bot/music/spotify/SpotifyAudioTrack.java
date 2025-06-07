@@ -57,9 +57,13 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
 
         String pathstr = new File("resources/spotify-dl").getAbsolutePath();
 
+        if (System.getProperty("os.name").contains("windows")) {
+            pathstr += ".exe";
+        }
+
         int exitCode = new ProcessBuilder()
                 .command(
-                        pathstr, "-d", sasm.getTempdir().getAbsolutePath(), "-n", identifier, "--auth", "file", "--credentials-file", "./resources", "-f", audioFileExtension, "https://open.spotify.com/track/" + identifier).redirectError(ProcessBuilder.Redirect.to(new File("spotify_errors.log")))
+                        pathstr, "-d", sasm.getTempdir().getAbsolutePath(), "-n", identifier, "--auth", "file", "--credentials-file", "./resources", "-f", audioFileExtension, "https://open.spotify.com/track/" + identifier).redirectError(ProcessBuilder.Redirect.to(new File("logs/spotify_errors.log")))
                 .inheritIO().start().waitFor();
 
         if (exitCode != 0) {

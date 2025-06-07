@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.klassenserver7b</groupId>
     <artifactId>k7bot</artifactId>
-    <version>1.25.1.0</version>
+    <version>1.25.2.1</version>
     <packaging>jar</packaging>
     <name>k7bot</name>
     <description>My Discord Bot</description>
@@ -16,6 +16,7 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <docker.basedir>${project.basedir}/docker</docker.basedir>
+        <docker.composefile>/opt/docker-container/k7bot/docker-compose.yml</docker.composefile>
         <docker.imagename>klassenserver7b/${project.artifactId}</docker.imagename>
     </properties>
 
@@ -153,6 +154,26 @@
                         </configuration>
                     </execution>
 
+                    <execution>
+                        <id>copy jar</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>cp</executable>
+                            <workingDirectory>${project.basedir}</workingDirectory>
+                            <arguments>
+                                <argument>target/${project.build.finalName}-full.jar</argument>
+                                <argument>${docker.basedir}</argument>
+                            </arguments>
+                            <successCodes>
+                                <successCode>0</successCode>
+                                <successCode>1</successCode>
+                            </successCodes>
+                        </configuration>
+                    </execution>
+
                     <!--
                       Create new docker image using Dockerfile which must be present in current working directory.
                       Tag the image using maven project version information.
@@ -169,8 +190,10 @@
                             <arguments>
                                 <argument>build</argument>
                                 <argument>-t</argument>
+                                <argument>${docker.imagename}:latest</argument>
+                                <argument>-t</argument>
                                 <argument>${docker.imagename}:${project.version}</argument>
-                                <argument>.</argument>
+                                <argument>${docker.basedir}</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -187,10 +210,46 @@
                             <workingDirectory>${docker.basedir}</workingDirectory>
                             <arguments>
                                 <argument>compose</argument>
+                                <argument>-f</argument>
+                                <argument>${docker.composefile}</argument>
                                 <argument>down</argument>
                             </arguments>
                         </configuration>
                     </execution>
+
+                    <!-- Login and Push the image to a docker repo. -->
+                    <execution>
+                        <id>docker-push-version</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>docker</executable>
+                            <workingDirectory>${docker.basedir}</workingDirectory>
+                            <arguments>
+                                <argument>push</argument>
+                                <argument>${docker.imagename}:${project.version}</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>docker-push-latest</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>docker</executable>
+                            <workingDirectory>${docker.basedir}</workingDirectory>
+                            <arguments>
+                                <argument>push</argument>
+                                <argument>${docker.imagename}:latest</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+
                     <execution>
                         <id>docker-compose-up</id>
                         <phase>deploy</phase>
@@ -202,25 +261,10 @@
                             <workingDirectory>${docker.basedir}</workingDirectory>
                             <arguments>
                                 <argument>compose</argument>
+                                <argument>-f</argument>
+                                <argument>${docker.composefile}</argument>
                                 <argument>up</argument>
                                 <argument>-d</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-
-                    <!-- Login and Push the image to a docker repo. -->
-                    <execution>
-                        <id>docker-push</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>docker</executable>
-                            <workingDirectory>${docker.basedir}</workingDirectory>
-                            <arguments>
-                                <argument>push</argument>
-                                <argument>${docker.imagename}</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -230,10 +274,6 @@
     </build>
     <reporting>
         <plugins>
-            <plugin>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>3.9.0</version>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -304,7 +344,7 @@
         <dependency>
             <groupId>dev.lavalink.youtube</groupId>
             <artifactId>v2</artifactId>
-            <version>1.13.0</version>
+            <version>1.13.2</version>
         </dependency>
         <dependency>
             <groupId>com.github.JustRed23</groupId>
@@ -312,9 +352,9 @@
             <version>0.7.7-1</version>
         </dependency>
         <dependency>
-            <groupId>com.github.whya5448.lavaplayer-jda-nas</groupId>
-            <artifactId>jda-nas</artifactId>
-            <version>1.0.6.4</version>
+            <groupId>com.github.klassenserver7b</groupId>
+            <artifactId>lavaplayer-jda-nas</artifactId>
+            <version>1.7.0</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>

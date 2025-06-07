@@ -5,6 +5,8 @@ package de.klassenserver7b.k7bot.music.spotify;
 
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.threads.SpotifyTokenRefresher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import se.michaelthelin.spotify.SpotifyApi;
 
 /**
@@ -15,8 +17,10 @@ public class SpotifyInteractions {
     private boolean apienabled;
     private SpotifyApi spotifyApi;
     public SpotifyTokenRefresher tokenRefresher;
+    private final Logger log;
 
     public SpotifyInteractions() {
+        this.log = LoggerFactory.getLogger(this.getClass());
         apienabled = false;
     }
 
@@ -34,7 +38,11 @@ public class SpotifyInteractions {
      *
      */
     public void startfetchcycle() {
-        this.tokenRefresher = SpotifyTokenRefresher.getINSTANCE();
+        this.tokenRefresher = new SpotifyTokenRefresher();
+        if (!this.tokenRefresher.start()) {
+            this.apienabled = false;
+            log.warn("Spotify token refresh failed - API disabled");
+        }
     }
 
     public void shutdown() {
