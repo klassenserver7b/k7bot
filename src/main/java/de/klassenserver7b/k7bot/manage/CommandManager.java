@@ -85,7 +85,6 @@ public class CommandManager {
 
         // Private
         this.commands.add(new UebersteuerungAdmin());
-        this.commands.add(new TeacherCommand());
 
         if (K7Bot.getInstance().isDevMode()) {
             this.commands.add(new TestCommand());
