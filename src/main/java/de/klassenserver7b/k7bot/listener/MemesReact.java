@@ -14,38 +14,38 @@ import java.sql.SQLException;
 
 public class MemesReact extends ListenerAdapter {
 
-	private final Logger log;
+    private final Logger log;
 
-	public MemesReact() {
-		log = LoggerFactory.getLogger(getClass());
-	}
+    public MemesReact() {
+        log = LoggerFactory.getLogger(getClass());
+    }
 
-	@Override
-	public void onMessageReceived(MessageReceivedEvent event) {
-		if (event.isFromType(ChannelType.TEXT)) {
+    @Override
+    public void onMessageReceived(MessageReceivedEvent event) {
+        if (event.isFromType(ChannelType.TEXT)) {
 
-			GuildMessageChannel chan = event.getChannel().asGuildMessageChannel();
-			long channelId = chan.getIdLong();
+            GuildMessageChannel chan = event.getChannel().asGuildMessageChannel();
+            long channelId = chan.getIdLong();
 
-			try (ResultSet set = LiteSQL.onQuery("SELECT channelId FROM memechannels WHERE channelId=?", channelId)) {
+            try (ResultSet set = LiteSQL.onQuery("SELECT channelId FROM memechannels WHERE channelId=?", channelId)) {
 
-				long msgId = event.getMessage().getIdLong();
+                long msgId = event.getMessage().getIdLong();
 
-				if (set.next()) {
-					react(msgId, chan);
-				}
+                if (set.next()) {
+                    react(msgId, chan);
+                }
 
-			} catch (SQLException e) {
-				log.error(e.getMessage(), e);
-			}
+            } catch (SQLException e) {
+                log.error(e.getMessage(), e);
+            }
 
-		}
-	}
+        }
+    }
 
-	public void react(long msgId, GuildMessageChannel chan) {
+    public void react(long msgId, GuildMessageChannel chan) {
 
-		chan.addReactionById(msgId, Emoji.fromFormatted("U+2B06")).queue();
+        chan.addReactionById(msgId, Emoji.fromFormatted("U+2B06")).queue();
 
-		chan.addReactionById(msgId, Emoji.fromFormatted("U+2B07")).queue();
-	}
+        chan.addReactionById(msgId, Emoji.fromFormatted("U+2B07")).queue();
+    }
 }

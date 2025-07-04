@@ -19,7 +19,6 @@ import java.util.ArrayList;
 
 /**
  * @author K7
- *
  */
 public class AddToQueueSlashCommand extends GenericPlayCommand implements SubSlashCommand {
 

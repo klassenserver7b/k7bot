@@ -1,6 +1,7 @@
 package de.klassenserver7b.k7bot;
 
 import com.jagrosh.jlyrics.LyricsClient;
+import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
@@ -26,7 +27,6 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
-import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

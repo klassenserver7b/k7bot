@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.klassenserver7b.k7bot.commands.types;
 
@@ -11,9 +11,9 @@ import org.jetbrains.annotations.NotNull;
  *
  */
 public interface SubSlashCommand extends SlashCommand {
-	@NotNull
+    @NotNull
     SubcommandData getSubCommandData();
 
-	String getSubPath();
+    String getSubPath();
 
 }

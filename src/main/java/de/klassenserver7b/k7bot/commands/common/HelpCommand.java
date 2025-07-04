@@ -1,9 +1,9 @@
 package de.klassenserver7b.k7bot.commands.common;
 
-import de.klassenserver7b.k7bot.util.HelpCategories;
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
+import de.klassenserver7b.k7bot.util.HelpCategories;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -96,8 +96,8 @@ public class HelpCommand implements ServerCommand {
                             Bot-Befehle beginnen standardmaßig mit `-`
                             [TEXT] stellt benötigte Commandargumente dar.
                             <TEXT> stellt optionale Commandargumente dar.
-
-
+                            
+                            
                             """,
                     false);
         }

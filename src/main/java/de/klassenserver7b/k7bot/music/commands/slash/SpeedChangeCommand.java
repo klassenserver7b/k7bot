@@ -53,7 +53,7 @@ public class SpeedChangeCommand implements TopLevelSlashCommand {
         OptionMapping speedmap = event.getOption("speedfactor");
         assert speedmap != null;
         double speedrate = speedmap.getAsDouble();
-        
+
         OptionMapping pitchmap = event.getOption("changepitch");
         boolean changepitch = (pitchmap == null || pitchmap.getAsBoolean());
 

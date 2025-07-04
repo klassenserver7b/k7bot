@@ -1,10 +1,10 @@
 package de.klassenserver7b.k7bot.moderation.commands.common;
 
-import de.klassenserver7b.k7bot.util.HelpCategories;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.moderation.commands.generic.GenericUserLogsCommand;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
+import de.klassenserver7b.k7bot.util.HelpCategories;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;

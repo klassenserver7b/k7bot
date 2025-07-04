@@ -1,11 +1,11 @@
 package de.klassenserver7b.k7bot.moderation.commands.common;
 
-import de.klassenserver7b.k7bot.util.HelpCategories;
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
+import de.klassenserver7b.k7bot.util.HelpCategories;
 import de.klassenserver7b.k7bot.util.errorhandler.PermissionError;
 import de.klassenserver7b.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.EmbedBuilder;

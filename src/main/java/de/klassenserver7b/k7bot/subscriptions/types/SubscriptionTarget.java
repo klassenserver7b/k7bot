@@ -11,7 +11,7 @@ public enum SubscriptionTarget {
      * The Type for BotNews such as Updates and Fixes, only fully functional when
      * GitHub API enabled.
      */
-    BOT_NEWS(2, false, false),
+    BOT_NEWS(1, false, false),
 
     /**
      * Unknown {@link SubscriptionTarget} type. Should never happen and would only

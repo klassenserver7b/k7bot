@@ -19,33 +19,33 @@ import java.util.concurrent.TimeUnit;
 
 public class Shutdownslashcommand implements TopLevelSlashCommand {
 
-	@Override
-	public void performSlashCommand(SlashCommandInteraction event) {
+    @Override
+    public void performSlashCommand(SlashCommandInteraction event) {
 
-		Member m = event.getMember();
-		GuildMessageChannel channel = event.getChannel().asGuildMessageChannel();
+        Member m = event.getMember();
+        GuildMessageChannel channel = event.getChannel().asGuildMessageChannel();
 
-		if (m.getIdLong() == K7Bot.getInstance().getOwnerId()) {
+        if (m.getIdLong() == K7Bot.getInstance().getOwnerId()) {
 
-			EmbedBuilder build = EmbedUtils.getBuilderOf(Color.orange,
-					"# Bot is shutting down! #" + "\n \n Requested by @" + event.getMember().getEffectiveName());
+            EmbedBuilder build = EmbedUtils.getBuilderOf(Color.orange,
+                    "# Bot is shutting down! #" + "\n \n Requested by @" + event.getMember().getEffectiveName());
 
-			event.replyEmbeds(build.build()).complete().deleteOriginal().completeAfter(10, TimeUnit.SECONDS);
+            event.replyEmbeds(build.build()).complete().deleteOriginal().completeAfter(10, TimeUnit.SECONDS);
 
-			K7Bot.getInstance().setExit(true);
-			K7Bot.getInstance().getShutdownThread().onShutdown();
-			return;
+            K7Bot.getInstance().setExit(true);
+            K7Bot.getInstance().getShutdownThread().onShutdown();
+            return;
 
-		}
+        }
 
-		PermissionError.onPermissionError(m, channel);
+        PermissionError.onPermissionError(m, channel);
 
-	}
+    }
 
-	@Override
-	public @NotNull SlashCommandData getCommandData() {
-		return Commands.slash("shutdown", "fährt den Bot herunter")
-				.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR));
-	}
+    @Override
+    public @NotNull SlashCommandData getCommandData() {
+        return Commands.slash("shutdown", "fährt den Bot herunter")
+                .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR));
+    }
 
 }

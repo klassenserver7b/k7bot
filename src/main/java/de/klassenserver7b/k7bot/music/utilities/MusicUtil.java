@@ -344,7 +344,7 @@ public class MusicUtil {
 
             try (InputStream uin = new URI(img.getUrl()).toURL().openStream();
                  FileOutputStream fout = new FileOutputStream(tempfile)) {
-                
+
                 uin.transferTo(fout);
                 uin.close();
                 fout.close();

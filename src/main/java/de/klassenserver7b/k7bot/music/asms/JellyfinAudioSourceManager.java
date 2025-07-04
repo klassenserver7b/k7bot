@@ -17,7 +17,6 @@ import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -83,12 +82,12 @@ public class JellyfinAudioSourceManager extends HttpAudioSourceManager {
             JsonObject mainObj = JsonParser.parseString(body).getAsJsonObject();
             JsonArray searchArray = mainObj.get("SearchHints").getAsJsonArray();
 
-            if(searchArray.size() == 0) {
+            if (searchArray.size() == 0) {
                 K7Bot.getInstance().getMainLogger().info("No results found for Jellyfin query: {}", query);
                 return null;
             }
 
-            JsonObject firstResult= searchArray.get(0).getAsJsonObject();;
+            JsonObject firstResult = searchArray.get(0).getAsJsonObject();
 
             String id = firstResult.get("Id").getAsString();
             String name = firstResult.get("Name").getAsString();

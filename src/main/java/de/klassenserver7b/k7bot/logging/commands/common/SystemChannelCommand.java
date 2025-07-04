@@ -1,10 +1,10 @@
 package de.klassenserver7b.k7bot.logging.commands.common;
 
-import de.klassenserver7b.k7bot.util.HelpCategories;
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.manage.SystemNotificationChannelManager;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
+import de.klassenserver7b.k7bot.util.HelpCategories;
 import de.klassenserver7b.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.klassenserver7b.k7bot.music.commands.slash;
 
@@ -18,50 +18,50 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * 
+ *
  */
 public class ClearAudioFilterFilterSlashCommand implements TopLevelSlashCommand {
 
-	/**
-	 * 
-	 */
-	public ClearAudioFilterFilterSlashCommand() {
+    /**
+     *
+     */
+    public ClearAudioFilterFilterSlashCommand() {
 
-	}
+    }
 
-	@Override
-	public void performSlashCommand(SlashCommandInteraction event) {
+    @Override
+    public void performSlashCommand(SlashCommandInteraction event) {
 
-		InteractionHook hook = event.deferReply(false).complete();
+        InteractionHook hook = event.deferReply(false).complete();
 
-		Member m = event.getMember();
+        Member m = event.getMember();
         assert m != null;
 
         AudioChannel vc = MusicUtil.getMembVcConnection(m);
 
-		if (MusicUtil.membFailsDefaultConditions(new GenericMessageSendHandler(hook), m) || vc == null) {
-			return;
-		}
+        if (MusicUtil.membFailsDefaultConditions(new GenericMessageSendHandler(hook), m) || vc == null) {
+            return;
+        }
 
-		BotAudioEffectsManager effman = BotAudioEffectsManager.getAudioEffectsManager(
-				K7Bot.getInstance().getPlayerUtil().getController(vc.getGuild().getIdLong()).getPlayer());
+        BotAudioEffectsManager effman = BotAudioEffectsManager.getAudioEffectsManager(
+                K7Bot.getInstance().getPlayerUtil().getController(vc.getGuild().getIdLong()).getPlayer());
 
-		effman.clearFilters();
+        effman.clearFilters();
 
 
-		assert event.getGuild() != null;
+        assert event.getGuild() != null;
 
-		hook.sendMessageEmbeds(EmbedUtils
-				.getSuccessEmbed("Successfully removed all AudioFilters", event.getGuild().getIdLong()).build())
-				.queue();
+        hook.sendMessageEmbeds(EmbedUtils
+                        .getSuccessEmbed("Successfully removed all AudioFilters", event.getGuild().getIdLong()).build())
+                .queue();
 
-	}
+    }
 
-	@NotNull
+    @NotNull
     @Override
-	public SlashCommandData getCommandData() {
-		return Commands.slash("audiofilterclear", "removes all audio filters from the current player")
-				.setGuildOnly(true);
-	}
+    public SlashCommandData getCommandData() {
+        return Commands.slash("audiofilterclear", "removes all audio filters from the current player")
+                .setGuildOnly(true);
+    }
 
 }

@@ -11,11 +11,10 @@ import java.util.function.Function;
 
 /**
  * @author K7
- *
  */
 public interface SpotifyTrackLoader {
 
-	AudioTrack load(SpotifyInteractions spotifyinteract, String songid,
-					Function<AudioTrackInfo, AudioTrack> trackFactory);
+    AudioTrack load(SpotifyInteractions spotifyinteract, String songid,
+                    Function<AudioTrackInfo, AudioTrack> trackFactory);
 
 }

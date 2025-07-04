@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.klassenserver7b.k7bot.util;
 
@@ -9,8 +9,8 @@ package de.klassenserver7b.k7bot.util;
  */
 public class InternalStatusCodes {
 
-	public static final int ERROR = -1;
-	public static final int FAILURE = 1;
-	public static final int SUCCESS = 0;
+    public static final int ERROR = -1;
+    public static final int FAILURE = 1;
+    public static final int SUCCESS = 0;
 
 }

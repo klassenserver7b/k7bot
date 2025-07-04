@@ -1,6 +1,5 @@
 package de.klassenserver7b.k7bot.music.commands.common;
 
-import de.klassenserver7b.k7bot.util.HelpCategories;
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.music.utilities.BotAudioEffectsManager;
@@ -8,6 +7,7 @@ import de.klassenserver7b.k7bot.music.utilities.BotEqualizer;
 import de.klassenserver7b.k7bot.music.utilities.BotEqualizer.EqualizerPreset;
 import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
+import de.klassenserver7b.k7bot.util.HelpCategories;
 import de.klassenserver7b.k7bot.util.errorhandler.SyntaxError;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;

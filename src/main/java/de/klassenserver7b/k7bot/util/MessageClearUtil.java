@@ -14,37 +14,36 @@ import java.util.List;
 
 /**
  * @author Klassenserver7b
- *
  */
 public class MessageClearUtil {
 
-	private static final Logger log = LoggerFactory.getLogger(MessageClearUtil.class);
+    private static final Logger log = LoggerFactory.getLogger(MessageClearUtil.class);
 
-	public static void onclear(int amount, GuildMessageChannel chan) {
-		try {
+    public static void onclear(int amount, GuildMessageChannel chan) {
+        try {
 
-			chan.purgeMessages(getMessages(chan, amount));
+            chan.purgeMessages(getMessages(chan, amount));
 
-		} catch (NumberFormatException e) {
-			log.error(e.getMessage(), e);
-		}
-	}
+        } catch (NumberFormatException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
 
-	public static List<Message> getMessages(MessageChannel channel, int amount) {
-		List<Message> messages = new ArrayList<>();
+    public static List<Message> getMessages(MessageChannel channel, int amount) {
+        List<Message> messages = new ArrayList<>();
 
-		int i = 0;
+        int i = 0;
 
-		for (Message message : channel.getIterableHistory().cache(false)) {
-			if (!message.isPinned()) {
-				messages.add(message);
-			}
+        for (Message message : channel.getIterableHistory().cache(false)) {
+            if (!message.isPinned()) {
+                messages.add(message);
+            }
 
-			if (i++ >= amount) {
-				break;
-			}
-		}
-		return messages;
-	}
+            if (i++ >= amount) {
+                break;
+            }
+        }
+        return messages;
+    }
 
 }
