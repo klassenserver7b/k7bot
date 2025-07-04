@@ -7,7 +7,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
-import de.klassenserver7b.k7bot.HelpCategories;
+import de.klassenserver7b.k7bot.util.HelpCategories;
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.music.SupportedPlayQueries;
@@ -213,7 +213,7 @@ public abstract class GenericPlayCommand implements ServerCommand {
 
         String url = q.strip();
 
-        if (url.matches("ytsearch: .*|scsearch: .*|spsearch: .*|http(s)?://.*|/run/media/data/.*")) {
+        if (url.matches("ytsearch: .*|scsearch: .*|spsearch: .*|jfsearch: .*|http(s)?://.*|/run/media/data/.*")) {
             return url;
         }
         return "ytsearch: " + url;

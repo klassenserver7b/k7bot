@@ -89,7 +89,6 @@ public class CommandManager {
 
         if (K7Bot.getInstance().isDevMode()) {
             this.commands.add(new TestCommand());
-            this.commands.add(new VTestCommand());
         }
 
         commands.forEach(command -> {

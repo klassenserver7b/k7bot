@@ -1,6 +1,6 @@
 package de.klassenserver7b.k7bot.util.customapis;
 
-import de.klassenserver7b.k7bot.HelpCategories;
+import de.klassenserver7b.k7bot.util.HelpCategories;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import net.dv8tion.jda.api.entities.Member;

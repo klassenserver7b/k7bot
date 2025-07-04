@@ -49,15 +49,10 @@ public class PropertiesManager {
 
     public void checkAPIProps() {
 
-        this.apienabled.put("vplan", (prop.getProperty("vplanpw") != null) && prop.getProperty("schoolID") != null);
-
-        this.apienabled.put("lernsax", (prop.getProperty("lsaxemail") != null)
-                && (prop.getProperty("lsaxtoken") != null) && (prop.getProperty("lsaxappid") != null));
-
-        this.apienabled.put("gourmetta",
-                (prop.getProperty("gourmettauserid") != null) && (prop.getProperty("gourmettapassword") != null));
-
         this.apienabled.put("discogs", prop.getProperty("discogs-token") != null);
+
+        this.apienabled.put("jellyfin", prop.getProperty("jellyfin-url") != null
+                && prop.getProperty("jellyfin-api-key") != null);
 
     }
 
@@ -87,18 +82,12 @@ public class PropertiesManager {
             prop.setProperty("canary-token", "");
             prop.setProperty("ownerId", "");
             prop.setProperty("shardCount", "");
-            prop.setProperty("vplanpw", "");
-            prop.setProperty("schoolID", "");
-            prop.setProperty("lsaxemail", "");
-            prop.setProperty("lsaxtoken", "");
-            prop.setProperty("lsaxappid", "");
-            prop.setProperty("gourmettauserid", "");
-            prop.setProperty("gourmettapassword", "");
             prop.setProperty("discogs-token", "");
-            prop.setProperty("vppwold", "");
             prop.setProperty("spotify-client-id", "");
             prop.setProperty("spotify-client-secret", "");
             prop.setProperty("votinglimit", "");
+            prop.setProperty("jellyfin-url", "");
+            prop.setProperty("jellyfin-api-key", "");
 
             prop.store(stream, "Bot-Configfile\n 'token' is required!");
 

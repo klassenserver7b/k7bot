@@ -1,6 +1,6 @@
 package de.klassenserver7b.k7bot.music.commands.common;
 
-import de.klassenserver7b.k7bot.HelpCategories;
+import de.klassenserver7b.k7bot.util.HelpCategories;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.music.commands.generic.GenericChartsCommand;
 import de.klassenserver7b.k7bot.music.utilities.ChartList;

@@ -17,7 +17,6 @@ import de.klassenserver7b.k7bot.sql.SQLManager;
 import de.klassenserver7b.k7bot.subscriptions.SubscriptionManager;
 import de.klassenserver7b.k7bot.threads.ConsoleReadThread;
 import de.klassenserver7b.k7bot.threads.LoopThread;
-import de.klassenserver7b.k7bot.util.TeacherDB;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -68,7 +67,6 @@ public class K7Bot {
     private SpotifyInteractions spotifyinteractions;
 
     private Long ownerId;
-    private TeacherDB teacherDB;
     private boolean exit = false;
     private boolean indev;
 
@@ -103,10 +101,6 @@ public class K7Bot {
      * @see LoopedEventManager#initializeDefaultEvents()
      */
     protected boolean initializeBot() {
-
-        teacherDB = new TeacherDB();
-        teacherDB.loadTeachersList();
-
         LiteSQL.connect();
 
         SQLManager.onCreate();
@@ -511,13 +505,6 @@ public class K7Bot {
      */
     public LoopedEventManager getLoopedEventManager() {
         return this.loopedEventMgr;
-    }
-
-    /**
-     * @return the TeachersList
-     */
-    public TeacherDB getTeacherDB() {
-        return this.teacherDB;
     }
 
     /**

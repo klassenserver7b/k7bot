@@ -1,6 +1,6 @@
 package de.klassenserver7b.k7bot.commands.common;
 
-import de.klassenserver7b.k7bot.HelpCategories;
+import de.klassenserver7b.k7bot.util.HelpCategories;
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.util.errorhandler.PermissionError;

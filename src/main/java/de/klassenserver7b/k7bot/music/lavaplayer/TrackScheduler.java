@@ -39,7 +39,7 @@ public class TrackScheduler extends AudioEventAdapter {
         String author = (jsinfo == null ? info.author : jsinfo.getAuthorString());
         String title = (jsinfo == null ? info.title : jsinfo.getTitle());
 
-        EmbedBuilder builder = EmbedUtils.getSuccessEmbed(" Jetzt läuft: " + title);
+        EmbedBuilder builder = EmbedUtils.getSuccessEmbed("Jetzt läuft: " + title);
 
         long sekunden = info.length / 1000L;
         long minuten = sekunden / 60L;
@@ -50,7 +50,7 @@ public class TrackScheduler extends AudioEventAdapter {
         String url = info.uri;
 
         if (!(track instanceof LocalAudioTrack)) {
-            builder.addField("Name", "[" + author + " - " + title + "](" + url + ")", false);
+            builder.addField("Name", "[" + author + " - " + title + "](" + url.replaceAll(".api_key=.*", "") + ")", false);
         } else {
             builder.addField("Name", author + " - " + title, false);
         }
