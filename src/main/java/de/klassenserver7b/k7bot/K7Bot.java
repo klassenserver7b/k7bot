@@ -1,7 +1,6 @@
 package de.klassenserver7b.k7bot;
 
 import com.jagrosh.jlyrics.LyricsClient;
-import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
@@ -18,7 +17,6 @@ import de.klassenserver7b.k7bot.sql.SQLManager;
 import de.klassenserver7b.k7bot.subscriptions.SubscriptionManager;
 import de.klassenserver7b.k7bot.threads.ConsoleReadThread;
 import de.klassenserver7b.k7bot.threads.LoopThread;
-import de.klassenserver7b.k7bot.util.TeacherDB;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -28,6 +26,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +67,6 @@ public class K7Bot {
     private SpotifyInteractions spotifyinteractions;
 
     private Long ownerId;
-    private TeacherDB teacherDB;
     private boolean exit = false;
     private boolean indev;
 
@@ -103,10 +101,6 @@ public class K7Bot {
      * @see LoopedEventManager#initializeDefaultEvents()
      */
     protected boolean initializeBot() {
-
-        teacherDB = new TeacherDB();
-        teacherDB.loadTeachersList();
-
         LiteSQL.connect();
 
         SQLManager.onCreate();
@@ -167,12 +161,14 @@ public class K7Bot {
             builder = DefaultShardManagerBuilder.create(canaryToken, EnumSet.allOf(GatewayIntent.class));
         }
 
-        builder.setAudioSendFactory(new NativeAudioSendFactory(400));
+        //builder.setAudioSendFactory(new NativeAudioSendFactory(400));
         builder.setShardsTotal(shardc);
         builder.setMemberCachePolicy(MemberCachePolicy.ALL);
         builder.setActivity(Activity.listening("-help"));
 
         builder.setStatus(OnlineStatus.ONLINE);
+
+        builder.setAudioSendFactory(new NativeAudioSendFactory());
 
         builder.addEventListeners(new CommandListener());
         builder.addEventListeners(new SlashCommandListener());
@@ -509,13 +505,6 @@ public class K7Bot {
      */
     public LoopedEventManager getLoopedEventManager() {
         return this.loopedEventMgr;
-    }
-
-    /**
-     * @return the TeachersList
-     */
-    public TeacherDB getTeacherDB() {
-        return this.teacherDB;
     }
 
     /**

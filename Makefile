@@ -1,10 +1,13 @@
 default: clean package
-	
+
 clean:
 	mvn clean
-	
+
 package:
-	mvn package
+	mvn clean package
+
+deploy:
+	mvn clean deploy
 
 copy:
 	cp target/k7bot-*-full.jar docker/Bot.jar
@@ -13,19 +16,16 @@ dbuild:
 	docker build -t klassenserver7b/k7bot ./docker
 
 dstart:
-	cd docker && docker compose up -d
+	docker compose -f /opt/docker-container/k7bot/docker-compose.yml up -d
 
 dstop:
-	cd docker && docker compose down
-	
-	
-release: clean package
+	docker compose -f /opt/docker-container/k7bot/docker-compose.yml down
 
-drelease: release copy dbuild
+release: package
 
-startb: clean package copy dbuild dstart
+startb: deploy
 
-restartb: dstop clean package copy dbuild dstart
+restartb: deploy
 
 stop: dstop
 

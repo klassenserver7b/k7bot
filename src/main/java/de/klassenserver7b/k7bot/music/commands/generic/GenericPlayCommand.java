@@ -7,9 +7,11 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
-import de.klassenserver7b.k7bot.HelpCategories;
+import de.klassenserver7b.k7bot.music.asms.JellyfinAudioSourceManager;
+import de.klassenserver7b.k7bot.util.HelpCategories;
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
+import de.klassenserver7b.k7bot.music.SupportedPlayQueries;
 import de.klassenserver7b.k7bot.music.asms.ExtendedLocalAudioSourceManager;
 import de.klassenserver7b.k7bot.music.asms.SpotifyAudioSourceManager;
 import de.klassenserver7b.k7bot.music.lavaplayer.AudioLoadResult;
@@ -17,7 +19,6 @@ import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;
 import de.klassenserver7b.k7bot.music.utilities.AudioLoadOption;
 import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
-import de.klassenserver7b.k7bot.music.SupportedPlayQueries;
 import de.klassenserver7b.k7bot.util.errorhandler.SyntaxError;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import net.dv8tion.jda.api.entities.Member;
@@ -51,6 +52,7 @@ public abstract class GenericPlayCommand implements ServerCommand {
         this.log = LoggerFactory.getLogger(this.getClass());
 
         apm = new DefaultAudioPlayerManager();
+        apm.registerSourceManager(new JellyfinAudioSourceManager());
         apm.registerSourceManager(new SpotifyAudioSourceManager());
         apm.registerSourceManager(new YoutubeAudioSourceManager());
         apm.registerSourceManager(new ExtendedLocalAudioSourceManager());
@@ -213,7 +215,7 @@ public abstract class GenericPlayCommand implements ServerCommand {
 
         String url = q.strip();
 
-        if (url.matches("ytsearch: .*|scsearch: .*|spsearch: .*|http(s)?://.*|/run/media/data/.*")) {
+        if (url.matches("ytsearch: .*|scsearch: .*|spsearch: .*|jfsearch: .*|http(s)?://.*|/run/media/data/.*")) {
             return url;
         }
         return "ytsearch: " + url;

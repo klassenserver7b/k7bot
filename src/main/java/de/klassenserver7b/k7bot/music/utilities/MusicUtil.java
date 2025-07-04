@@ -26,6 +26,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.michaelthelin.spotify.SpotifyApi;
@@ -33,7 +34,6 @@ import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.specification.Image;
 import se.michaelthelin.spotify.model_objects.specification.Track;
 
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -150,7 +150,7 @@ public class MusicUtil {
      * @param m the member to check
      * @return true if the member is connected to a VoiceChannel
      */
-    public static boolean membNotVcConnected(@Nonnull Member m) {
+    public static boolean membNotVcConnected(@NotNull Member m) {
 
         GuildVoiceState state;
         if ((state = m.getVoiceState()) != null)
@@ -162,7 +162,7 @@ public class MusicUtil {
      * @param m the member to get the AudioChannel from
      * @return the AudioChannel the member is connected to
      */
-    public static AudioChannel getMembVcConnection(@Nonnull Member m) {
+    public static AudioChannel getMembVcConnection(@NotNull Member m) {
 
         GuildVoiceState state;
         if ((state = m.getVoiceState()) != null) {
@@ -197,7 +197,7 @@ public class MusicUtil {
      * @param m           the member to check
      * @return true if the member is connected to the music playing VoiceChannel
      */
-    public static boolean membFailsDefaultConditions(GenericMessageSendHandler sendHandler, @Nonnull Member m) {
+    public static boolean membFailsDefaultConditions(GenericMessageSendHandler sendHandler, @NotNull Member m) {
 
         if (MusicUtil.membNotVcConnected(m)) {
             sendHandler.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete().delete()
@@ -213,7 +213,7 @@ public class MusicUtil {
      * @param m           the member to check
      * @return true if the member isn't connected to the right channel
      */
-    public static boolean failsConditions(@Nonnull GenericMessageSendHandler sendHandler, @Nonnull Member m) {
+    public static boolean failsConditions(@NotNull GenericMessageSendHandler sendHandler, @NotNull Member m) {
 
         if (MusicUtil.membNotVcConnected(m)) {
             sendHandler.sendMessage("You are not in a voicechannel" + m.getAsMention()).complete().delete()
@@ -255,7 +255,7 @@ public class MusicUtil {
      * @param m the member to check
      * @return true if the member is connected to the music playing VoiceChannel
      */
-    public static boolean failsConditions(@Nonnull Member m) {
+    public static boolean failsConditions(@NotNull Member m) {
 
         if (MusicUtil.membNotVcConnected(m)) {
             return false;

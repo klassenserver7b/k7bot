@@ -1,6 +1,6 @@
 package de.klassenserver7b.k7bot.util.commands.common;
 
-import de.klassenserver7b.k7bot.HelpCategories;
+import de.klassenserver7b.k7bot.util.HelpCategories;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;

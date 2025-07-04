@@ -13,8 +13,8 @@ import net.dv8tion.jda.api.events.channel.update.ChannelUpdateNameEvent;
 import net.dv8tion.jda.api.events.channel.update.ChannelUpdatePositionEvent;
 import net.dv8tion.jda.api.events.channel.update.ChannelUpdateTypeEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.awt.*;
 
 import static de.klassenserver7b.k7bot.util.ChannelUtil.getSystemChannel;
@@ -26,7 +26,7 @@ public class ChannelLoggingListener extends ListenerAdapter {
     }
 
     @Override
-    public void onChannelCreate(@Nonnull ChannelCreateEvent event) {
+    public void onChannelCreate(@NotNull ChannelCreateEvent event) {
 
         if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.CHANNEL_CREATE, event.getGuild())) {
             return;
@@ -48,7 +48,7 @@ public class ChannelLoggingListener extends ListenerAdapter {
     }
 
     @Override
-    public void onChannelDelete(@Nonnull ChannelDeleteEvent event) {
+    public void onChannelDelete(@NotNull ChannelDeleteEvent event) {
 
         if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.CHANNEL_DELETE, event.getGuild())) {
             return;
@@ -70,7 +70,7 @@ public class ChannelLoggingListener extends ListenerAdapter {
     }
 
     @Override
-    public void onChannelUpdateName(@Nonnull ChannelUpdateNameEvent event) {
+    public void onChannelUpdateName(@NotNull ChannelUpdateNameEvent event) {
 
         if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.CHANNEL_UPDATE_NAME, event.getGuild())) {
             return;
@@ -90,7 +90,7 @@ public class ChannelLoggingListener extends ListenerAdapter {
     }
 
     @Override
-    public void onChannelUpdatePosition(@Nonnull ChannelUpdatePositionEvent event) {
+    public void onChannelUpdatePosition(@NotNull ChannelUpdatePositionEvent event) {
 
         if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.CHANNEL_UPDATE_POSITION, event.getGuild())) {
             return;
@@ -110,7 +110,7 @@ public class ChannelLoggingListener extends ListenerAdapter {
     }
 
     @Override
-    public void onChannelUpdateType(@Nonnull ChannelUpdateTypeEvent event) {
+    public void onChannelUpdateType(@NotNull ChannelUpdateTypeEvent event) {
 
         if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.CHANNEL_UPDATE_TYPE, event.getGuild())) {
             return;

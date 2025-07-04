@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.klassenserver7b</groupId>
     <artifactId>k7bot</artifactId>
-    <version>1.25.0.0</version>
+    <version>1.26.2.0</version>
     <packaging>jar</packaging>
     <name>k7bot</name>
     <description>My Discord Bot</description>
@@ -16,6 +16,7 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <docker.basedir>${project.basedir}/docker</docker.basedir>
+        <docker.composefile>/opt/docker-container/k7bot/docker-compose.yml</docker.composefile>
         <docker.imagename>klassenserver7b/${project.artifactId}</docker.imagename>
     </properties>
 
@@ -65,7 +66,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>3.4.1</version>
+                <version>3.5.0</version>
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -96,6 +97,9 @@
                                     <mainClass>
                                         de.klassenserver7b.k7bot.Main
                                     </mainClass>
+                                    <addDefaultImplementationEntries>
+                                        true
+                                    </addDefaultImplementationEntries>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
@@ -130,7 +134,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.5.0</version>
+                <version>3.5.1</version>
                 <executions>
                     <!-- Remove existing image from local repo -->
                     <execution>
@@ -145,6 +149,26 @@
                             <arguments>
                                 <argument>rmi</argument>
                                 <argument>${docker.imagename}</argument>
+                            </arguments>
+                            <successCodes>
+                                <successCode>0</successCode>
+                                <successCode>1</successCode>
+                            </successCodes>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>copy jar</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>cp</executable>
+                            <workingDirectory>${project.basedir}</workingDirectory>
+                            <arguments>
+                                <argument>target/${project.build.finalName}-full.jar</argument>
+                                <argument>${docker.basedir}/Bot.jar</argument>
                             </arguments>
                             <successCodes>
                                 <successCode>0</successCode>
@@ -169,8 +193,10 @@
                             <arguments>
                                 <argument>build</argument>
                                 <argument>-t</argument>
+                                <argument>${docker.imagename}:latest</argument>
+                                <argument>-t</argument>
                                 <argument>${docker.imagename}:${project.version}</argument>
-                                <argument>.</argument>
+                                <argument>${docker.basedir}</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -187,10 +213,83 @@
                             <workingDirectory>${docker.basedir}</workingDirectory>
                             <arguments>
                                 <argument>compose</argument>
-                                <argument>down</argument>
+                                <argument>-f</argument>
+                                <argument>${docker.composefile}</argument>
+                                <argument>stop</argument>
                             </arguments>
                         </configuration>
                     </execution>
+
+                    <execution>
+                        <id>docker-compose-rm</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>docker</executable>
+                            <workingDirectory>${docker.basedir}</workingDirectory>
+                            <arguments>
+                                <argument>compose</argument>
+                                <argument>-f</argument>
+                                <argument>${docker.composefile}</argument>
+                                <argument>rm</argument>
+                                <argument>-f</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+
+                    <!-- Login and Push the image to a docker repo. -->
+                    <execution>
+                        <id>docker-push-version</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>docker</executable>
+                            <workingDirectory>${docker.basedir}</workingDirectory>
+                            <arguments>
+                                <argument>push</argument>
+                                <argument>${docker.imagename}:${project.version}</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>docker-push-latest</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>docker</executable>
+                            <workingDirectory>${docker.basedir}</workingDirectory>
+                            <arguments>
+                                <argument>push</argument>
+                                <argument>${docker.imagename}:latest</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>docker-compose-pull</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>docker</executable>
+                            <workingDirectory>${docker.basedir}</workingDirectory>
+                            <arguments>
+                                <argument>compose</argument>
+                                <argument>-f</argument>
+                                <argument>${docker.composefile}</argument>
+                                <argument>pull</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+
                     <execution>
                         <id>docker-compose-up</id>
                         <phase>deploy</phase>
@@ -202,25 +301,10 @@
                             <workingDirectory>${docker.basedir}</workingDirectory>
                             <arguments>
                                 <argument>compose</argument>
+                                <argument>-f</argument>
+                                <argument>${docker.composefile}</argument>
                                 <argument>up</argument>
                                 <argument>-d</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-
-                    <!-- Login and Push the image to a docker repo. -->
-                    <execution>
-                        <id>docker-push</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>docker</executable>
-                            <workingDirectory>${docker.basedir}</workingDirectory>
-                            <arguments>
-                                <argument>push</argument>
-                                <argument>${docker.imagename}</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -230,10 +314,6 @@
     </build>
     <reporting>
         <plugins>
-            <plugin>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>3.9.0</version>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -294,17 +374,17 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>5.3.0</version>
+            <version>5.6.1</version>
         </dependency>
         <dependency>
             <groupId>dev.arbjerg</groupId>
             <artifactId>lavaplayer</artifactId>
-            <version>2.2.3</version>
+            <version>2.2.4</version>
         </dependency>
         <dependency>
             <groupId>dev.lavalink.youtube</groupId>
             <artifactId>v2</artifactId>
-            <version>1.11.5</version>
+            <version>1.13.3</version>
         </dependency>
         <dependency>
             <groupId>com.github.JustRed23</groupId>
@@ -312,14 +392,14 @@
             <version>0.7.7-1</version>
         </dependency>
         <dependency>
-            <groupId>com.github.whya5448.lavaplayer-jda-nas</groupId>
-            <artifactId>jda-nas</artifactId>
-            <version>1.0.6.4</version>
+            <groupId>com.github.klassenserver7b</groupId>
+            <artifactId>lavaplayer-jda-nas</artifactId>
+            <version>1.7.2</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <version>1.5.17</version>
+            <version>1.5.18</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
         <dependency>
@@ -331,18 +411,18 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.5.17</version>
+            <version>1.5.18</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.49.1.0</version>
+            <version>3.50.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
             <artifactId>httpclient5</artifactId>
-            <version>5.4.3</version>
+            <version>5.5</version>
         </dependency>
         <dependency>
             <groupId>com.github.KevinPriv</groupId>
@@ -353,7 +433,7 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.12.1</version>
+            <version>2.13.1</version>
         </dependency>
         <dependency>
             <groupId>com.github.Ree6-Applications</groupId>
@@ -364,24 +444,24 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.18.3</version>
+            <version>1.21.1</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-text -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
-            <version>1.13.0</version>
+            <version>1.13.1</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>33.4.0-jre</version>
+            <version>33.4.8-jre</version>
         </dependency>
         <dependency>
             <groupId>se.michaelthelin.spotify</groupId>
             <artifactId>spotify-web-api-java</artifactId>
-            <version>9.1.1</version>
+            <version>9.2.0</version>
         </dependency>
         <dependency>
             <groupId>com.vdurmont</groupId>

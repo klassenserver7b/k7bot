@@ -47,15 +47,11 @@ public class SlashCommandManager {
         registerschedule.add(new SubscribeSlashCommand());
         registerschedule.add(new UnSubscribeSlashCommand());
         registerschedule.add(new EqualizerSlashCommand());
-        registerschedule.add(new WhitelistSlashCommand());
         registerschedule.add(new VotingCommand());
         registerschedule.add(new SpeedChangeCommand());
         registerschedule.add(new ClearAudioFilterFilterSlashCommand());
         registerschedule.add(new StableDiffusionCommand());
         registerschedule.add(new TanzmusikAISlashCommand());
-        registerschedule.add(new CheckRoomSlashCommand());
-        registerschedule.add(new SearchForRoomSlashCommand());
-        registerschedule.add(new SearchForTeacherSlashCommand());
         registerschedule.add(new MemesChannelSlashCommand());
         registerschedule.add(new LoggingConfigSlashCommand());
         registerschedule.add(new SystemChannelSlashCommand());

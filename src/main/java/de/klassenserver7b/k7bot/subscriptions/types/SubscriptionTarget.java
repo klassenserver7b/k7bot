@@ -1,9 +1,6 @@
 package de.klassenserver7b.k7bot.subscriptions.types;
 
-import de.klassenserver7b.k7bot.util.customapis.LernsaxInteractions;
-import de.klassenserver7b.k7bot.util.customapis.Stundenplan24Vplan;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Klassenserver7b
@@ -11,37 +8,10 @@ import javax.annotation.Nonnull;
 public enum SubscriptionTarget {
 
     /**
-     * The Type for {@link Stundenplan24Vplan} Subscription, only when Vplan API
-     * enabled.
-     */
-    VPLAN(1, true, true),
-
-    /**
      * The Type for BotNews such as Updates and Fixes, only fully functional when
      * GitHub API enabled.
      */
     BOT_NEWS(2, false, false),
-
-    /**
-     * The Type for {@link LernsaxInteractions} especially 'Lernpläne', only when
-     * Lernsax API enabled
-     */
-    LERNPLAN(3, true, true),
-
-    /**
-     * The Type for updates about the gourmetta foodplan of the day
-     */
-    GOURMETTA(4, true, false),
-
-    /**
-     * The Type for News about Hypixel Syblock
-     */
-    SKYBLOCKNEWS(5, true, false),
-
-    /**
-     * The Type for the dvb departure plan
-     */
-    DVB(6, true, false),
 
     /**
      * Unknown {@link SubscriptionTarget} type. Should never happen and would only
@@ -98,7 +68,7 @@ public enum SubscriptionTarget {
      * @return The {@link SubscriptionTarget} that is referred to by the provided
      * key. If the id key is unknown, {@link #UNKNOWN} is returned.
      */
-    @Nonnull
+    @NotNull
     public static SubscriptionTarget fromId(int id) {
         for (SubscriptionTarget type : values()) {
             if (type.id == id)

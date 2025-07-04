@@ -13,8 +13,8 @@ import net.dv8tion.jda.api.events.role.update.RoleUpdateNameEvent;
 import net.dv8tion.jda.api.events.role.update.RoleUpdatePermissionsEvent;
 import net.dv8tion.jda.api.events.role.update.RoleUpdatePositionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +72,7 @@ public class RoleLoggingListener extends ListenerAdapter {
     }
 
     @Override
-    public void onRoleUpdateName(@Nonnull RoleUpdateNameEvent event) {
+    public void onRoleUpdateName(@NotNull RoleUpdateNameEvent event) {
 
         if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.ROLE_NAME, event.getGuild())) {
             return;
@@ -98,7 +98,7 @@ public class RoleLoggingListener extends ListenerAdapter {
     }
 
     @Override
-    public void onRoleUpdatePermissions(@Nonnull RoleUpdatePermissionsEvent event) {
+    public void onRoleUpdatePermissions(@NotNull RoleUpdatePermissionsEvent event) {
 
         if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.ROLE_PERMISSIONS, event.getGuild())) {
             return;
@@ -145,7 +145,7 @@ public class RoleLoggingListener extends ListenerAdapter {
     }
 
     @Override
-    public void onRoleUpdatePosition(@Nonnull RoleUpdatePositionEvent event) {
+    public void onRoleUpdatePosition(@NotNull RoleUpdatePositionEvent event) {
 
         if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.ROLE_POSITION, event.getGuild())) {
             return;

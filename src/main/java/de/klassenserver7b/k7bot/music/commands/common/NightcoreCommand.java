@@ -5,7 +5,7 @@ package de.klassenserver7b.k7bot.music.commands.common;
 
 import com.github.natanbc.lavadsp.timescale.TimescalePcmAudioFilter;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import de.klassenserver7b.k7bot.HelpCategories;
+import de.klassenserver7b.k7bot.util.HelpCategories;
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;

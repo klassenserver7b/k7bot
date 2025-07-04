@@ -96,7 +96,7 @@ public class TanzmusikAISlashCommand implements TopLevelSlashCommand {
     protected List<String> analyzeSong(File songFile) throws IOException, InterruptedException {
 
         ProcessBuilder pb = new ProcessBuilder();
-        pb.environment().put("TRANSFORMERS_CACHE", "/opt/k7bot/.transformers_cache");
+        pb.environment().put("TRANSFORMERS_CACHE", "/opt/k7bot/resources/tanzmusik/.transformers_cache");
         int exitCode = pb.command("/opt/k7bot/resources/tanzmusik/run_k7bot.sh", songFile.getAbsolutePath()).start().waitFor();
 
         if (exitCode != 0) {

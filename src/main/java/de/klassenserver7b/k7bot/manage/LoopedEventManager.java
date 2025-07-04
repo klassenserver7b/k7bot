@@ -6,14 +6,11 @@ package de.klassenserver7b.k7bot.manage;
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.util.InternalStatusCodes;
 import de.klassenserver7b.k7bot.util.customapis.DBAutodelete;
-import de.klassenserver7b.k7bot.util.customapis.GourmettaInteractions;
-import de.klassenserver7b.k7bot.util.customapis.LernsaxInteractions;
-import de.klassenserver7b.k7bot.util.customapis.Stundenplan24Vplan;
 import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -172,11 +169,11 @@ public class LoopedEventManager {
     /**
      * @param identifiers the identifiers of the events to be removed
      */
-    public void removeEvents(@Nonnull String... identifiers) {
+    public void removeEvents(@NotNull String... identifiers) {
         removeEvents(Arrays.asList(identifiers));
     }
 
-    public void removeEvents(@Nonnull Collection<? extends String> identifiers) {
+    public void removeEvents(@NotNull Collection<? extends String> identifiers) {
 
         List<LoopedEvent> change = new ArrayList<>();
 
@@ -242,21 +239,6 @@ public class LoopedEventManager {
 
         log.info("Await API-ready");
         PropertiesManager propMgr = K7Bot.getInstance().getPropertiesManager();
-
-        if (propMgr.isApiEnabled("lernsax")) {
-            registerEvent(new LernsaxInteractions(), true);
-            log.info("LernsaxAPI registered");
-        }
-
-        if (propMgr.isApiEnabled("vplan")) {
-            registerEvent(new Stundenplan24Vplan("JG12"), true);
-            log.info("VplanAPI registered");
-        }
-
-        if (propMgr.isApiEnabled("gourmetta")) {
-            registerEvent(new GourmettaInteractions(), true);
-            log.info("GourmettaAPI registered");
-        }
 
         registerEvent(new DBAutodelete(), true);
 

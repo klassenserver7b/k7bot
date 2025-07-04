@@ -18,8 +18,8 @@ import net.dv8tion.jda.api.events.guild.GuildBanEvent;
 import net.dv8tion.jda.api.events.guild.GuildUnbanEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateTimeOutEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.awt.*;
 
 import static de.klassenserver7b.k7bot.util.ChannelUtil.getSystemChannel;
@@ -67,7 +67,7 @@ public class ModerationLoggingListener extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMemberUpdateTimeOut(@Nonnull GuildMemberUpdateTimeOutEvent event) {
+    public void onGuildMemberUpdateTimeOut(@NotNull GuildMemberUpdateTimeOutEvent event) {
 
         if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.TIMEOUT, event.getGuild())) {
             return;
@@ -105,7 +105,7 @@ public class ModerationLoggingListener extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildAuditLogEntryCreate(@Nonnull GuildAuditLogEntryCreateEvent event) {
+    public void onGuildAuditLogEntryCreate(@NotNull GuildAuditLogEntryCreateEvent event) {
 
         if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.AUDITLOG_ENTRY_CREATE, event.getGuild())) {
             return;
@@ -125,7 +125,7 @@ public class ModerationLoggingListener extends ListenerAdapter {
     }
 
     @Override
-    public void onAutoModExecution(@Nonnull AutoModExecutionEvent event) {
+    public void onAutoModExecution(@NotNull AutoModExecutionEvent event) {
 
         if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.AUTOMOD_EXECUTED, event.getGuild())) {
             return;
@@ -146,7 +146,7 @@ public class ModerationLoggingListener extends ListenerAdapter {
     }
 
     @Override
-    public void onAutoModRuleCreate(@Nonnull AutoModRuleCreateEvent event) {
+    public void onAutoModRuleCreate(@NotNull AutoModRuleCreateEvent event) {
 
         if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.AUTOMOD_RULE_CREATE, event.getRule().getGuild())) {
             return;
@@ -163,7 +163,7 @@ public class ModerationLoggingListener extends ListenerAdapter {
     }
 
     @Override
-    public void onAutoModRuleDelete(@Nonnull AutoModRuleDeleteEvent event) {
+    public void onAutoModRuleDelete(@NotNull AutoModRuleDeleteEvent event) {
 
         if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.AUTOMOD_RULE_DELETE, event.getRule().getGuild())) {
             return;
@@ -182,7 +182,7 @@ public class ModerationLoggingListener extends ListenerAdapter {
     }
 
     @Override
-    public void onAutoModRuleUpdate(@Nonnull AutoModRuleUpdateEvent event) {
+    public void onAutoModRuleUpdate(@NotNull AutoModRuleUpdateEvent event) {
 
         if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.AUTOMOD_RULE_UPDATE, event.getRule().getGuild())) {
             return;

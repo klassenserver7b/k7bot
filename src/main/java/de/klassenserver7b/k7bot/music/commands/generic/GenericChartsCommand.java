@@ -3,15 +3,15 @@
  */
 package de.klassenserver7b.k7bot.music.commands.generic;
 
-import de.klassenserver7b.k7bot.util.tablemessage.Cell;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
+import de.klassenserver7b.k7bot.util.tablemessage.Cell;
 import de.klassenserver7b.k7bot.util.tablemessage.TableMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 import java.awt.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.Map.Entry;
 
 /**

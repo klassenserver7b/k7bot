@@ -5,8 +5,7 @@ package de.klassenserver7b.k7bot.music.utilities;
 
 import com.sedmelluq.discord.lavaplayer.filter.equalizer.Equalizer;
 import de.klassenserver7b.k7bot.music.utilities.BotAudioEffectsManager.FilterTypes;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  *
@@ -121,7 +120,7 @@ public abstract class BotEqualizer {
          *
          * @return The Bands as a float-array
          */
-        @Nonnull
+        @NotNull
         public float[] getBands() {
             return bands;
         }
@@ -134,7 +133,7 @@ public abstract class BotEqualizer {
          * @return The {@link EqualizerPreset} that is referred to by the provided key.
          * If the id key is unknown, {@link #UNKNOWN} is returned.
          */
-        @Nonnull
+        @NotNull
         public static EqualizerPreset fromId(int id) {
             for (EqualizerPreset type : values()) {
                 if (type.id == id)

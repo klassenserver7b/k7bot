@@ -22,11 +22,11 @@ import de.klassenserver7b.k7bot.music.spotify.loader.SpotifyPlaylistLoader;
 import de.klassenserver7b.k7bot.music.spotify.loader.SpotifyTrackLoader;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
 
-import javax.annotation.Nonnull;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.File;
@@ -68,7 +68,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
      */
     public SpotifyAudioSourceManager(HttpInterfaceManager combinedHttpConfiguration,
                                      SpotifyPlaylistLoader playlistLoader, SpotifyTrackLoader trackLoader,
-                                     @Nonnull SpotifyInteractions spotifyInteract) {
+                                     @NotNull SpotifyInteractions spotifyInteract) {
 
         log = LoggerFactory.getLogger(this.getClass());
         this.combinedHttpConfiguration = combinedHttpConfiguration;

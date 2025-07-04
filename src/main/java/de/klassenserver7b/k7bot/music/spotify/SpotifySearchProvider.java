@@ -1,13 +1,13 @@
 package de.klassenserver7b.k7bot.music.spotify;
 
 import org.apache.hc.core5.http.ParseException;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.specification.Paging;
 import se.michaelthelin.spotify.model_objects.specification.Track;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 
 public class SpotifySearchProvider {
@@ -15,7 +15,7 @@ public class SpotifySearchProvider {
     private final SpotifyInteractions spotifyInteract;
     private final Logger log;
 
-    public SpotifySearchProvider(@Nonnull SpotifyInteractions spotifyInteract) {
+    public SpotifySearchProvider(@NotNull SpotifyInteractions spotifyInteract) {
         this.spotifyInteract = spotifyInteract;
         this.log = LoggerFactory.getLogger(this.getClass());
     }

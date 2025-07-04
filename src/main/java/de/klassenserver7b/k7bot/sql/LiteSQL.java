@@ -10,7 +10,7 @@ import java.sql.*;
 
 public class LiteSQL {
     private static Connection conn;
-    private final static Logger dblog = LoggerFactory.getLogger("Database-Log");
+    private final static Logger dblog = LoggerFactory.getLogger("database-Log");
 
     public static void connect() {
         conn = null;
@@ -45,7 +45,7 @@ public class LiteSQL {
      *
      * @param sqlpattern The SQL-String with placeholders
      * @param parameters The parameters to replace the placeholders with
-     * @return The amount of rows affected by the update
+     * @return The number of rows affected by the update
      */
     public static int onUpdate(String sqlpattern, Object... parameters) {
 

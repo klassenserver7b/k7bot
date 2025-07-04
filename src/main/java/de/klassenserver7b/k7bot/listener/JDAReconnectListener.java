@@ -7,8 +7,7 @@ import de.klassenserver7b.k7bot.util.RestartUtil;
 import net.dv8tion.jda.api.events.session.SessionRecreateEvent;
 import net.dv8tion.jda.api.events.session.SessionResumeEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author K7
@@ -17,14 +16,14 @@ import javax.annotation.Nonnull;
 public class JDAReconnectListener extends ListenerAdapter {
 
 	@Override
-	public void onSessionRecreate(@Nonnull SessionRecreateEvent event) {
+	public void onSessionRecreate(@NotNull SessionRecreateEvent event) {
 
 		RestartUtil.restart();
 
 	}
 	
 	@Override
-	public void onSessionResume(@Nonnull SessionResumeEvent event) {
+	public void onSessionResume(@NotNull SessionResumeEvent event) {
 		RestartUtil.restart();
 
 	}

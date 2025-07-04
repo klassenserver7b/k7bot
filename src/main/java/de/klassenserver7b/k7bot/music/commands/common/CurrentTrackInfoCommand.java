@@ -3,7 +3,7 @@ package de.klassenserver7b.k7bot.music.commands.common;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import de.klassenserver7b.k7bot.HelpCategories;
+import de.klassenserver7b.k7bot.util.HelpCategories;
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;
