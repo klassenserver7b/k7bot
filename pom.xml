@@ -165,7 +165,7 @@
                             <workingDirectory>${project.basedir}</workingDirectory>
                             <arguments>
                                 <argument>target/${project.build.finalName}-full.jar</argument>
-                                <argument>${docker.basedir}/Bot.jar</argument>
+                                <argument>${docker.basedir}</argument>
                             </arguments>
                             <successCodes>
                                 <successCode>0</successCode>
@@ -334,7 +334,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>5.5.1</version>
+            <version>5.6.1</version>
         </dependency>
         <dependency>
             <groupId>dev.arbjerg</groupId>
@@ -344,7 +344,7 @@
         <dependency>
             <groupId>dev.lavalink.youtube</groupId>
             <artifactId>v2</artifactId>
-            <version>1.13.2</version>
+            <version>1.13.3</version>
         </dependency>
         <dependency>
             <groupId>com.github.JustRed23</groupId>
@@ -377,7 +377,7 @@
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.49.1.0</version>
+            <version>3.50.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
