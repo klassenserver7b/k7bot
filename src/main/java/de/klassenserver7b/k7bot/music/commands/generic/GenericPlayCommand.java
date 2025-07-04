@@ -7,6 +7,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
+import de.klassenserver7b.k7bot.music.asms.JellyfinAudioSourceManager;
 import de.klassenserver7b.k7bot.util.HelpCategories;
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
@@ -51,6 +52,7 @@ public abstract class GenericPlayCommand implements ServerCommand {
         this.log = LoggerFactory.getLogger(this.getClass());
 
         apm = new DefaultAudioPlayerManager();
+        apm.registerSourceManager(new JellyfinAudioSourceManager());
         apm.registerSourceManager(new SpotifyAudioSourceManager());
         apm.registerSourceManager(new YoutubeAudioSourceManager());
         apm.registerSourceManager(new ExtendedLocalAudioSourceManager());
