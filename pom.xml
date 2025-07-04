@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.klassenserver7b</groupId>
     <artifactId>k7bot</artifactId>
-    <version>1.26.1.0</version>
+    <version>1.26.2.0</version>
     <packaging>jar</packaging>
     <name>k7bot</name>
     <description>My Discord Bot</description>
@@ -97,6 +97,9 @@
                                     <mainClass>
                                         de.klassenserver7b.k7bot.Main
                                     </mainClass>
+                                    <addDefaultImplementationEntries>
+                                        true
+                                    </addDefaultImplementationEntries>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
@@ -165,7 +168,7 @@
                             <workingDirectory>${project.basedir}</workingDirectory>
                             <arguments>
                                 <argument>target/${project.build.finalName}-full.jar</argument>
-                                <argument>${docker.basedir}</argument>
+                                <argument>${docker.basedir}/Bot.jar</argument>
                             </arguments>
                             <successCodes>
                                 <successCode>0</successCode>
@@ -212,13 +215,13 @@
                                 <argument>compose</argument>
                                 <argument>-f</argument>
                                 <argument>${docker.composefile}</argument>
-                                <argument>down</argument>
+                                <argument>stop</argument>
                             </arguments>
                         </configuration>
                     </execution>
 
                     <execution>
-                        <id>docker-compose-down</id>
+                        <id>docker-compose-rm</id>
                         <phase>deploy</phase>
                         <goals>
                             <goal>exec</goal>
@@ -230,7 +233,8 @@
                                 <argument>compose</argument>
                                 <argument>-f</argument>
                                 <argument>${docker.composefile}</argument>
-                                <argument>down</argument>
+                                <argument>rm</argument>
+                                <argument>-f</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -264,6 +268,24 @@
                             <arguments>
                                 <argument>push</argument>
                                 <argument>${docker.imagename}:latest</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>docker-compose-pull</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>docker</executable>
+                            <workingDirectory>${docker.basedir}</workingDirectory>
+                            <arguments>
+                                <argument>compose</argument>
+                                <argument>-f</argument>
+                                <argument>${docker.composefile}</argument>
+                                <argument>pull</argument>
                             </arguments>
                         </configuration>
                     </execution>

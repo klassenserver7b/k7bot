@@ -1,5 +1,6 @@
 package de.klassenserver7b.k7bot.music.asms;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
@@ -7,6 +8,7 @@ import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import de.klassenserver7b.k7bot.K7Bot;
+import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.core5.http.HttpHost;
@@ -15,6 +17,7 @@ import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -70,24 +73,31 @@ public class JellyfinAudioSourceManager extends HttpAudioSourceManager {
         K7Bot.getInstance().getMainLogger().debug("Searching Jellyfin for query: {}", query);
 
         try {
-            BasicClassicHttpRequest request = new BasicClassicHttpRequest("GET", HttpHost.create(SERVER_URL), "/Search/Hints?mediaTypes=Audio&includeItemTypes=Audio&searchTerm=" + URLEncoder.encode(query));
-
+            BasicClassicHttpRequest request = new BasicClassicHttpRequest("GET", SERVER_URL + "/Search/Hints?mediaTypes=Audio&includeItemTypes=Audio&searchTerm=" + URLEncoder.encode(query));
             request.addHeader("X-MediaBrowser-Token", API_KEY);
-            String[] itemData = httpClient.execute(request, response -> {
 
-                JsonObject mainObj = JsonParser.parseString(response.getEntity().getContent().toString()).getAsJsonObject();
-                JsonObject firstResult = mainObj.get("SearchHints").getAsJsonArray().get(0).getAsJsonObject();
+            String body = httpClient.execute(request, new BasicHttpClientResponseHandler());
 
-                String id = firstResult.get("id").getAsString();
-                String name = firstResult.get("name").getAsString();
+            K7Bot.getInstance().getMainLogger().debug("Jellyfin Query response: {}", body);
 
-                return new String[]{id, name};
-            });
+            JsonObject mainObj = JsonParser.parseString(body).getAsJsonObject();
+            JsonArray searchArray = mainObj.get("SearchHints").getAsJsonArray();
 
-            return loadItemById(audioPlayerManager, itemData[0], itemData[1]);
+            if(searchArray.size() == 0) {
+                K7Bot.getInstance().getMainLogger().info("No results found for Jellyfin query: {}", query);
+                return null;
+            }
 
-        } catch (IOException | URISyntaxException | IllegalStateException e) {
-            K7Bot.getInstance().getMainLogger().error("Error while searching Jellyfin for query: {}", query, e);
+            JsonObject firstResult= searchArray.get(0).getAsJsonObject();;
+
+            String id = firstResult.get("Id").getAsString();
+            String name = firstResult.get("Name").getAsString();
+
+
+            return loadItemById(audioPlayerManager, id, name);
+
+        } catch (IOException | IllegalStateException e) {
+            K7Bot.getInstance().getMainLogger().warn("Error while searching Jellyfin for query: {}", query, e);
             return null;
         }
     }
@@ -106,13 +116,13 @@ public class JellyfinAudioSourceManager extends HttpAudioSourceManager {
         try {
             BasicClassicHttpRequest request = new BasicClassicHttpRequest("GET", HttpHost.create(SERVER_URL), "/Items/?ids" + itemId);
             request.addHeader("X-MediaBrowser-Token", API_KEY);
-            return httpClient.execute(request, response -> {
-                JsonObject mainObj = JsonParser.parseString(response.getEntity().getContent().toString()).getAsJsonObject();
-                return mainObj.get("Items").getAsJsonArray().get(0).getAsJsonObject().get("Name").getAsString();
-            });
+            String body = httpClient.execute(request, new BasicHttpClientResponseHandler());
+
+            JsonObject mainObj = JsonParser.parseString(body).getAsJsonObject();
+            return mainObj.get("Items").getAsJsonArray().get(0).getAsJsonObject().get("Name").getAsString();
 
         } catch (IOException | URISyntaxException | IllegalStateException e) {
-            K7Bot.getInstance().getMainLogger().error("Error while loading item details for id : {}", itemId, e);
+            K7Bot.getInstance().getMainLogger().warn("Error while loading item details for id : {}", itemId, e);
             return "Unknown Item";
         }
     }

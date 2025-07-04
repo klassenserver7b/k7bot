@@ -39,6 +39,7 @@ public class CommandManager {
         this.commands.add(new HelpCommand());
         this.commands.add(new PrefixCommand());
         this.commands.add(new PingCommand());
+        this.commands.add(new VersionCommand());
         this.commands.add(new SystemChannelCommand());
         this.commands.add(new RestartCommand());
         this.commands.add(new ShutdownCommand());

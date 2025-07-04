@@ -21,7 +21,9 @@ public enum SupportedPlayQueries {
 
     SoundCloudSearch(4, "scsearch:"),
 
-    SpotifySearch(5, "spsearch:");
+    SpotifySearch(5, "spsearch:"),
+
+    JellyfinSearch(6, "jfsearch:");
 
     private final int id;
     private final String searchSuffix;
