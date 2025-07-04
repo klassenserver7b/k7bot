@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.klassenserver7b</groupId>
     <artifactId>k7bot</artifactId>
-    <version>1.26.0.0</version>
+    <version>1.26.1.0</version>
     <packaging>jar</packaging>
     <name>k7bot</name>
     <description>My Discord Bot</description>
@@ -199,6 +199,24 @@
                     </execution>
 
                     <!-- Restart the local Bot -->
+                    <execution>
+                        <id>docker-compose-down</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>docker</executable>
+                            <workingDirectory>${docker.basedir}</workingDirectory>
+                            <arguments>
+                                <argument>compose</argument>
+                                <argument>-f</argument>
+                                <argument>${docker.composefile}</argument>
+                                <argument>down</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+
                     <execution>
                         <id>docker-compose-down</id>
                         <phase>deploy</phase>

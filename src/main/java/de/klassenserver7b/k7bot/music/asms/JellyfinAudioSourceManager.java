@@ -14,6 +14,7 @@ import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,7 +70,8 @@ public class JellyfinAudioSourceManager extends HttpAudioSourceManager {
         K7Bot.getInstance().getMainLogger().debug("Searching Jellyfin for query: {}", query);
 
         try {
-            BasicClassicHttpRequest request = new BasicClassicHttpRequest("GET", HttpHost.create(SERVER_URL), "/Search/Hints?mediaTypes=Audio&includeItemTypes=Audio&searchTerm=" + query);
+            BasicClassicHttpRequest request = new BasicClassicHttpRequest("GET", HttpHost.create(SERVER_URL), "/Search/Hints?mediaTypes=Audio&includeItemTypes=Audio&searchTerm=" + URLEncoder.encode(query));
+
             request.addHeader("X-MediaBrowser-Token", API_KEY);
             String[] itemData = httpClient.execute(request, response -> {
 
