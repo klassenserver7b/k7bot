@@ -46,7 +46,7 @@
             <plugin>
                 <inherited>true</inherited>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.5.0</version>
+                <version>3.6.0</version>
                 <executions>
                     <execution>
                         <id>enforce-maven-3</id>
