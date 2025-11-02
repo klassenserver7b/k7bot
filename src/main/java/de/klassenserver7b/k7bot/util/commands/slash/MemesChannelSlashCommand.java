@@ -9,6 +9,7 @@ import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.unions.GuildChannelUnion;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -66,7 +67,7 @@ public class MemesChannelSlashCommand implements TopLevelSlashCommand {
                 .addSubcommands(new SubcommandData("remove", "removes a memechannel")
                         .addOptions(new OptionData(OptionType.CHANNEL, "channel", "the channel to use")
                                 .setRequired(true).setChannelTypes(ChannelType.TEXT)))
-                .setGuildOnly(true);
+                .setContexts(InteractionContextType.GUILD);
     }
 
 }

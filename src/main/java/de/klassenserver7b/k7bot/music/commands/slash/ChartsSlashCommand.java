@@ -5,6 +5,7 @@ import de.klassenserver7b.k7bot.music.commands.generic.GenericChartsCommand;
 import de.klassenserver7b.k7bot.music.utilities.ChartList;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.Command.Choice;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -121,7 +122,7 @@ public class ChartsSlashCommand extends GenericChartsCommand implements TopLevel
                 .addOption(OptionType.INTEGER, "time",
                         "REQUIRES TIMEUNIT! - Wie viele TimeUnits soll der Bot zur Chartbestimmung berücksichtigen")
                 .addOptions(new OptionData(OptionType.STRING, "timeunit", "see choices").addChoices(choices))
-                .setGuildOnly(true);
+                .setContexts(InteractionContextType.GUILD);
     }
 
 }

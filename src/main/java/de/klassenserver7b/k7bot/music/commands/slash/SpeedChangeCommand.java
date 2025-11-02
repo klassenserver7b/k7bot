@@ -13,6 +13,7 @@ import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -95,7 +96,7 @@ public class SpeedChangeCommand implements TopLevelSlashCommand {
                                 .setRequiredRange(0, 2),
                         new OptionData(OptionType.BOOLEAN, "changepitch", "whether the pitch should be changed default: true",
                                 false))
-                .setGuildOnly(true);
+                .setContexts(InteractionContextType.GUILD);
     }
 
 }

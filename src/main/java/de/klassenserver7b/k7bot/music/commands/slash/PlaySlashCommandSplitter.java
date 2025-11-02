@@ -7,6 +7,7 @@ import de.klassenserver7b.k7bot.commands.types.SubSlashCommand;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -52,7 +53,7 @@ public class PlaySlashCommandSplitter implements TopLevelSlashCommand {
                 .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.VOICE_CONNECT))
                 .setDescriptionLocalization(DiscordLocale.GERMAN,
                         "Spielt den/die ausgewählte/-n Track / Livestream / Playlist")
-                .setGuildOnly(true);
+                .setContexts(InteractionContextType.GUILD);
     }
 
     @Override

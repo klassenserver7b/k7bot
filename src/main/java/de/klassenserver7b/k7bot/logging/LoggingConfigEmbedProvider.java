@@ -9,17 +9,18 @@ import de.klassenserver7b.k7bot.util.KAutoCloseable;
 import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.components.MessageTopLevelComponent;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.actionrow.ActionRowChildComponent;
+import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.selections.StringSelectMenu;
+import net.dv8tion.jda.api.components.selections.StringSelectMenu.Builder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.InteractionHook;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.ItemComponent;
-import net.dv8tion.jda.api.interactions.components.LayoutComponent;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -158,12 +159,12 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
         return embbuild.build();
     }
 
-    protected List<LayoutComponent> buildCatSelectActionRows() {
+    protected List<MessageTopLevelComponent> buildCatSelectActionRows() {
 
-        List<LayoutComponent> rows = new LinkedList<>();
-        List<ItemComponent> strSelect = new LinkedList<>();
+        List<MessageTopLevelComponent> rows = new LinkedList<>();
+        List<ActionRowChildComponent> strSelect = new LinkedList<>();
 
-        StringSelectMenu.Builder strSelectBuilder = StringSelectMenu.create("logging-choose-category");
+        Builder strSelectBuilder = StringSelectMenu.create("logging-choose-category");
 
         for (LoggingOptions option : LoggingOptions.values()) {
             if (option.getId() % 10 == 0) {
@@ -212,7 +213,7 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
             strbuild.append("`");
             strbuild.append(opt.toString());
 
-            strbuild.append(" ".repeat(Math.max(0, 30 - opt.toString().toCharArray().length)));
+            strbuild.append(" ".repeat(Math.max(0, 30 - opt.toString().length())));
 
             strbuild.append(" - ");
             strbuild.append("`");
@@ -229,23 +230,23 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
         return embbuild.build();
     }
 
-    protected List<LayoutComponent> buildCatOptionsActionRows(List<Integer> catIds) {
+    protected List<MessageTopLevelComponent> buildCatOptionsActionRows(List<Integer> catIds) {
 
         int idRange = category.getId();
 
-        List<ItemComponent> buttonRow = new LinkedList<>();
+        List<ActionRowChildComponent> buttonRow = new LinkedList<>();
 
         buttonRow.add(Button.primary("logging-cat-enableall-" + idRange, "Enable All"));
         buttonRow.add(Button.primary("logging-cat-disableall-" + idRange, "Disable All"));
         buttonRow.add(Button.danger("logging-cat-back-00", "Back"));
 
-        StringSelectMenu.Builder strSelectBuilder = StringSelectMenu.create("logging-single-select");
+        Builder strSelectBuilder = StringSelectMenu.create("logging-single-select");
 
         for (int catid : catIds) {
             strSelectBuilder.addOption(LoggingOptions.byId(catid).toString(), "logging-catid-" + catid);
         }
 
-        List<LayoutComponent> rows = new LinkedList<>();
+        List<MessageTopLevelComponent> rows = new LinkedList<>();
         rows.add(ActionRow.of(buttonRow));
         rows.add(ActionRow.of(strSelectBuilder.build()));
 

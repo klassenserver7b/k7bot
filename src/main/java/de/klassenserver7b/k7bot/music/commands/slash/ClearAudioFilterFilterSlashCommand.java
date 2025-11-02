@@ -11,6 +11,7 @@ import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -61,7 +62,7 @@ public class ClearAudioFilterFilterSlashCommand implements TopLevelSlashCommand 
     @Override
     public SlashCommandData getCommandData() {
         return Commands.slash("audiofilterclear", "removes all audio filters from the current player")
-                .setGuildOnly(true);
+                .setContexts(InteractionContextType.GUILD);
     }
 
 }
