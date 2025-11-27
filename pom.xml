@@ -134,6 +134,10 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
+	    <plugin>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>4.0.0-M16</version>
+            </plugin>
         </plugins>
     </build>
     <reporting>
