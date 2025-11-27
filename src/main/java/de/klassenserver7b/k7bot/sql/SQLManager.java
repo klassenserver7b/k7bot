@@ -1,9 +1,8 @@
-
 package de.klassenserver7b.k7bot.sql;
 
 public class SQLManager {
 
-	//@formatter:off
+    //@formatter:off
 	public static void onCreate() {
 
 		LiteSQL.onUpdate(

@@ -12,6 +12,7 @@ import de.klassenserver7b.k7bot.music.utilities.MusicUtil;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.Command.Choice;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
@@ -82,7 +83,7 @@ public class EqualizerSlashCommand implements TopLevelSlashCommand {
         return Commands.slash("equalizer", "used to set up the equalizer of the bot.")
                 .addOptions(new OptionData(OptionType.STRING, "preset", "please select an equalizer preset.")
                         .addChoices(choices).setRequired(true))
-                .setGuildOnly(true)
+                .setContexts(InteractionContextType.GUILD)
                 .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.VOICE_CONNECT));
     }
 

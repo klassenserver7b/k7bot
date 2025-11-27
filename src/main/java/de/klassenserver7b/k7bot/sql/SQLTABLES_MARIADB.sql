@@ -1,39 +1,154 @@
-CREATE TABLE IF NOT EXISTS reactroles(guildId INTEGER NOT NULL, channelId INTEGER, messageId INTEGER NOT NULL, emote VARCHAR(255) NOT NULL, roleId INTEGER NOT NULL, PRIMARY KEY(guildId, channelId, messageId, emote));
+CREATE TABLE IF NOT EXISTS reactroles
+(
+    guildId   INTEGER      NOT NULL,
+    channelId INTEGER,
+    messageId INTEGER      NOT NULL,
+    emote     VARCHAR(255) NOT NULL,
+    roleId    INTEGER      NOT NULL,
+    PRIMARY KEY (guildId, channelId, messageId, emote)
+);
 
-CREATE TABLE IF NOT EXISTS modlogs(id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY, guildId INTEGER, memberId INTEGER NOT NULL, requesterId INTEGER NOT NULL, memberName TEXT, requesterName TEXT, action TEXT, reason TEXT, date DATETIME);
+CREATE TABLE IF NOT EXISTS modlogs
+(
+    id            INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    guildId       INTEGER,
+    memberId      INTEGER NOT NULL,
+    requesterId   INTEGER NOT NULL,
+    memberName    TEXT,
+    requesterName TEXT,
+    action        TEXT,
+    reason        TEXT,
+    date          DATETIME
+);
 
-CREATE TABLE IF NOT EXISTS createdprivatevcs(guildId INTEGER NOT NULL, channelId INTEGER NOT NULL, PRIMARY KEY (guildId, channelId));
+CREATE TABLE IF NOT EXISTS createdprivatevcs
+(
+    guildId   INTEGER NOT NULL,
+    channelId INTEGER NOT NULL,
+    PRIMARY KEY (guildId, channelId)
+);
 
-CREATE TABLE IF NOT EXISTS musicutil(guildId INTEGER NOT NULL PRIMARY KEY, channelId INTEGER, volume INTEGER NOT NULL DEFAULT 10);
+CREATE TABLE IF NOT EXISTS musicutil
+(
+    guildId   INTEGER NOT NULL PRIMARY KEY,
+    channelId INTEGER,
+    volume    INTEGER NOT NULL DEFAULT 10
+);
 
-CREATE TABLE IF NOT EXISTS statschannels(guildId INTEGER NOT NULL PRIMARY KEY, categoryId INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS statschannels
+(
+    guildId    INTEGER NOT NULL PRIMARY KEY,
+    categoryId INTEGER NOT NULL
+);
 
-CREATE TABLE IF NOT EXISTS botutil(guildId INTEGER PRIMARY KEY, syschannelId INTEGER, prefix TEXT NOT NULL DEFAULT '-');
+CREATE TABLE IF NOT EXISTS botutil
+(
+    guildId      INTEGER PRIMARY KEY,
+    syschannelId INTEGER,
+    prefix       TEXT NOT NULL DEFAULT '-'
+);
 
-CREATE TABLE IF NOT EXISTS vplancurrent(id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY, targetDate DATE, classEntrys INTEGER);
+CREATE TABLE IF NOT EXISTS vplancurrent
+(
+    id          INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    targetDate  DATE,
+    classEntrys INTEGER
+);
 
-CREATE TABLE IF NOT EXISTS vplannext(id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY, targetDate DATE, classEntrys INTEGER);
+CREATE TABLE IF NOT EXISTS vplannext
+(
+    id          INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    targetDate  DATE,
+    classEntrys INTEGER
+);
 
-CREATE TABLE IF NOT EXISTS musiclogs(id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY, songname TEXT, songauthor TEXT, guildId INTEGER, timestamp INTEGER);
+CREATE TABLE IF NOT EXISTS musiclogs
+(
+    id         INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    songname   TEXT,
+    songauthor TEXT,
+    guildId    INTEGER,
+    timestamp  INTEGER
+);
 
-CREATE TABLE IF NOT EXISTS commandlog(id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY, command TEXT, guildId INTEGER, userId INTEGER, timestamp INTEGER);
+CREATE TABLE IF NOT EXISTS commandlog
+(
+    id        INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    command   TEXT,
+    guildId   INTEGER,
+    userId    INTEGER,
+    timestamp INTEGER
+);
 
-CREATE TABLE IF NOT EXISTS slashcommandlog(id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY, command TEXT, guildId INTEGER, userId INTEGER, timestamp INTEGER, commandstring TEXT);
+CREATE TABLE IF NOT EXISTS slashcommandlog
+(
+    id            INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    command       TEXT,
+    guildId       INTEGER,
+    userId        INTEGER,
+    timestamp     INTEGER,
+    commandstring TEXT
+);
 
-CREATE TABLE IF NOT EXISTS lernsaxinteractions(id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY, lernplanId TEXT);
+CREATE TABLE IF NOT EXISTS lernsaxinteractions
+(
+    id         INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    lernplanId TEXT
+);
 
-CREATE TABLE IF NOT EXISTS gourmettaInteractions(id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY, lastday LONG);
+CREATE TABLE IF NOT EXISTS gourmettaInteractions
+(
+    id      INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    lastday LONG
+);
 
-CREATE TABLE IF NOT EXISTS githubinteractions(id INTEGER NOT NUlL AUTO_INCREMENT PRIMARY KEY, lastcommit TEXT);
+CREATE TABLE IF NOT EXISTS githubinteractions
+(
+    id         INTEGER NOT NUlL AUTO_INCREMENT PRIMARY KEY,
+    lastcommit TEXT
+);
 
-CREATE TABLE IF NOT EXISTS subscriptions(id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY, type INTEGER NOT NULL, target INTEGER NOT NULL, targetDcId INTEGER NOT NULL, subscriptionId INTEGER);
+CREATE TABLE IF NOT EXISTS subscriptions
+(
+    id             INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    type           INTEGER NOT NULL,
+    target         INTEGER NOT NULL,
+    targetDcId     INTEGER NOT NULL,
+    subscriptionId INTEGER
+);
 
-CREATE TABLE IF NOT EXISTS vplandata(lesson INTEGER, room TINYTEXT);
+CREATE TABLE IF NOT EXISTS vplandata
+(
+    lesson INTEGER,
+    room   TINYTEXT
+);
 
-CREATE TABLE IF NOT EXISTS userreacts(userId INTEGER NOT NULL, guildId INTEGER, messageId INTEGER NOT NULL, emote VARCHAR(255) NOT NULL, state BOOLEAN, PRIMARY KEY(userId, guildId, messageId, emote));
+CREATE TABLE IF NOT EXISTS userreacts
+(
+    userId    INTEGER      NOT NULL,
+    guildId   INTEGER,
+    messageId INTEGER      NOT NULL,
+    emote     VARCHAR(255) NOT NULL,
+    state     BOOLEAN,
+    PRIMARY KEY (userId, guildId, messageId, emote)
+);
 
-CREATE TABLE IF NOT EXISTS messagelogs(messageId INTEGER NOT NULL PRIMARY KEY, guildId INTEGER, timestamp INTEGER, authorId INTEGER, messageText TEXT);
+CREATE TABLE IF NOT EXISTS messagelogs
+(
+    messageId   INTEGER NOT NULL PRIMARY KEY,
+    guildId     INTEGER,
+    timestamp   INTEGER,
+    authorId    INTEGER,
+    messageText TEXT
+);
 
-CREATE TABLE IF NOT EXISTS memechannels(channelId INTEGER NOT NULL PRIMARY KEY);
+CREATE TABLE IF NOT EXISTS memechannels
+(
+    channelId INTEGER NOT NULL PRIMARY KEY
+);
 
-CREATE TABLE IF NOT EXISTS loggingConfig (guildId INTEGER NOT NULL PRIMARY KEY, optionJson TEXT NOT NULL DEFAULT '[]');
+CREATE TABLE IF NOT EXISTS loggingConfig
+(
+    guildId    INTEGER NOT NULL PRIMARY KEY,
+    optionJson TEXT    NOT NULL DEFAULT '[]'
+);

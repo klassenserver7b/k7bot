@@ -1,4 +1,3 @@
-
 package de.klassenserver7b.k7bot.logging.listeners;
 
 import de.klassenserver7b.k7bot.logging.LoggingConfigDBHandler;

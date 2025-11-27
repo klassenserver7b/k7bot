@@ -11,21 +11,20 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author K7
- *
  */
 public class JDAReconnectListener extends ListenerAdapter {
 
-	@Override
-	public void onSessionRecreate(@NotNull SessionRecreateEvent event) {
+    @Override
+    public void onSessionRecreate(@NotNull SessionRecreateEvent event) {
 
-		RestartUtil.restart();
+        RestartUtil.restart();
 
-	}
-	
-	@Override
-	public void onSessionResume(@NotNull SessionResumeEvent event) {
-		RestartUtil.restart();
+    }
 
-	}
+    @Override
+    public void onSessionResume(@NotNull SessionResumeEvent event) {
+        RestartUtil.restart();
+
+    }
 
 }

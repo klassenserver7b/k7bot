@@ -4,6 +4,6 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.jetbrains.annotations.NotNull;
 
 public interface TopLevelSlashCommand extends SlashCommand {
-	@NotNull
-	SlashCommandData getCommandData();
+    @NotNull
+    SlashCommandData getCommandData();
 }

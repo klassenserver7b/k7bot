@@ -62,7 +62,7 @@ public class TanzmusikAISlashCommand implements TopLevelSlashCommand {
             File songFile = downloadAttachment(event.getOption("song").getAsAttachment());
             results = analyzeSong(songFile);
             log.debug("State of Songfile deletion: {}, {}", songFile, songFile.delete());
-            
+
 
         } catch (IOException | InterruptedException | ExecutionException e) {
             hook.sendMessageEmbeds(EmbedUtils.getErrorEmbed("Failed to analyze the song").setTitle("500 - Internal Server Error").build()).queue();

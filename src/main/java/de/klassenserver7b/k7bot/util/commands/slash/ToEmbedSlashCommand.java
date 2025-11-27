@@ -17,51 +17,51 @@ import java.awt.*;
 
 public class ToEmbedSlashCommand implements TopLevelSlashCommand {
 
-	@Override
-	public void performSlashCommand(SlashCommandInteraction event) {
+    @Override
+    public void performSlashCommand(SlashCommandInteraction event) {
 
-		if (event.getMember().hasPermission(Permission.MESSAGE_SEND)) {
+        if (event.getMember().hasPermission(Permission.MESSAGE_SEND)) {
 
-			OptionMapping title = event.getOption("title");
-			OptionMapping description = event.getOption("description");
-			OptionMapping coloropt = event.getOption("color");
+            OptionMapping title = event.getOption("title");
+            OptionMapping description = event.getOption("description");
+            OptionMapping coloropt = event.getOption("color");
 
-			InteractionHook hook = event.deferReply().complete();
+            InteractionHook hook = event.deferReply().complete();
 
-			EmbedBuilder builder = EmbedUtils.getBuilderOf(description.getAsString().replaceAll("<br>", "\n"), event.getGuild().getIdLong());
+            EmbedBuilder builder = EmbedUtils.getBuilderOf(description.getAsString().replaceAll("<br>", "\n"), event.getGuild().getIdLong());
 
-			builder.setTitle(title.getAsString());
-			builder.setFooter("requested by @" + event.getMember().getEffectiveName());
+            builder.setTitle(title.getAsString());
+            builder.setFooter("requested by @" + event.getMember().getEffectiveName());
 
-			if (coloropt != null) {
+            if (coloropt != null) {
 
-				String colortxt;
-				colortxt = coloropt.getAsString();
+                String colortxt;
+                colortxt = coloropt.getAsString();
 
-				if (!colortxt.startsWith("#")) {
-					colortxt = "#" + colortxt;
-				}
+                if (!colortxt.startsWith("#")) {
+                    colortxt = "#" + colortxt;
+                }
 
-				Color color = Color.decode(colortxt);
-				builder.setColor(color);
+                Color color = Color.decode(colortxt);
+                builder.setColor(color);
 
-			}
+            }
 
-			hook.sendMessageEmbeds(builder.build()).queue();
+            hook.sendMessageEmbeds(builder.build()).queue();
 
-		} else {
+        } else {
 
-			PermissionError.onPermissionError(event.getMember(), event.getChannel().asGuildMessageChannel());
-		}
+            PermissionError.onPermissionError(event.getMember(), event.getChannel().asGuildMessageChannel());
+        }
 
-	}
+    }
 
-	@Override
-	public @NotNull SlashCommandData getCommandData() {
-		return Commands.slash("toembed", "Erstellt einen Embed mit den gegebenen Parametern")
-				.addOption(OptionType.STRING, "title", "Welchen Titel soll der Embed haben?", true)
-				.addOption(OptionType.STRING, "description", "Welchen Inhalt soll der Embed haben?", true)
-				.addOption(OptionType.STRING, "color", "Die Farbe des Embeds als hexadezimale Zahl");
-	}
+    @Override
+    public @NotNull SlashCommandData getCommandData() {
+        return Commands.slash("toembed", "Erstellt einen Embed mit den gegebenen Parametern")
+                .addOption(OptionType.STRING, "title", "Welchen Titel soll der Embed haben?", true)
+                .addOption(OptionType.STRING, "description", "Welchen Inhalt soll der Embed haben?", true)
+                .addOption(OptionType.STRING, "color", "Die Farbe des Embeds als hexadezimale Zahl");
+    }
 
 }

@@ -12,11 +12,10 @@ import java.util.function.Function;
 
 /**
  * @author K7
- *
  */
 public interface SpotifyPlaylistLoader {
 
-	AudioPlaylist load(SpotifyInteractions spotifyinteract, String playlistId, String selectedVideoId,
-					   Function<AudioTrackInfo, AudioTrack> trackFactory);
+    AudioPlaylist load(SpotifyInteractions spotifyinteract, String playlistId, String selectedVideoId,
+                       Function<AudioTrackInfo, AudioTrack> trackFactory);
 
 }

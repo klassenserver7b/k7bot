@@ -1,12 +1,12 @@
 package de.klassenserver7b.k7bot.music.commands.common;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import de.klassenserver7b.k7bot.util.HelpCategories;
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.music.lavaplayer.MusicController;
 import de.klassenserver7b.k7bot.music.lavaplayer.Queue;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
+import de.klassenserver7b.k7bot.util.HelpCategories;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;

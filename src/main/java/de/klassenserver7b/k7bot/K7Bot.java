@@ -1,6 +1,7 @@
 package de.klassenserver7b.k7bot;
 
 import com.jagrosh.jlyrics.LyricsClient;
+import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
@@ -17,6 +18,7 @@ import de.klassenserver7b.k7bot.sql.SQLManager;
 import de.klassenserver7b.k7bot.subscriptions.SubscriptionManager;
 import de.klassenserver7b.k7bot.threads.ConsoleReadThread;
 import de.klassenserver7b.k7bot.threads.LoopThread;
+import de.klassenserver7b.k7bot.tu.navigator.TUNavigator;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -26,7 +28,6 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
-import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +66,7 @@ public class K7Bot {
     private LyricsClient lyricsapi;
     private GLAWrapper lyricsapiold;
     private SpotifyInteractions spotifyinteractions;
+    private TUNavigator tuNavigator;
 
     private Long ownerId;
     private boolean exit = false;
@@ -221,6 +223,8 @@ public class K7Bot {
         this.lyricsapiold = new GLAWrapper();
 
         this.spotifyinteractions = new SpotifyInteractions();
+
+        this.tuNavigator = new TUNavigator();
 
         InitializeMusic(this.audioPlayerManager);
 
@@ -414,6 +418,10 @@ public class K7Bot {
      */
     public SlashCommandManager getslashMan() {
         return this.slashMgr;
+    }
+
+    public TUNavigator getTuNavigator() {
+        return tuNavigator;
     }
 
     /**

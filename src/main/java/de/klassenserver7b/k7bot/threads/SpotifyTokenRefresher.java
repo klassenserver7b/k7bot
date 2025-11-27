@@ -4,7 +4,6 @@
 package de.klassenserver7b.k7bot.threads;
 
 import de.klassenserver7b.k7bot.K7Bot;
-import org.apache.hc.client5.http.HttpResponseException;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ParseException;

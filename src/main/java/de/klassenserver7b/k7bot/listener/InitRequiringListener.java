@@ -16,7 +16,7 @@ public interface InitRequiringListener {
      * Initializes the Listener (usually checking stuff happened in off time)
      *
      * @return {@link CompletableFuture} which retuns the "exit code" of the
-     *         inmitialization
+     * inmitialization
      */
     CompletableFuture<Integer> initialize();
 

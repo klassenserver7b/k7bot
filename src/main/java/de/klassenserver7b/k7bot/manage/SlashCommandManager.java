@@ -9,6 +9,7 @@ import de.klassenserver7b.k7bot.music.commands.slash.*;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.subscriptions.commands.SubscribeSlashCommand;
 import de.klassenserver7b.k7bot.subscriptions.commands.UnSubscribeSlashCommand;
+import de.klassenserver7b.k7bot.tu.commands.slash.TUNavigateSlashCommand;
 import de.klassenserver7b.k7bot.util.commands.slash.ClearSlashCommand;
 import de.klassenserver7b.k7bot.util.commands.slash.MemesChannelSlashCommand;
 import de.klassenserver7b.k7bot.util.commands.slash.ReactRolesSlashCommand;
@@ -48,6 +49,7 @@ public class SlashCommandManager {
         registerschedule.add(new UnSubscribeSlashCommand());
         registerschedule.add(new EqualizerSlashCommand());
         registerschedule.add(new VotingCommand());
+        registerschedule.add(new TUNavigateSlashCommand());
         registerschedule.add(new SpeedChangeCommand());
         registerschedule.add(new ClearAudioFilterFilterSlashCommand());
         registerschedule.add(new StableDiffusionCommand());

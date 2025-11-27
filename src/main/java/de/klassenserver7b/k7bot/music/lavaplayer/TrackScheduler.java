@@ -21,7 +21,7 @@ public class TrackScheduler extends AudioEventAdapter {
 
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack track) {
-        
+
         TrackScheduler.next = false;
 
         long guildid = K7Bot.getInstance().getPlayerUtil().getGuildbyPlayerHash(player.hashCode());

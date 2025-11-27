@@ -6,6 +6,7 @@ import de.klassenserver7b.k7bot.manage.SystemNotificationChannelManager;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -37,7 +38,7 @@ public class SystemChannelSlashCommand implements TopLevelSlashCommand {
         return Commands.slash("syschannel", "change syschannel")
                 .addOptions(new OptionData(OptionType.CHANNEL, "channel", "the channel to use")
                         .setChannelTypes(ChannelType.TEXT).setRequired(true))
-                .setGuildOnly(true)
+                .setContexts(InteractionContextType.GUILD)
                 .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_SERVER));
     }
 
