@@ -9,7 +9,6 @@
 commit.txt
 bot.properties
 /resources
-/docker/resources
 /docker/Bot.jar
 .classpath
 .project
