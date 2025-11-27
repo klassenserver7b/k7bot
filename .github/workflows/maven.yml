@@ -1,11 +1,6 @@
 # This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
 
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
 name: Java CI with Maven
 
 on:
@@ -16,22 +11,39 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    
+    strategy:
+      matrix:
+        java-version: ['21', '23']
 
     steps:
     - uses: actions/checkout@v6
-    - name: Set up JDK 21
+    
+    - name: Set up JDK ${{ matrix.java-version }}
       uses: actions/setup-java@v5
       with:
-        java-version: '21'
+        java-version: ${{ matrix.java-version }}
         distribution: 'zulu'
         cache: maven
+    
     - name: Build with Maven
       run: mvn -B clean package --file pom.xml
+    
+    - name: Run tests
+      run: mvn -B test --file pom.xml
+    
+    - name: Upload build artifact (Java 21 only)
+      if: matrix.java-version == '21'
+      uses: actions/upload-artifact@v4
+      with:
+        name: k7bot-jar
+        path: target/k7bot-*-full.jar
+        retention-days: 30
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
-    - name: Update dependency graph
+    - name: Update dependency graph (Java 21 only)
+      if: matrix.java-version == '21'
       uses: advanced-security/maven-dependency-submission-action@v5
