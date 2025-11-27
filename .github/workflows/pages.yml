@@ -47,7 +47,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v4
       with:
-        path: 'target/mvn-site'
+        path: 'target/site'
     
     - name: Deploy to GitHub Pages
       id: deployment
