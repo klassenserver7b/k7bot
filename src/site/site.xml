@@ -1,7 +1,17 @@
-<site xmlns="http://maven.apache.org/SITE/2.0.0" name="k7bot">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/DECORATION/1.8.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/DECORATION/1.8.0
+                             http://maven.apache.org/xsd/decoration-1.8.0.xsd"
+         name="k7bot">
 
-    <bannerLeft name="K7Bot" href="https://github.com/klassenserver7b/Klassenserver7bBot">
-        <image src="https://avatars.githubusercontent.com/u/79657220?v=4" alt="logo" width="55px" height="55px"/>
+    <bannerLeft>
+        <name>K7Bot</name>
+        <src>https://avatars.githubusercontent.com/u/79657220?v=4</src>
+        <alt>logo</alt>
+        <href>https://github.com/klassenserver7b/Klassenserver7bBot</href>
+        <width>55</width>
+        <height>55</height>
     </bannerLeft>
 
     <skin>
@@ -14,4 +24,4 @@
         <menu ref="parent"/>
         <menu ref="reports"/>
     </body>
-</site>
+</project>
