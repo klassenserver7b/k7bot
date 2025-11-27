@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.klassenserver7b</groupId>
     <artifactId>k7bot</artifactId>
-    <version>1.27.2.0</version>
+    <version>1.27.3.0</version>
     <packaging>jar</packaging>
     <name>k7bot</name>
     <description>My Discord Bot</description>
@@ -15,9 +15,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <docker.basedir>${project.basedir}/docker</docker.basedir>
-        <docker.composefile>/opt/docker-container/k7bot/docker-compose.yml</docker.composefile>
-        <docker.imagename>klassenserver7b/${project.artifactId}</docker.imagename>
     </properties>
 
     <developers>
@@ -136,187 +133,6 @@
                 <configuration>
                     <skip>true</skip>
                 </configuration>
-            </plugin>
-
-            <!-- Docker Building -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.6.2</version>
-                <executions>
-                    <!-- Remove existing image from local repo -->
-                    <execution>
-                        <id>docker-clean</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>docker</executable>
-                            <workingDirectory>${docker.basedir}</workingDirectory>
-                            <arguments>
-                                <argument>rmi</argument>
-                                <argument>${docker.imagename}</argument>
-                            </arguments>
-                            <successCodes>
-                                <successCode>0</successCode>
-                                <successCode>1</successCode>
-                            </successCodes>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>copy jar</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>cp</executable>
-                            <workingDirectory>${project.basedir}</workingDirectory>
-                            <arguments>
-                                <argument>target/${project.build.finalName}-full.jar</argument>
-                                <argument>${docker.basedir}/Bot.jar</argument>
-                            </arguments>
-                            <successCodes>
-                                <successCode>0</successCode>
-                                <successCode>1</successCode>
-                            </successCodes>
-                        </configuration>
-                    </execution>
-
-                    <!--
-                      Create new docker image using Dockerfile which must be present in current working directory.
-                      Tag the image using maven project version information.
-                    -->
-                    <execution>
-                        <id>docker-build</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>docker</executable>
-                            <workingDirectory>${docker.basedir}</workingDirectory>
-                            <arguments>
-                                <argument>build</argument>
-                                <argument>-t</argument>
-                                <argument>${docker.imagename}:latest</argument>
-                                <argument>-t</argument>
-                                <argument>${docker.imagename}:${project.version}</argument>
-                                <argument>${docker.basedir}</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-
-                    <!-- Restart the local Bot -->
-                    <execution>
-                        <id>docker-compose-down</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>docker</executable>
-                            <workingDirectory>${docker.basedir}</workingDirectory>
-                            <arguments>
-                                <argument>compose</argument>
-                                <argument>-f</argument>
-                                <argument>${docker.composefile}</argument>
-                                <argument>stop</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>docker-compose-rm</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>docker</executable>
-                            <workingDirectory>${docker.basedir}</workingDirectory>
-                            <arguments>
-                                <argument>compose</argument>
-                                <argument>-f</argument>
-                                <argument>${docker.composefile}</argument>
-                                <argument>rm</argument>
-                                <argument>-f</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-
-                    <!-- Login and Push the image to a docker repo. -->
-                    <execution>
-                        <id>docker-push-version</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>docker</executable>
-                            <workingDirectory>${docker.basedir}</workingDirectory>
-                            <arguments>
-                                <argument>push</argument>
-                                <argument>${docker.imagename}:${project.version}</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>docker-push-latest</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>docker</executable>
-                            <workingDirectory>${docker.basedir}</workingDirectory>
-                            <arguments>
-                                <argument>push</argument>
-                                <argument>${docker.imagename}:latest</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>docker-compose-pull</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>docker</executable>
-                            <workingDirectory>${docker.basedir}</workingDirectory>
-                            <arguments>
-                                <argument>compose</argument>
-                                <argument>-f</argument>
-                                <argument>${docker.composefile}</argument>
-                                <argument>pull</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>docker-compose-up</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>docker</executable>
-                            <workingDirectory>${docker.basedir}</workingDirectory>
-                            <arguments>
-                                <argument>compose</argument>
-                                <argument>-f</argument>
-                                <argument>${docker.composefile}</argument>
-                                <argument>up</argument>
-                                <argument>-d</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
