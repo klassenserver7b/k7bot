@@ -40,7 +40,7 @@ jobs:
       - name: Copy JAR to docker directory
         run: cp target/k7bot-*-full.jar docker/Bot.jar
 
-      - uses: actions/upload-artifact@v5.0.0
+      - uses: actions/upload-artifact@v6
         with:
           name: bins-k7bot
           path: docker/Bot.jar
@@ -90,8 +90,3 @@ jobs:
           file_glob: true
           tag: ${{ steps.tagname.outputs.val }}
           overwrite: true
-
-      - name: Extract version
-        id: extract-version
-        run: |
-          printf "::set-output name=%s::%s\n" tag-name "${GITHUB_REF#refs/tags/}"
