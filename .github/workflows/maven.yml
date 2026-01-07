@@ -17,7 +17,7 @@ jobs:
     
     strategy:
       matrix:
-        java-version: ['21'] # 23
+        java-version: ['25']
 
     steps:
     - uses: actions/checkout@v6
@@ -35,8 +35,8 @@ jobs:
     - name: Run tests
       run: mvn -B test --file pom.xml
     
-    - name: Upload build artifact (Java 21 only)
-      if: matrix.java-version == '21'
+    - name: Upload build artifact
+      if: matrix.java-version == '25'
       uses: actions/upload-artifact@v6
       with:
         name: k7bot-jar
@@ -44,6 +44,6 @@ jobs:
         retention-days: 30
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
-    - name: Update dependency graph (Java 21 only)
-      if: matrix.java-version == '21'
+    - name: Update dependency graph
+      if: matrix.java-version == '25'
       uses: advanced-security/maven-dependency-submission-action@v5

@@ -1,4 +1,4 @@
-FROM azul/zulu-openjdk-alpine:21-latest
+FROM azul/zulu-openjdk-alpine:25-latest
 WORKDIR /opt/k7bot
 
 COPY Bot.jar ./Bot.jar
