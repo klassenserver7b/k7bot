@@ -2,7 +2,7 @@ FROM azul/zulu-openjdk-alpine:25-latest
 WORKDIR /opt/k7bot
 
 COPY Bot.jar ./Bot.jar
-RUN apk add --no-cache msttcorefonts-installer fontconfig gcompat
+RUN apk add --no-cache msttcorefonts-installer fontconfig gcompat opus libsodium
 RUN update-ms-fonts
 
 VOLUME /opt/k7bot/logs
