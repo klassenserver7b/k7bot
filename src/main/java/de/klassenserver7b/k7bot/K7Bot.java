@@ -1,5 +1,6 @@
 package de.klassenserver7b.k7bot;
 
+import club.minnced.discord.jdave.interop.JDaveSessionFactory;
 import com.jagrosh.jlyrics.LyricsClient;
 import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
@@ -21,6 +22,7 @@ import de.klassenserver7b.k7bot.threads.LoopThread;
 import de.klassenserver7b.k7bot.tu.navigator.TUNavigator;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.audio.AudioModuleConfig;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.exceptions.InvalidTokenException;
@@ -170,6 +172,7 @@ public class K7Bot {
 
         builder.setStatus(OnlineStatus.ONLINE);
 
+        builder.setAudioModuleConfig(new AudioModuleConfig().withDaveSessionFactory(new JDaveSessionFactory()));
         builder.setAudioSendFactory(new NativeAudioSendFactory());
 
         builder.addEventListeners(new CommandListener());
