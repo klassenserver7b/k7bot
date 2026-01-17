@@ -90,6 +90,5 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: bins-k7bot/Bot.jar
-          file_glob: true
           tag: ${{ steps.tagname.outputs.val }}
           overwrite: true
