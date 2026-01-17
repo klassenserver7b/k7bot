@@ -74,6 +74,9 @@ jobs:
       - uses: actions/download-artifact@v7
         with:
             name: "bins-k7bot"
+            
+      - name: Display structure of downloaded files
+        run: ls -R
 
       - name: Calculate tag name
         run: |
