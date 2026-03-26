@@ -44,8 +44,7 @@ public class SpotifyAudioTrack extends DelegatedAudioTrack {
             new WavAudioTrack(trackInfo, stream).process(executor);
         }
 
-        //noinspection ResultOfMethodCallIgnored
-        decr.delete();
+        boolean _ = decr.delete();
 
     }
 
