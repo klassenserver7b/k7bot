@@ -189,7 +189,7 @@ public class SpotifyConverter {
             PlaylistTrack[] tracks = playlisttracks.getItems();
             for (PlaylistTrack playlistTrack : tracks) {
 
-                Track track = (Track) playlistTrack.getTrack();
+                Track track = (Track) playlistTrack.getItem();
                 searchquery.add(track.getName() + " - " + track.getArtists()[0].getName());
 
             }
@@ -209,7 +209,7 @@ public class SpotifyConverter {
                 tracks = pagedplaylisttracks.getItems();
                 for (PlaylistTrack playlistTrack : tracks) {
 
-                    Track track = (Track) playlistTrack.getTrack();
+                    Track track = (Track) playlistTrack.getItem();
                     searchquery.add(track.getName() + " - " + track.getArtists()[0].getName());
 
                 }
@@ -234,7 +234,7 @@ public class SpotifyConverter {
                 tracks = playlisttracks.getItems();
                 for (PlaylistTrack playlistTrack : tracks) {
 
-                    Track track = (Track) playlistTrack.getTrack();
+                    Track track = (Track) playlistTrack.getItem();
                     searchquery.add(track.getName() + " - " + track.getArtists()[0].getName());
 
                 }

@@ -108,7 +108,7 @@ public class DefaultSpotifyPlaylistLoader implements SpotifyPlaylistLoader {
             PlaylistTrack[] tracks = playlisttracks.getItems();
             for (PlaylistTrack playlistTrack : tracks) {
 
-                Track track = (Track) playlistTrack.getTrack();
+                Track track = (Track) playlistTrack.getItem();
                 ptracks.add(track);
 
             }
@@ -134,7 +134,7 @@ public class DefaultSpotifyPlaylistLoader implements SpotifyPlaylistLoader {
                 tracks = pagedplaylisttracks.getItems();
                 for (PlaylistTrack playlistTrack : tracks) {
 
-                    Track track = (Track) playlistTrack.getTrack();
+                    Track track = (Track) playlistTrack.getItem();
                     ptracks.add(track);
 
                 }
