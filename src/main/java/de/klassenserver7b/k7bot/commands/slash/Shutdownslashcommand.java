@@ -2,6 +2,7 @@ package de.klassenserver7b.k7bot.commands.slash;
 
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
+import de.klassenserver7b.k7bot.util.BotState;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.errorhandler.PermissionError;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -32,8 +33,8 @@ public class Shutdownslashcommand implements TopLevelSlashCommand {
 
             event.replyEmbeds(build.build()).complete().deleteOriginal().completeAfter(10, TimeUnit.SECONDS);
 
-            K7Bot.getInstance().setExit(true);
-            K7Bot.getInstance().getShutdownThread().onShutdown();
+            K7Bot.getInstance().setState(BotState.STOPPING);
+            K7Bot.getInstance().shutdown();
             return;
 
         }

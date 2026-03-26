@@ -1,14 +1,16 @@
 package de.klassenserver7b.k7bot.manage;
 
 import de.klassenserver7b.k7bot.K7Bot;
-import de.klassenserver7b.k7bot.commands.slash.*;
+import de.klassenserver7b.k7bot.commands.slash.HelpSlashCommand;
+import de.klassenserver7b.k7bot.commands.slash.PingSlashCommand;
+import de.klassenserver7b.k7bot.commands.slash.Shutdownslashcommand;
+import de.klassenserver7b.k7bot.commands.slash.VotingCommand;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
 import de.klassenserver7b.k7bot.logging.commands.slash.LoggingConfigSlashCommand;
 import de.klassenserver7b.k7bot.logging.commands.slash.SystemChannelSlashCommand;
-import de.klassenserver7b.k7bot.music.commands.slash.*;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.subscriptions.commands.SubscribeSlashCommand;
-import de.klassenserver7b.k7bot.subscriptions.commands.UnSubscribeSlashCommand;
+import de.klassenserver7b.k7bot.subscriptions.commands.UnsubscribeSlashCommand;
 import de.klassenserver7b.k7bot.tu.commands.slash.TUNavigateSlashCommand;
 import de.klassenserver7b.k7bot.util.commands.slash.ClearSlashCommand;
 import de.klassenserver7b.k7bot.util.commands.slash.MemesChannelSlashCommand;
@@ -43,17 +45,10 @@ public class SlashCommandManager {
         registerschedule.add(new PingSlashCommand());
         registerschedule.add(new ToEmbedSlashCommand());
         registerschedule.add(new ReactRolesSlashCommand());
-        registerschedule.add(new PlaySlashCommandSplitter());
-        registerschedule.add(new ChartsSlashCommand());
         registerschedule.add(new SubscribeSlashCommand());
-        registerschedule.add(new UnSubscribeSlashCommand());
-        registerschedule.add(new EqualizerSlashCommand());
+        registerschedule.add(new UnsubscribeSlashCommand());
         registerschedule.add(new VotingCommand());
         registerschedule.add(new TUNavigateSlashCommand());
-        registerschedule.add(new SpeedChangeCommand());
-        registerschedule.add(new ClearAudioFilterFilterSlashCommand());
-        registerschedule.add(new StableDiffusionCommand());
-        registerschedule.add(new TanzmusikAISlashCommand());
         registerschedule.add(new MemesChannelSlashCommand());
         registerschedule.add(new LoggingConfigSlashCommand());
         registerschedule.add(new SystemChannelSlashCommand());

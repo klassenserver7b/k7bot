@@ -3,6 +3,7 @@ package de.klassenserver7b.k7bot.listener;
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.common.HelpCommand;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
+import de.klassenserver7b.k7bot.util.BotState;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
@@ -25,35 +26,36 @@ public class CommandListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        if (!K7Bot.getInstance().isInExit()) {
+        if (K7Bot.getInstance().getState() == BotState.STOPPING) {
+            return;
+        }
 
-            switch (event.getChannelType()) {
+        switch (event.getChannelType()) {
 
-                case PRIVATE -> privateMessageRecieved(event, event.getMessage());
+            case PRIVATE -> privateMessageRecieved(event, event.getMessage());
 
-                case CATEGORY, GROUP, UNKNOWN ->
-                        throw new IllegalStateException("Message from illegal ChannelType" + event.getChannel(),
-                                new Throwable().fillInStackTrace());
+            case CATEGORY, GROUP, UNKNOWN ->
+                    throw new IllegalStateException("Message from illegal ChannelType" + event.getChannel(),
+                            new Throwable().fillInStackTrace());
 
-                default -> {
-                    try {
-                        String prefix = K7Bot.getInstance().getPrefixMgr()
-                                .getPrefix(event.getGuild().getIdLong());
+            default -> {
+                try {
+                    String prefix = K7Bot.getInstance().getPrefixMgr()
+                            .getPrefix(event.getGuild().getIdLong());
 
-                        if (prefix == null) {
-                            prefix = "-";
-                        }
-
-                        prefix = prefix.toLowerCase();
-                        guildMessageRecieved(event, prefix);
-                    } catch (IllegalStateException e) {
-                        log.error(e.getMessage(), e);
+                    if (prefix == null) {
+                        prefix = "-";
                     }
 
+                    prefix = prefix.toLowerCase();
+                    guildMessageRecieved(event, prefix);
+                } catch (IllegalStateException e) {
+                    log.error(e.getMessage(), e);
                 }
-            }
 
+            }
         }
+
 
     }
 
@@ -109,7 +111,7 @@ public class CommandListener extends ListenerAdapter {
                     case -1 -> sendUnknownCommand(channel, args[0]);
                 }
 
-                inserttoLog(args[0].replaceAll("'", ""), LocalDateTime.now(), event.getGuild(),
+                inserttoLog(args[0].replace("'", ""), LocalDateTime.now(), event.getGuild(),
                         event.getAuthor().getIdLong());
 
             }
@@ -152,10 +154,12 @@ public class CommandListener extends ListenerAdapter {
 
     private void inserttoLog(String command, LocalDateTime time, Long guildid, Long userid) {
 
-        if (!K7Bot.getInstance().isInExit()) {
-            LiteSQL.onUpdate("INSERT INTO commandlog(command, guildId, userId, timestamp) VALUES(?, ?, ?, ?);", command,
-                    guildid, userid, time.format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss")));
+        if (K7Bot.getInstance().getState() == BotState.STOPPING) {
+            return;
         }
+        LiteSQL.onUpdate("INSERT INTO commandlog(command, guildId, userId, timestamp) VALUES(?, ?, ?, ?);", command,
+                guildid, userid, time.format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss")));
+
 
     }
 }

@@ -1,25 +1,16 @@
 package de.klassenserver7b.k7bot;
 
 import club.minnced.discord.jdave.interop.JDaveSessionFactory;
-import com.jagrosh.jlyrics.LyricsClient;
-import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import de.klassenserver7b.k7bot.listener.*;
 import de.klassenserver7b.k7bot.logging.LoggingFilter;
 import de.klassenserver7b.k7bot.manage.*;
-import de.klassenserver7b.k7bot.music.asms.ExtendedLocalAudioSourceManager;
-import de.klassenserver7b.k7bot.music.asms.SpotifyAudioSourceManager;
-import de.klassenserver7b.k7bot.music.spotify.SpotifyInteractions;
-import de.klassenserver7b.k7bot.music.utilities.AudioPlayerUtil;
-import de.klassenserver7b.k7bot.music.utilities.gla.GLAWrapper;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.sql.SQLManager;
 import de.klassenserver7b.k7bot.subscriptions.SubscriptionManager;
-import de.klassenserver7b.k7bot.threads.ConsoleReadThread;
 import de.klassenserver7b.k7bot.threads.LoopThread;
 import de.klassenserver7b.k7bot.tu.navigator.TUNavigator;
+import de.klassenserver7b.k7bot.util.BotState;
+import de.klassenserver7b.k7bot.util.StatsCategoryUtil;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.audio.AudioModuleConfig;
@@ -36,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
@@ -46,37 +38,24 @@ public class K7Bot {
     private static K7Bot INSTANCE;
 
     private final Logger logger = LoggerFactory.getLogger("K7Bot-Main");
-
+    private final PropertiesManager propMgr;
     private ShardManager shardMgr;
     private CommandManager cmdMgr;
-
     private SystemNotificationChannelManager sysChannelMgr;
     private PrefixManager prefixMgr;
-
     private SubscriptionManager subMgr;
-
     private SlashCommandManager slashMgr;
-
-    private final PropertiesManager propMgr;
     private LoopedEventManager loopedEventMgr;
 
-    private AudioPlayerManager audioPlayerManager;
-    private AudioPlayerUtil playerutil;
-
     private LoopThread loop;
-    private ConsoleReadThread shutdownT;
-    private LyricsClient lyricsapi;
-    private GLAWrapper lyricsapiold;
-    private SpotifyInteractions spotifyinteractions;
     private TUNavigator tuNavigator;
 
     private Long ownerId;
-    private boolean exit = false;
-    private boolean indev;
+    private BotState state;
 
-    private K7Bot(boolean indev) throws IllegalArgumentException {
+    private K7Bot() throws IllegalArgumentException {
         INSTANCE = this;
-        this.indev = indev;
+        this.state = BotState.STARTING;
         this.propMgr = new PropertiesManager();
 
         if (!propMgr.loadProps() || !propMgr.isBotTokenValid()) {
@@ -90,17 +69,31 @@ public class K7Bot {
 
         awaitJDAReady();
 
-        runShutdown();
-
         initListeners();
         runLoop();
+    }
+
+    /**
+     * This method is used to get the Bot Instance.
+     * The Bot is managed by this class as a Singleton.
+     *
+     * @return the K7Bot Instance
+     * @throws IllegalArgumentException if something failed while logging into discord
+     */
+    public static K7Bot getInstance() throws IllegalArgumentException {
+
+        if (INSTANCE == null) {
+            return new K7Bot();
+        }
+
+        return INSTANCE;
     }
 
     /**
      * Initialize the Bot.
      *
      * @return if the Bot was successfully initialized
-     * @see #buildBot(String, String, int)
+     * @see #buildBot(String, int)
      * @see #initializeObjects()
      * @see LoopedEventManager#initializeDefaultEvents()
      */
@@ -110,11 +103,6 @@ public class K7Bot {
         SQLManager.onCreate();
 
         String token = propMgr.getProperty("token");
-
-        String canaryToken;
-        if ((canaryToken = propMgr.getProperty("canary-token")) == null) {
-            this.indev = false;
-        }
 
         String shards;
         int shardc;
@@ -129,7 +117,7 @@ public class K7Bot {
         this.ownerId = Long.valueOf(propMgr.getProperty("ownerId"));
 
         try {
-            shardMgr = buildBot(token, canaryToken, shardc);
+            shardMgr = buildBot(token, shardc);
         } catch (IllegalArgumentException e) {
             invalidConfigExit("Couldn't start Bot! - EXITING", 1, e);
             return false;
@@ -144,26 +132,21 @@ public class K7Bot {
 
     /**
      * Build the Bot.
-     * The Bot will be built with the specified token or canary token.
+     * The Bot will be built with the specified token
      * The Bot will also be built with the specified shard count.
      * <p>
      * If the config is invalid, the Bot will exit with the specified exit code. @see {@link #invalidConfigExit(String, int, RuntimeException)}
      *
-     * @param token       the Bot's token
-     * @param canaryToken the Bot's canary token
-     * @param shardc      the shard count
+     * @param token  the Bot's token
+     * @param shardc the shard count
      * @return the ShardManager
      * @throws IllegalArgumentException if the Bot couldn't be built see {@link DefaultShardManagerBuilder#build()}
      */
-    protected ShardManager buildBot(String token, String canaryToken, int shardc) throws IllegalArgumentException {
+    protected ShardManager buildBot(String token, int shardc) throws IllegalArgumentException {
 
         DefaultShardManagerBuilder builder;
 
-        if (!indev) {
-            builder = DefaultShardManagerBuilder.create(token, EnumSet.allOf(GatewayIntent.class));
-        } else {
-            builder = DefaultShardManagerBuilder.create(canaryToken, EnumSet.allOf(GatewayIntent.class));
-        }
+        builder = DefaultShardManagerBuilder.create(token, EnumSet.allOf(GatewayIntent.class));
 
         //builder.setAudioSendFactory(new NativeAudioSendFactory(400));
         builder.setShardsTotal(shardc);
@@ -173,14 +156,12 @@ public class K7Bot {
         builder.setStatus(OnlineStatus.ONLINE);
 
         builder.setAudioModuleConfig(new AudioModuleConfig().withDaveSessionFactory(new JDaveSessionFactory()));
-        builder.setAudioSendFactory(new NativeAudioSendFactory());
 
         builder.addEventListeners(new CommandListener());
         builder.addEventListeners(new SlashCommandListener());
         builder.addEventListeners(LoggingFilter.getInstance());
         builder.addEventListeners(new VoiceListener());
         builder.addEventListeners(new ReactRoleListener());
-        builder.addEventListeners(new AutoRickroll());
         builder.addEventListeners(new MemesReact());
         builder.addEventListeners(new BotLeaveGuildListener());
         builder.addEventListeners(new MessageListener());
@@ -205,10 +186,6 @@ public class K7Bot {
     /**
      * Initialize the Objects that require an initialization.
      * The Objects are initialized and the Bot will log the result.
-     * <p>
-     * While initializing the Objects, the Bot will also initialize the Music Configuration.
-     *
-     * @see #InitializeMusic(AudioPlayerManager)
      */
     protected void initializeObjects() {
 
@@ -219,37 +196,10 @@ public class K7Bot {
 
         this.sysChannelMgr = new SystemNotificationChannelManager();
 
-        this.audioPlayerManager = new DefaultAudioPlayerManager();
-        this.playerutil = new AudioPlayerUtil();
-
-        this.lyricsapi = new LyricsClient("Genius");
-        this.lyricsapiold = new GLAWrapper();
-
-        this.spotifyinteractions = new SpotifyInteractions();
-
         this.tuNavigator = new TUNavigator();
-
-        InitializeMusic(this.audioPlayerManager);
 
         this.cmdMgr = new CommandManager();
         this.slashMgr = new SlashCommandManager();
-    }
-
-    /**
-     * Initialize the Music Configuration.
-     * The Music Configuration is used to play Music in the Bot.
-     *
-     * @param manager the AudioPlayerManager
-     */
-    public void InitializeMusic(AudioPlayerManager manager) {
-
-        spotifyinteractions.initialize();
-
-        manager.getConfiguration().setFilterHotSwapEnabled(true);
-        manager.registerSourceManager(new SpotifyAudioSourceManager());
-        manager.registerSourceManager(new ExtendedLocalAudioSourceManager());
-        AudioSourceManagers.registerRemoteSources(manager);
-
     }
 
     /**
@@ -270,11 +220,8 @@ public class K7Bot {
             }
 
         });
-        if (!this.indev) {
-            logger.info("Bot was started (nondev)");
-        } else {
-            logger.info("Bot was started in Canary mode");
-        }
+        logger.info("Bot started");
+        this.state = BotState.RUNNING;
     }
 
     /**
@@ -312,6 +259,42 @@ public class K7Bot {
 
     }
 
+    public void shutdown() {
+
+        logger.info("Bot is shutting down!");
+
+        ShardManager shardMgr = K7Bot.getInstance().getShardManager();
+
+        if (shardMgr != null) {
+
+            ArrayList<Object> listeners = new ArrayList<>();
+
+            for (JDA jda : shardMgr.getShards()) {
+                listeners.addAll(jda.getEventManager().getRegisteredListeners());
+            }
+
+            shardMgr.removeEventListener(listeners.toArray());
+
+            K7Bot.getInstance().stopLoop();
+
+            K7Bot.getInstance().getLoopedEventManager().shutdownLoopedEvents();
+
+            StatsCategoryUtil.onShutdown();
+
+            shardMgr.setStatus(OnlineStatus.OFFLINE);
+
+            shardMgr.shutdown();
+            logger.info("Bot offline");
+
+            LiteSQL.disconnect();
+            return;
+
+        }
+
+        logger.info("ShardMan was null!");
+
+    }
+
     /**
      * The Error-Handling method for invalid Configurations.
      * The Bot will log the error and open the bot.properties file in the resources folder.
@@ -329,14 +312,6 @@ public class K7Bot {
             // EXIT AS USUAL;
         }
         System.exit(exitCode);
-    }
-
-    /**
-     * Shut down the Bot.
-     * The Bot will stop all Threads and disconnect from Discord.
-     */
-    protected void runShutdown() {
-        this.shutdownT = new ConsoleReadThread();
     }
 
     /**
@@ -379,36 +354,6 @@ public class K7Bot {
         return K7Bot.getInstance().getShardManager().getShards().getFirst().getSelfUser().getEffectiveName();
     }
 
-
-    /**
-     * This method is used to get the Bot Instance.
-     * The Bot is managed by this class as a Singleton.
-     * see {@link #getInstance(boolean)}
-     *
-     * @return the Bot Instance
-     * @throws IllegalArgumentException if something failed while logging into discord
-     */
-    public static K7Bot getInstance() throws IllegalArgumentException {
-        return getInstance(false);
-    }
-
-    /**
-     * This method is used to get the Bot Instance with the specified canary mode.
-     * The Bot is managed by this class as a Singleton.
-     *
-     * @param indev if the Bot should start in canary mode
-     * @return the K7Bot Instance
-     * @throws IllegalArgumentException if something failed while logging into discord
-     */
-    public static K7Bot getInstance(boolean indev) throws IllegalArgumentException {
-
-        if (INSTANCE == null) {
-            return new K7Bot(indev);
-        }
-
-        return INSTANCE;
-    }
-
     /**
      * @return the CommandManager
      */
@@ -425,20 +370,6 @@ public class K7Bot {
 
     public TUNavigator getTuNavigator() {
         return tuNavigator;
-    }
-
-    /**
-     * @return the JLyricsAPI
-     */
-    public LyricsClient getLyricsAPI() {
-        return this.lyricsapi;
-    }
-
-    /**
-     * @return the GeniusLyricsAPI
-     */
-    public GLAWrapper getLyricsAPIold() {
-        return this.lyricsapiold;
     }
 
     /**
@@ -463,17 +394,17 @@ public class K7Bot {
     }
 
     /**
-     * @return if the Bot is currently exiting
+     * @return the {@link BotState state} of the Bot
      */
-    public boolean isInExit() {
-        return this.exit;
+    public BotState getState() {
+        return this.state;
     }
 
     /**
-     * @return if the Bot is in canary mode
+     * @param state set the {@link BotState state} of the bot
      */
-    public boolean isDevMode() {
-        return this.indev;
+    public void setState(BotState state) {
+        this.state = state;
     }
 
     /**
@@ -481,20 +412,6 @@ public class K7Bot {
      */
     public ShardManager getShardManager() {
         return this.shardMgr;
-    }
-
-    /**
-     * @return the AudioPlayerUtil
-     */
-    public AudioPlayerUtil getPlayerUtil() {
-        return this.playerutil;
-    }
-
-    /**
-     * @return the AudioPlayerManager
-     */
-    public AudioPlayerManager getAudioPlayerManager() {
-        return this.audioPlayerManager;
     }
 
     /**
@@ -523,26 +440,5 @@ public class K7Bot {
      */
     public PrefixManager getPrefixMgr() {
         return this.prefixMgr;
-    }
-
-    /**
-     * @return the shutdownThread
-     */
-    public ConsoleReadThread getShutdownThread() {
-        return this.shutdownT;
-    }
-
-    /**
-     * @param exit set if the Bot is currently exiting
-     */
-    public void setExit(boolean exit) {
-        this.exit = exit;
-    }
-
-    /**
-     * @return the SpotifyInteractions
-     */
-    public SpotifyInteractions getSpotifyinteractions() {
-        return spotifyinteractions;
     }
 }

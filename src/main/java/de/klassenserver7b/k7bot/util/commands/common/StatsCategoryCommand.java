@@ -1,6 +1,5 @@
 package de.klassenserver7b.k7bot.util.commands.common;
 
-import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.util.HelpCategories;
@@ -21,9 +20,8 @@ import java.util.concurrent.TimeUnit;
 
 public class StatsCategoryCommand implements ServerCommand {
 
-    private boolean isEnabled;
-
     private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private boolean isEnabled;
 
     @Override
     public String getHelp() {
@@ -58,7 +56,7 @@ public class StatsCategoryCommand implements ServerCommand {
                     LiteSQL.onUpdate("INSERT INTO statschannels(guildId, categoryId) VALUES(?, ?);", guild.getIdLong(),
                             catid);
 
-                    StatsCategoryUtil.fillCategory(cat, K7Bot.getInstance().isDevMode());
+                    StatsCategoryUtil.fillCategory(cat);
 
                 } else {
 
@@ -66,8 +64,7 @@ public class StatsCategoryCommand implements ServerCommand {
                     channel.sendMessage("Category updated!").complete().delete().queueAfter(10, TimeUnit.SECONDS);
                     Category cat = guild.getCategoryById(catid);
                     cat.getChannels().forEach(chan -> chan.delete().complete());
-                    StatsCategoryUtil.fillCategory(guild.getCategoryById(catid),
-                            K7Bot.getInstance().isDevMode());
+                    StatsCategoryUtil.fillCategory(guild.getCategoryById(catid));
 
                 }
             } catch (SQLException e) {

@@ -5,7 +5,6 @@ package de.klassenserver7b.k7bot.logging;
 
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
-import de.klassenserver7b.k7bot.util.KAutoCloseable;
 import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -22,6 +21,8 @@ import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionE
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -33,10 +34,11 @@ import java.util.List;
  */
 public class LoggingConfigEmbedProvider extends ListenerAdapter {
 
-    private InteractionHook hook;
     private final long guildId;
-    private LoggingOptions category;
     private final LoopedEvent timeoutCheckEvent;
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private InteractionHook hook;
+    private LoggingOptions category;
 
     /**
      *
@@ -45,9 +47,11 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
         this.hook = hook;
         this.guildId = hook.getInteraction().getGuild().getIdLong();
 
-        try (KAutoCloseable ignored = LoggingFilter.getInstance().blockEventExecution()) {
+        try (AutoCloseable _ = LoggingFilter.getInstance().blockEventExecution()) {
             Message m = hook.sendMessageEmbeds(buildCatSelectEmbed()).setComponents(buildCatSelectActionRows()).complete();
             LoggingFilter.getInstance().getLoggingBlocker().block(m.getIdLong());
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
 
         timeoutCheckEvent = new HookTimeoutLoop("logging-config-" + guildId + "-" + System.currentTimeMillis(), this);
@@ -124,8 +128,10 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
     }
 
     protected void exit() {
-        try (KAutoCloseable ignored = LoggingFilter.getInstance().blockEventExecution(hook.retrieveOriginal().complete().getIdLong())) {
+        try (AutoCloseable ignored = LoggingFilter.getInstance().blockEventExecution(hook.retrieveOriginal().complete().getIdLong())) {
             hook.deleteOriginal().queue();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
         K7Bot.getInstance().getShardManager().removeEventListener(this);
         K7Bot.getInstance().getLoopedEventManager().removeEvent(timeoutCheckEvent);
@@ -201,7 +207,7 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
         StringBuilder strbuild = new StringBuilder();
         strbuild.append("Option");
 
-        strbuild.append(" ".repeat(30));
+        strbuild.repeat(" ", 30);
 
         strbuild.append(" - State");
         strbuild.append("\n\n");
@@ -213,7 +219,7 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
             strbuild.append("`");
             strbuild.append(opt.toString());
 
-            strbuild.append(" ".repeat(Math.max(0, 30 - opt.toString().length())));
+            strbuild.repeat(" ", Math.max(0, 30 - opt.toString().length()));
 
             strbuild.append(" - ");
             strbuild.append("`");

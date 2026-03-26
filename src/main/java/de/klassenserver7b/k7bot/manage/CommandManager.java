@@ -1,11 +1,9 @@
 package de.klassenserver7b.k7bot.manage;
 
-import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.common.*;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.logging.commands.common.SystemChannelCommand;
 import de.klassenserver7b.k7bot.moderation.commands.common.*;
-import de.klassenserver7b.k7bot.music.commands.common.*;
 import de.klassenserver7b.k7bot.util.commands.common.*;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -61,36 +59,6 @@ public class CommandManager {
         this.commands.add(new TimeoutCommand());
         this.commands.add(new StopTimeoutCommand());
 
-        // Musik Commands
-        this.commands.add(new PlayCommand());
-        this.commands.add(new StopCommand());
-        this.commands.add(new PauseCommand());
-        this.commands.add(new ResumeCommand());
-        this.commands.add(new PlayNextCommand());
-        this.commands.add(new AddQueueTrackCommand());
-        this.commands.add(new SkipCommand());
-        this.commands.add(new VolumeCommand());
-        this.commands.add(new LoopCommand());
-        this.commands.add(new UnLoopCommand());
-        this.commands.add(new ShuffleCommand());
-        this.commands.add(new QueuelistCommand());
-        this.commands.add(new ClearQueueCommand());
-        this.commands.add(new CurrentTrackInfoCommand());
-        this.commands.add(new SeekCommand());
-        this.commands.add(new SkipForwardCommand());
-        this.commands.add(new SkipBackCommand());
-        this.commands.add(new LyricsCommand());
-        this.commands.add(new OverallChartsCommand());
-        this.commands.add(new EqualizerCommand());
-        this.commands.add(new NightcoreCommand());
-
-        // Private
-        this.commands.add(new UebersteuerungAdmin());
-
-        if (K7Bot.getInstance().isDevMode()) {
-            this.commands.add(new TestCommand());
-        }
-
         commands.forEach(command -> {
             command.enableCommand();
             for (String s : command.getCommandStrings()) {
@@ -141,17 +109,6 @@ public class CommandManager {
         return true;
     }
 
-    public boolean disableCommandsByClass(Class<?> command) {
-
-        List<ServerCommand> rem = getCommandsByClass(command);
-
-        for (ServerCommand c : rem) {
-            c.disableCommand();
-        }
-
-        return !rem.isEmpty();
-    }
-
     public boolean enableCommand(String command) {
         return enableCommand(mappedCommands.get(command));
     }
@@ -164,17 +121,6 @@ public class CommandManager {
 
         command.enableCommand();
         return true;
-    }
-
-    public boolean enableCommandsByClass(Class<?> command) {
-
-        List<ServerCommand> add = getCommandsByClass(command);
-
-        for (ServerCommand c : add) {
-            c.enableCommand();
-        }
-
-        return !add.isEmpty();
     }
 
     public List<ServerCommand> getCommandsByClass(Class<?> command) {

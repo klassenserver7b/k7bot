@@ -4,7 +4,6 @@
 package de.klassenserver7b.k7bot.logging;
 
 import de.klassenserver7b.k7bot.logging.listeners.*;
-import de.klassenserver7b.k7bot.util.KAutoCloseable;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.channel.GenericChannelEvent;
 import net.dv8tion.jda.api.events.emoji.GenericEmojiEvent;
@@ -130,14 +129,14 @@ public class LoggingFilter extends ListenerAdapter {
      *
      * @return an AutoCloseable object to unblock the event execution
      */
-    public KAutoCloseable blockEventExecution() {
+    public AutoCloseable blockEventExecution() {
         synchronized (eventQueue) {
             queueEnableCount++;
             return this::unblockEventExecution;
         }
     }
 
-    public KAutoCloseable blockEventExecution(long snowflake) {
+    public AutoCloseable blockEventExecution(long snowflake) {
         synchronized (eventQueue) {
             loggingBlocker.block(snowflake);
             queueEnableCount++;

@@ -67,23 +67,17 @@ public class SubscribeSlashCommand implements TopLevelSlashCommand {
         } else {
             GuildChannelUnion union = event.getOption("channel").getAsChannel();
             SubscriptionDeliveryType delivery;
+            
+            switch (union.getType()) {
 
-            if (!K7Bot.getInstance().isDevMode()) {
-                switch (union.getType()) {
-
-                    case TEXT -> delivery = SubscriptionDeliveryType.TEXT_CHANNEL;
-                    case NEWS -> delivery = SubscriptionDeliveryType.NEWS;
-                    default -> {
-                        delivery = SubscriptionDeliveryType.UNKNOWN;
-                        hook.sendMessageEmbeds(EmbedUtils.getErrorEmbed(
-                                        "Can't create subscription in " + union.getType() + "!\nPlease use a Text or News Channel")
-                                .build()).queue();
-                    }
+                case TEXT -> delivery = SubscriptionDeliveryType.TEXT_CHANNEL;
+                case NEWS -> delivery = SubscriptionDeliveryType.NEWS;
+                default -> {
+                    delivery = SubscriptionDeliveryType.UNKNOWN;
+                    hook.sendMessageEmbeds(EmbedUtils.getErrorEmbed(
+                                    "Can't create subscription in " + union.getType() + "!\nPlease use a Text or News Channel")
+                            .build()).queue();
                 }
-            } else {
-
-                delivery = SubscriptionDeliveryType.CANARY;
-
             }
 
             if (delivery != SubscriptionDeliveryType.UNKNOWN) {

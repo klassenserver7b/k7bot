@@ -3,7 +3,6 @@ package de.klassenserver7b.k7bot.listener;
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.logging.LoggingFilter;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
-import de.klassenserver7b.k7bot.util.KAutoCloseable;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
@@ -16,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +53,7 @@ public class VoiceListener extends ListenerAdapter {
 
             VoiceChannel vc;
 
-            try (KAutoCloseable ignored = LoggingFilter.getInstance().blockEventExecution()) {
+            try (AutoCloseable ignored = LoggingFilter.getInstance().blockEventExecution()) {
 
                 if (cat != null) {
                     vc = cat.createVoiceChannel(member.getEffectiveName() + "s Voicechannel").complete();
@@ -63,6 +61,9 @@ public class VoiceListener extends ListenerAdapter {
                     vc = voice.getGuild().createVoiceChannel(member.getEffectiveName() + "s Voicechannel").complete();
                 }
                 LoggingFilter.getInstance().getLoggingBlocker().block(vc.getIdLong());
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                return;
             }
 
             vc.getManager().setUserLimit(voice.getUserLimit()).queue();
@@ -86,7 +87,7 @@ public class VoiceListener extends ListenerAdapter {
                 }
                 if (this.tempchannels.contains(audioChannel.getIdLong())) {
 
-                    try (KAutoCloseable ignored = LoggingFilter.getInstance().blockEventExecution()) {
+                    try (AutoCloseable ignored = LoggingFilter.getInstance().blockEventExecution()) {
                         LoggingFilter.getInstance().getLoggingBlocker().block(audioChannel.getIdLong());
                         audioChannel.delete().queue();
                     }
@@ -97,7 +98,7 @@ public class VoiceListener extends ListenerAdapter {
                     K7Bot.getInstance().getMainLogger().info("Removed custom VoiceChannel with the Name: {} and the following ID: {}", audioChannel.getName(), audioChannel.getIdLong());
                 }
 
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 log.error(e.getMessage(), e);
             }
         }
