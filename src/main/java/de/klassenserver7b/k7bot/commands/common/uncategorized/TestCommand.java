@@ -1,19 +1,17 @@
 package de.klassenserver7b.k7bot.commands.common.uncategorized;
 
 import de.klassenserver7b.k7bot.K7Bot;
+import de.klassenserver7b.k7bot.audio.AudioLoadOption;
+import de.klassenserver7b.k7bot.audio.AudioLoadResultHandler;
+import de.klassenserver7b.k7bot.audio.GuildAudioManager;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
-import de.klassenserver7b.k7bot.manage.LavaLinkManager;
 import de.klassenserver7b.k7bot.util.HelpCategories;
-import dev.arbjerg.lavalink.client.FunctionalLoadResultHandler;
 import dev.arbjerg.lavalink.client.Link;
-import dev.arbjerg.lavalink.client.player.Track;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
-
-import java.util.List;
 
 public class TestCommand implements ServerCommand {
 
@@ -51,44 +49,8 @@ public class TestCommand implements ServerCommand {
         final long guildId = guild.getIdLong();
         final Link link = K7Bot.getInstance().getLavalinkClient().getOrCreateLink(guildId);
 
-        link.loadItem(identifier).subscribe(new FunctionalLoadResultHandler(
-                // Track loaded
-                (trackLoad) -> {
-                    final Track track = trackLoad.getTrack();
-
-                    final var userData = new LavaLinkManager.UserData(caller.getUser().getIdLong());
-                    track.setUserData(userData);
-                    link.createOrUpdatePlayer()
-                            .setTrack(track)
-                            .setVolume(35)
-                            .subscribe((player) -> {
-                                final Track playingTrack = player.getTrack();
-                                final var trackTitle = playingTrack.getInfo().getTitle();
-
-                                channel.sendMessage("Now playing: " + trackTitle + "\nRequested by: <@" + caller.getUser().getIdLong() + '>').queue();
-                            });
-
-                },
-                null,
-                // search result loaded
-                (search) -> {
-                    final List<Track> tracks = search.getTracks();
-
-                    if (tracks.isEmpty()) {
-                        channel.sendMessage("No tracks found!").queue();
-                        return;
-                    }
-
-                    final Track firstTrack = tracks.getFirst();
-
-                    // This is a different way of updating the player! Choose your preference!
-                    // This method will also create a player if there is not one in the server yet
-                    link.updatePlayer((update) -> update.setTrack(firstTrack).setVolume(35))
-                            .subscribe((ignored) -> channel.sendMessage("Now playing: " + firstTrack.getInfo().getTitle()).queue());
-                },
-                null, // no matches
-                null // load failed
-        ));
+        GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
+        link.loadItem(identifier).subscribe(new AudioLoadResultHandler(gam, AudioLoadOption.APPEND, caller.getUser().getIdLong()));
 
 
         //Test command is only used when I have something to test......

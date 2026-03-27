@@ -1,5 +1,6 @@
 package de.klassenserver7b.k7bot;
 
+import de.klassenserver7b.k7bot.audio.AudioManager;
 import de.klassenserver7b.k7bot.listener.*;
 import de.klassenserver7b.k7bot.logging.LoggingFilter;
 import de.klassenserver7b.k7bot.manage.*;
@@ -48,6 +49,12 @@ public class K7Bot {
     private LoopedEventManager loopedEventMgr;
 
     private LavalinkClient lavalinkClient;
+
+    public AudioManager getAudioManager() {
+        return audioManager;
+    }
+
+    private AudioManager audioManager;
 
     private LoopThread loop;
     private TUNavigator tuNavigator;
@@ -197,6 +204,7 @@ public class K7Bot {
         this.loopedEventMgr = new LoopedEventManager();
 
         this.sysChannelMgr = new SystemNotificationChannelManager();
+        this.audioManager = new AudioManager();
 
         this.tuNavigator = new TUNavigator();
 

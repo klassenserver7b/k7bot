@@ -7,6 +7,7 @@ import dev.arbjerg.lavalink.client.LavalinkClient;
 import dev.arbjerg.lavalink.client.LavalinkNode;
 import dev.arbjerg.lavalink.client.NodeOptions;
 import dev.arbjerg.lavalink.client.event.EmittedEvent;
+import dev.arbjerg.lavalink.client.event.ReadyEvent;
 import dev.arbjerg.lavalink.client.event.StatsEvent;
 import dev.arbjerg.lavalink.client.event.TrackStartEvent;
 import dev.arbjerg.lavalink.client.loadbalancing.RegionGroup;
@@ -51,15 +52,6 @@ public class LavaLinkManager {
 
             nodes.forEach((node) -> {
                 log.info("registered node: {} - {}", node.getName(), node.getBaseUri());
-                node.on(TrackStartEvent.class).subscribe((event) -> {
-                    final LavalinkNode node1 = event.getNode();
-
-                    System.out.printf(
-                            "%s: track started: %s%n",
-                            node1.getName(),
-                            event.getTrack().getInfo()
-                    );
-                });
             });
             return true;
 
@@ -70,11 +62,11 @@ public class LavaLinkManager {
     }
 
     private static void registerLavalinkListeners(LavalinkClient client) {
-        client.on(dev.arbjerg.lavalink.client.event.ReadyEvent.class).subscribe((event) -> {
+        client.on(ReadyEvent.class).subscribe((event) -> {
             final LavalinkNode node = event.getNode();
 
-            System.out.printf(
-                    "Node '%s' is ready, session id is '%s'!%n",
+            log.info(
+                    "Node {} is ready, session id is {}!",
                     node.getName(),
                     event.getSessionId()
             );
@@ -83,8 +75,8 @@ public class LavaLinkManager {
         client.on(StatsEvent.class).subscribe((event) -> {
             final LavalinkNode node = event.getNode();
 
-            System.out.printf(
-                    "Node '%s' has stats, current players: %d/%d%n",
+            log.debug(
+                    "Node {} has stats, current players: {}{}",
                     node.getName(),
                     event.getPlayingPlayers(),
                     event.getPlayers()
@@ -93,13 +85,13 @@ public class LavaLinkManager {
 
         client.on(EmittedEvent.class).subscribe((event) -> {
             if (event instanceof TrackStartEvent) {
-                System.out.println("Is a track start event!");
+                log.info("Is a track start event!");
             }
 
             final var node = event.getNode();
 
-            System.out.printf(
-                    "Node '%s' emitted event: %s%n",
+            log.info(
+                    "Node {} emitted event: {}",
                     node.getName(),
                     event
             );
@@ -121,7 +113,8 @@ public class LavaLinkManager {
         }
     }
 
-    public record UserData(long requester) {}
+    public record UserData(long requester) {
+    }
 }
 
 
