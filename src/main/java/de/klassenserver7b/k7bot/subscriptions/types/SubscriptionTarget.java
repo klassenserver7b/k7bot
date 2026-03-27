@@ -11,53 +11,23 @@ public enum SubscriptionTarget {
      * The Type for BotNews such as Updates and Fixes, only fully functional when
      * GitHub API enabled.
      */
-    BOT_NEWS(1, false, false),
+    BOT_NEWS(1, false),
 
     /**
      * Unknown {@link SubscriptionTarget} type. Should never happen and would only
      * possibly happen if the K7Bot implemented a new API type and had yet to
-     * implement channnel-support for it.
+     * implement channel-support for it.
      */
-    UNKNOWN(-1, false, false);
+    UNKNOWN(-1, false);
 
-    private final boolean needsAPI;
     private final boolean privileged;
     private final int id;
 
-    SubscriptionTarget(int id, boolean needsSpecialAPI, boolean isprivleged) {
+    SubscriptionTarget(int id, boolean privileged) {
 
         this.id = id;
-        this.needsAPI = needsSpecialAPI;
-        this.privileged = isprivleged;
+        this.privileged = privileged;
 
-    }
-
-    /**
-     * The K7Bot id key used to represent the {@link SubscriptionTarget}.
-     *
-     * @return The id key used by K7Bot for this target type.
-     */
-    public int getId() {
-        return this.id;
-    }
-
-    /**
-     * Whether this {@link SubscriptionTarget} needs an enabled API to run
-     *
-     * @return Whetherthis needs an enabled API to run.
-     */
-    public boolean needsApi() {
-        return this.needsAPI;
-    }
-
-    /**
-     * Whether this {@link SubscriptionTarget} needs special rights which are given
-     * by the bot owner - e.g. access to Vplans
-     *
-     * @return Whether this needs special rights from the Admin
-     */
-    public boolean isprivileged() {
-        return this.privileged;
     }
 
     /**
@@ -75,6 +45,25 @@ public enum SubscriptionTarget {
                 return type;
         }
         return UNKNOWN;
+    }
+
+    /**
+     * The K7Bot id key used to represent the {@link SubscriptionTarget}.
+     *
+     * @return The id key used by K7Bot for this target type.
+     */
+    public int getId() {
+        return this.id;
+    }
+
+    /**
+     * Whether this {@link SubscriptionTarget} needs special rights which are given
+     * by the bot owner - e.g. access to Vplans
+     *
+     * @return Whether this needs special rights from the Admin
+     */
+    public boolean isprivileged() {
+        return this.privileged;
     }
 
 }

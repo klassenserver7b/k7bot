@@ -1,6 +1,5 @@
 package de.klassenserver7b.k7bot;
 
-import club.minnced.discord.jdave.interop.JDaveSessionFactory;
 import de.klassenserver7b.k7bot.listener.*;
 import de.klassenserver7b.k7bot.logging.LoggingFilter;
 import de.klassenserver7b.k7bot.manage.*;
@@ -13,7 +12,6 @@ import de.klassenserver7b.k7bot.util.BotState;
 import de.klassenserver7b.k7bot.util.StatsCategoryUtil;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
-import net.dv8tion.jda.api.audio.AudioModuleConfig;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.exceptions.InvalidTokenException;
@@ -148,14 +146,11 @@ public class K7Bot {
 
         builder = DefaultShardManagerBuilder.create(token, EnumSet.allOf(GatewayIntent.class));
 
-        //builder.setAudioSendFactory(new NativeAudioSendFactory(400));
         builder.setShardsTotal(shardc);
         builder.setMemberCachePolicy(MemberCachePolicy.ALL);
         builder.setActivity(Activity.listening("-help"));
 
         builder.setStatus(OnlineStatus.ONLINE);
-
-        builder.setAudioModuleConfig(new AudioModuleConfig().withDaveSessionFactory(new JDaveSessionFactory()));
 
         builder.addEventListeners(new CommandListener());
         builder.addEventListeners(new SlashCommandListener());
