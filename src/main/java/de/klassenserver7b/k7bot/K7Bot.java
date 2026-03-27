@@ -10,6 +10,8 @@ import de.klassenserver7b.k7bot.threads.LoopThread;
 import de.klassenserver7b.k7bot.tu.navigator.TUNavigator;
 import de.klassenserver7b.k7bot.util.BotState;
 import de.klassenserver7b.k7bot.util.StatsCategoryUtil;
+import dev.arbjerg.lavalink.client.LavalinkClient;
+import dev.arbjerg.lavalink.libraries.jda.JDAVoiceUpdateListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -44,6 +46,8 @@ public class K7Bot {
     private SubscriptionManager subMgr;
     private SlashCommandManager slashMgr;
     private LoopedEventManager loopedEventMgr;
+
+    private LavalinkClient lavalinkClient;
 
     private LoopThread loop;
     private TUNavigator tuNavigator;
@@ -149,6 +153,9 @@ public class K7Bot {
         builder.setShardsTotal(shardc);
         builder.setMemberCachePolicy(MemberCachePolicy.ALL);
         builder.setActivity(Activity.listening("-help"));
+
+        this.lavalinkClient = LavaLinkManager.initialize(token);
+        builder.setVoiceDispatchInterceptor(new JDAVoiceUpdateListener(lavalinkClient));
 
         builder.setStatus(OnlineStatus.ONLINE);
 
@@ -435,5 +442,9 @@ public class K7Bot {
      */
     public PrefixManager getPrefixMgr() {
         return this.prefixMgr;
+    }
+
+    public LavalinkClient getLavalinkClient() {
+        return this.lavalinkClient;
     }
 }

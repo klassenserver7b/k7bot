@@ -1,6 +1,7 @@
 package de.klassenserver7b.k7bot.manage;
 
 import de.klassenserver7b.k7bot.commands.common.moderation.*;
+import de.klassenserver7b.k7bot.commands.common.uncategorized.TestCommand;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.commands.common.logging.SystemChannelCommand;
 import de.klassenserver7b.k7bot.commands.common.util.*;
@@ -55,6 +56,8 @@ public class CommandManager {
         this.commands.add(new MemberLogsCommand());
         this.commands.add(new TimeoutCommand());
         this.commands.add(new StopTimeoutCommand());
+
+        this.commands.add(new TestCommand());
 
         commands.forEach(command -> {
             command.enableCommand();
