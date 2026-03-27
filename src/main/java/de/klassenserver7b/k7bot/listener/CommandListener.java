@@ -1,7 +1,7 @@
 package de.klassenserver7b.k7bot.listener;
 
 import de.klassenserver7b.k7bot.K7Bot;
-import de.klassenserver7b.k7bot.commands.common.HelpCommand;
+import de.klassenserver7b.k7bot.commands.common.util.HelpCommand;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.util.BotState;
 import net.dv8tion.jda.api.entities.Guild;

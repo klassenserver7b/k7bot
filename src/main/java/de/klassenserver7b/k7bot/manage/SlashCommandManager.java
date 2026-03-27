@@ -1,21 +1,13 @@
 package de.klassenserver7b.k7bot.manage;
 
 import de.klassenserver7b.k7bot.K7Bot;
-import de.klassenserver7b.k7bot.commands.slash.HelpSlashCommand;
-import de.klassenserver7b.k7bot.commands.slash.PingSlashCommand;
-import de.klassenserver7b.k7bot.commands.slash.Shutdownslashcommand;
-import de.klassenserver7b.k7bot.commands.slash.VotingCommand;
+import de.klassenserver7b.k7bot.commands.slash.logging.LoggingConfigSlashCommand;
+import de.klassenserver7b.k7bot.commands.slash.logging.SystemChannelSlashCommand;
+import de.klassenserver7b.k7bot.commands.slash.subscriptions.SubscribeSlashCommand;
+import de.klassenserver7b.k7bot.commands.slash.subscriptions.UnsubscribeSlashCommand;
+import de.klassenserver7b.k7bot.commands.slash.util.*;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
-import de.klassenserver7b.k7bot.logging.commands.slash.LoggingConfigSlashCommand;
-import de.klassenserver7b.k7bot.logging.commands.slash.SystemChannelSlashCommand;
 import de.klassenserver7b.k7bot.sql.LiteSQL;
-import de.klassenserver7b.k7bot.subscriptions.commands.SubscribeSlashCommand;
-import de.klassenserver7b.k7bot.subscriptions.commands.UnsubscribeSlashCommand;
-import de.klassenserver7b.k7bot.tu.commands.slash.TUNavigateSlashCommand;
-import de.klassenserver7b.k7bot.util.commands.slash.ClearSlashCommand;
-import de.klassenserver7b.k7bot.util.commands.slash.MemesChannelSlashCommand;
-import de.klassenserver7b.k7bot.util.commands.slash.ReactRolesSlashCommand;
-import de.klassenserver7b.k7bot.util.commands.slash.ToEmbedSlashCommand;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
@@ -37,26 +29,25 @@ public class SlashCommandManager {
 
         this.commands = new ConcurrentHashMap<>();
 
-        List<TopLevelSlashCommand> registerschedule = new ArrayList<>();
+        List<TopLevelSlashCommand> registerSchedule = new ArrayList<>();
 
-        registerschedule.add(new HelpSlashCommand());
-        registerschedule.add(new ClearSlashCommand());
-        registerschedule.add(new Shutdownslashcommand());
-        registerschedule.add(new PingSlashCommand());
-        registerschedule.add(new ToEmbedSlashCommand());
-        registerschedule.add(new ReactRolesSlashCommand());
-        registerschedule.add(new SubscribeSlashCommand());
-        registerschedule.add(new UnsubscribeSlashCommand());
-        registerschedule.add(new VotingCommand());
-        registerschedule.add(new TUNavigateSlashCommand());
-        registerschedule.add(new MemesChannelSlashCommand());
-        registerschedule.add(new LoggingConfigSlashCommand());
-        registerschedule.add(new SystemChannelSlashCommand());
+        registerSchedule.add(new HelpSlashCommand());
+        registerSchedule.add(new ClearSlashCommand());
+        registerSchedule.add(new PingSlashCommand());
+        registerSchedule.add(new ToEmbedSlashCommand());
+        registerSchedule.add(new ReactRolesSlashCommand());
+        registerSchedule.add(new SubscribeSlashCommand());
+        registerSchedule.add(new UnsubscribeSlashCommand());
+        registerSchedule.add(new VotingCommand());
+        registerSchedule.add(new TUNavigateSlashCommand());
+        registerSchedule.add(new MemesChannelSlashCommand());
+        registerSchedule.add(new LoggingConfigSlashCommand());
+        registerSchedule.add(new SystemChannelSlashCommand());
 
         for (JDA shard : K7Bot.getInstance().getShardManager().getShards()) {
             CommandListUpdateAction commup = shard.updateCommands();
 
-            for (TopLevelSlashCommand command : registerschedule) {
+            for (TopLevelSlashCommand command : registerSchedule) {
                 SlashCommandData cdata = command.getCommandData();
                 this.commands.put(cdata.getName(), command);
                 //noinspection ResultOfMethodCallIgnored
@@ -69,27 +60,28 @@ public class SlashCommandManager {
     }
 
     public boolean perform(SlashCommandInteraction event) {
-        TopLevelSlashCommand cmd;
-        if ((cmd = this.commands.get(event.getName().toLowerCase())) != null) {
+        TopLevelSlashCommand cmd = this.commands.get(event.getName().toLowerCase());
 
-            String guild = "PRIVATE";
-            if (event.getGuild() != null) {
-                guild = event.getGuild().getName();
-            }
-
-            commandlog.info("SlashCommand - see next lines:\n\nUser: {} | \nGuild: {} | \nChannel: {} | \nMessage: {}\n", event.getUser().getName(), guild, event.getChannel().getName(), event.getCommandString());
-
-            LiteSQL.onUpdate(
-                    "INSERT INTO slashcommandlog (command, guildId, userId, timestamp, commandstring) VALUES (?, ?, ?, ?, ?)",
-                    event.getName(), ((event.getGuild() != null) ? event.getGuild().getIdLong() : 0),
-                    event.getUser().getIdLong(),
-                    event.getTimeCreated().format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss")),
-                    event.getCommandString());
-
-            cmd.performSlashCommand(event);
-
-            return true;
+        if (cmd == null) {
+            return false;
         }
-        return false;
+
+        String guild = "PRIVATE";
+        if (event.isFromGuild()) {
+            guild = event.getGuild().getName();
+        }
+
+        commandlog.info("SlashCommand - see next lines:\n\nUser: {} | \nGuild: {} | \nChannel: {} | \nMessage: {}\n", event.getUser().getName(), guild, event.getChannel().getName(), event.getCommandString());
+
+        LiteSQL.onUpdate(
+                "INSERT INTO slashcommandlog (command, guildId, userId, timestamp, commandstring) VALUES (?, ?, ?, ?, ?)",
+                event.getName(), ((event.getGuild() != null) ? event.getGuild().getIdLong() : 0),
+                event.getUser().getIdLong(),
+                event.getTimeCreated().format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss")),
+                event.getCommandString());
+
+        cmd.performSlashCommand(event);
+
+        return true;
     }
 }

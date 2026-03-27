@@ -1,10 +1,9 @@
 package de.klassenserver7b.k7bot.manage;
 
-import de.klassenserver7b.k7bot.commands.common.*;
+import de.klassenserver7b.k7bot.commands.common.moderation.*;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
-import de.klassenserver7b.k7bot.logging.commands.common.SystemChannelCommand;
-import de.klassenserver7b.k7bot.moderation.commands.common.*;
-import de.klassenserver7b.k7bot.util.commands.common.*;
+import de.klassenserver7b.k7bot.commands.common.logging.SystemChannelCommand;
+import de.klassenserver7b.k7bot.commands.common.util.*;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
@@ -39,8 +38,6 @@ public class CommandManager {
         this.commands.add(new PingCommand());
         this.commands.add(new VersionCommand());
         this.commands.add(new SystemChannelCommand());
-        this.commands.add(new RestartCommand());
-        this.commands.add(new ShutdownCommand());
 
         // Util Commands
         this.commands.add(new ClearCommand());

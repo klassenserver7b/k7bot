@@ -288,16 +288,11 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
 
         }
 
-        private void exit() {
-            K7Bot.getInstance().getShardManager().removeEventListener(listener);
-            K7Bot.getInstance().getLoopedEventManager().removeEvent(this);
-        }
-
         @Override
         public int checkforUpdates() {
 
             if (listener.hook.isExpired()) {
-                exit();
+                shutdown();
             }
 
             return 0;
@@ -310,7 +305,8 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
 
         @Override
         public void shutdown() {
-            exit();
+            K7Bot.getInstance().getShardManager().removeEventListener(listener);
+            K7Bot.getInstance().getLoopedEventManager().removeEvent(this);
         }
 
         @Override

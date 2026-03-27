@@ -1,7 +1,7 @@
 package de.klassenserver7b.k7bot.listener;
 
 import de.klassenserver7b.k7bot.K7Bot;
-import de.klassenserver7b.k7bot.commands.common.HelpCommand;
+import de.klassenserver7b.k7bot.commands.common.util.HelpCommand;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
