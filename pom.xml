@@ -205,7 +205,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>6.3.2</version>
+            <version>6.4.0</version>
         </dependency>
         <dependency>
             <groupId>dev.arbjerg</groupId>
@@ -215,7 +215,7 @@
         <dependency>
             <groupId>club.minnced</groupId>
             <artifactId>jdave-api</artifactId>
-            <version>0.1.7</version>
+            <version>0.1.8</version>
         </dependency>
         <dependency>
             <groupId>com.github.klassenserver7b.jdave</groupId>
