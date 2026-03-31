@@ -40,7 +40,7 @@ jobs:
       - name: Copy JAR to docker directory
         run: cp target/k7bot-*-full.jar docker/Bot.jar
 
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: bins-k7bot
           path: docker/Bot.jar
