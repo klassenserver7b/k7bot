@@ -1,13 +1,13 @@
 package de.klassenserver7b.k7bot.audio;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AudioManager {
 
-    private HashMap<Long, GuildAudioManager> guildAudioManagers;
+    private ConcurrentHashMap<Long, GuildAudioManager> guildAudioManagers;
 
     public AudioManager() {
-        guildAudioManagers = new HashMap<>();
+        guildAudioManagers = new ConcurrentHashMap<>();
     }
 
     public GuildAudioManager getGuildAudioManager(long guildId) {

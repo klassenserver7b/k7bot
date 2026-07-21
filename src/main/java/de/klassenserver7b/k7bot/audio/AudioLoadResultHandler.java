@@ -4,10 +4,15 @@ import de.klassenserver7b.k7bot.manage.LavaLinkManager;
 import dev.arbjerg.lavalink.client.AbstractAudioLoadResultHandler;
 import dev.arbjerg.lavalink.client.player.*;
 import org.jspecify.annotations.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class AudioLoadResultHandler extends AbstractAudioLoadResultHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(AudioLoadResultHandler.class);
+
 
     private final GuildAudioManager guildAudioManager;
     private final long userId;
@@ -41,6 +46,10 @@ public class AudioLoadResultHandler extends AbstractAudioLoadResultHandler {
 
     @Override
     public void onSearchResultLoaded(@NonNull SearchResult searchResult) {
+        if (searchResult.getTracks().isEmpty()) {
+            noMatches();
+            return;
+        }
 
         final Track track = searchResult.getTracks().getFirst();
         setUserData(track);
@@ -50,12 +59,12 @@ public class AudioLoadResultHandler extends AbstractAudioLoadResultHandler {
 
     @Override
     public void noMatches() {
-        //TODO
+        log.warn("No matches found for audio load request by user {}", userId);
     }
 
     @Override
     public void loadFailed(@NonNull LoadFailed loadFailed) {
-        //TODO
+        log.error("Failed to load audio for user {}: {}", userId, loadFailed.getException().getMessage());
     }
 
     private void setUserData(Track track) {

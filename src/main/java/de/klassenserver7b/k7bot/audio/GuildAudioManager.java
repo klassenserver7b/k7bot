@@ -10,9 +10,22 @@ public class GuildAudioManager {
 
     private final TrackScheduler trackScheduler = new TrackScheduler(this);
     private final long guildId;
+    private long channelId = -1;
 
     public GuildAudioManager(long guildId) {
         this.guildId = guildId;
+    }
+
+    public long getGuildId() {
+        return guildId;
+    }
+
+    public void setChannelId(long channelId) {
+        this.channelId = channelId;
+    }
+
+    public long getChannelId() {
+        return channelId;
     }
 
     public void stop() {
@@ -22,7 +35,7 @@ public class GuildAudioManager {
         this.getPlayer().ifPresent(
                 (player) -> player.setPaused(false)
                         .setTrack(null)
-                        .subscribe()
+                        .subscribe(v -> {}, e -> System.err.println("Lavalink operation failed: " + e.getMessage()))
         );
     }
 

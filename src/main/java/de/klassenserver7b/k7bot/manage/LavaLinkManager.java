@@ -10,6 +10,7 @@ import dev.arbjerg.lavalink.client.event.EmittedEvent;
 import dev.arbjerg.lavalink.client.event.ReadyEvent;
 import dev.arbjerg.lavalink.client.event.StatsEvent;
 import dev.arbjerg.lavalink.client.event.TrackStartEvent;
+import dev.arbjerg.lavalink.client.event.TrackEndEvent;
 import dev.arbjerg.lavalink.client.loadbalancing.RegionGroup;
 import dev.arbjerg.lavalink.client.loadbalancing.builtin.VoiceRegionPenaltyProvider;
 import org.slf4j.Logger;
@@ -20,9 +21,13 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
+
 public class LavaLinkManager {
 
     private static final Logger log = LoggerFactory.getLogger(LavaLinkManager.class);
+    public static final Map<String, String> SESSION_IDS = new ConcurrentHashMap<>();
 
     public static LavalinkClient initialize(String token) {
 
@@ -64,6 +69,7 @@ public class LavaLinkManager {
     private static void registerLavalinkListeners(LavalinkClient client) {
         client.on(ReadyEvent.class).subscribe((event) -> {
             final LavalinkNode node = event.getNode();
+            SESSION_IDS.put(node.getName(), event.getSessionId());
 
             log.info(
                     "Node {} is ready, session id is {}!",
@@ -83,18 +89,20 @@ public class LavaLinkManager {
             );
         });
 
-        client.on(EmittedEvent.class).subscribe((event) -> {
-            if (event instanceof TrackStartEvent) {
-                log.info("Is a track start event!");
+        client.on(TrackStartEvent.class).subscribe((event) -> {
+            log.info("TrackStartEvent on node {} for guild {}", event.getNode().getName(), event.getGuildId());
+            de.klassenserver7b.k7bot.audio.GuildAudioManager gam = de.klassenserver7b.k7bot.K7Bot.getInstance().getAudioManager().getGuildAudioManager(event.getGuildId());
+            if (gam != null) {
+                gam.getTrackScheduler().onTrackStart(event.getTrack());
             }
+        });
 
-            final var node = event.getNode();
-
-            log.info(
-                    "Node {} emitted event: {}",
-                    node.getName(),
-                    event
-            );
+        client.on(TrackEndEvent.class).subscribe((event) -> {
+            log.info("TrackEndEvent on node {} for guild {}", event.getNode().getName(), event.getGuildId());
+            de.klassenserver7b.k7bot.audio.GuildAudioManager gam = de.klassenserver7b.k7bot.K7Bot.getInstance().getAudioManager().getGuildAudioManager(event.getGuildId());
+            if (gam != null) {
+                gam.getTrackScheduler().onTrackEnd(event.getTrack(), event.getEndReason());
+            }
         });
     }
 

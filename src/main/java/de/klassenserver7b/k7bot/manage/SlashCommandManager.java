@@ -1,6 +1,7 @@
 package de.klassenserver7b.k7bot.manage;
 
 import de.klassenserver7b.k7bot.K7Bot;
+import de.klassenserver7b.k7bot.audio.commands.slash.AudioSlashCommands;
 import de.klassenserver7b.k7bot.commands.slash.logging.LoggingConfigSlashCommand;
 import de.klassenserver7b.k7bot.commands.slash.logging.SystemChannelSlashCommand;
 import de.klassenserver7b.k7bot.commands.slash.subscriptions.SubscribeSlashCommand;
@@ -43,6 +44,8 @@ public class SlashCommandManager {
         registerSchedule.add(new MemesChannelSlashCommand());
         registerSchedule.add(new LoggingConfigSlashCommand());
         registerSchedule.add(new SystemChannelSlashCommand());
+        
+        registerSchedule.addAll(AudioSlashCommands.getAllCommands());
 
         for (JDA shard : K7Bot.getInstance().getShardManager().getShards()) {
             CommandListUpdateAction commup = shard.updateCommands();

@@ -1,5 +1,6 @@
 package de.klassenserver7b.k7bot.manage;
 
+import de.klassenserver7b.k7bot.audio.commands.common.AudioServerCommand;
 import de.klassenserver7b.k7bot.commands.common.moderation.*;
 import de.klassenserver7b.k7bot.commands.common.uncategorized.TestCommand;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
@@ -58,6 +59,7 @@ public class CommandManager {
         this.commands.add(new StopTimeoutCommand());
 
         this.commands.add(new TestCommand());
+        this.commands.add(new AudioServerCommand());
 
         commands.forEach(command -> {
             command.enableCommand();
