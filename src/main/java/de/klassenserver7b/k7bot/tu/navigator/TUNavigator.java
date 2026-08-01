@@ -8,7 +8,7 @@ import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.net.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,18 +24,14 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class TUNavigator {
-    static final Logger logger = LoggerFactory.getLogger(TUNavigator.class);
-
     public static final String API_BASE = "https://navigator.tu-dresden.de";
-
     public static final int TILE_SIZE = 480;
     public static final int TILE_QUALITY = 2;
     public static final int TILE_BACKGROUND_PADDING = 20;
-
-    private File tileCacheDir;
-
+    static final Logger logger = LoggerFactory.getLogger(TUNavigator.class);
     private final Cache cache;
     private final TileBackgroundLoader tileBackgroundLoader;
+    private File tileCacheDir;
 
     public TUNavigator() {
         try {
@@ -329,12 +325,9 @@ public class TUNavigator {
 
             return uri.build().toString();
         } catch (Exception e) {
-            logger.error("could not find address for building " + building, e);
+            logger.error("could not find address for building {}", building, e);
             return null;
         }
-    }
-
-    public record Target(String building, String partId, String floor, String room) {
     }
 
     public Target resolveTarget(String query) {
@@ -419,5 +412,8 @@ public class TUNavigator {
         if (floor == null) return null;
 
         return new Target(building, partId, floor, room);
+    }
+
+    public record Target(String building, String partId, String floor, String room) {
     }
 }

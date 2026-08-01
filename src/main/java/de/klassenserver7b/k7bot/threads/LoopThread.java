@@ -18,11 +18,11 @@ import java.util.concurrent.ScheduledFuture;
  */
 public class LoopThread implements Runnable {
 
-    private ScheduledFuture<?> refreshTask;
     private final Logger log;
-    private boolean hasstarted;
     private final String[] status = new String[]{"-help", "-getprefix", "YouTube", "Spotify", "SlashCommands",
             "Logging"};
+    private ScheduledFuture<?> refreshTask;
+    private boolean hasstarted;
 
     public LoopThread() {
         log = LoggerFactory.getLogger(this.getClass());
@@ -40,7 +40,7 @@ public class LoopThread implements Runnable {
         K7Bot INSTANCE = K7Bot.getInstance();
 
         if ((!this.hasstarted)) {
-            StatsCategoryUtil.onStartup(INSTANCE.isDevMode());
+            StatsCategoryUtil.onStartup();
             this.hasstarted = true;
         }
 

@@ -13,12 +13,7 @@ public class RestartUtil {
 
     public static void restart() {
         K7Bot INSTANCE = K7Bot.getInstance();
-
-        INSTANCE.getPlayerUtil().stopAllTracks();
-
         SQLManager.onCreate();
-
-        INSTANCE.getSpotifyinteractions().restart();
         INSTANCE.restartLoop();
 
     }

@@ -4,10 +4,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -16,12 +16,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 public class Cache {
-    record Entry(String url, String hash, JsonElement value, LocalDateTime time) {
-    }
-
     private final ArrayList<Entry> entries;
     private final CloseableHttpClient httpClient;
-
     public Cache() {
         entries = new ArrayList<>();
         httpClient = HttpClients.createDefault();
@@ -98,5 +94,8 @@ public class Cache {
         } catch (IOException e) {
             return null;
         }
+    }
+
+    record Entry(String url, String hash, JsonElement value, LocalDateTime time) {
     }
 }

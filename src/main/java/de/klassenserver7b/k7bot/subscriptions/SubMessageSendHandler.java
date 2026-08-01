@@ -20,9 +20,6 @@ public class SubMessageSendHandler {
     public void provideSubscriptionMessage(Subscription s, MessageCreateData d) {
 
         SubscriptionDeliveryType type = s.getDeliveryType();
-        if (K7Bot.getInstance().isDevMode()) {
-            type = SubscriptionDeliveryType.CANARY;
-        }
 
         switch (type) {
 
@@ -32,10 +29,6 @@ public class SubMessageSendHandler {
             }
             case PRIVATE_CHANNEL: {
                 sendPrivateMessage(s, d);
-                break;
-            }
-            case CANARY: {
-                sendCanaryMessage(s, d);
                 break;
             }
 
@@ -76,28 +69,6 @@ public class SubMessageSendHandler {
 
         } else {
             log.error("Could not find the Discord target for the Subscription\nSubscriptionId: {}\nDiscord(PrivateChannel)Id: {}", s.getId(), s.getTargetDiscordId());
-        }
-
-    }
-
-    private void sendCanaryMessage(Subscription s, MessageCreateData data) {
-
-        if (!K7Bot.getInstance().isDevMode() || (s.getDeliveryType() != SubscriptionDeliveryType.CANARY)) {
-            return;
-        }
-
-        Long chanid = s.getTargetDiscordId();
-
-        GuildChannel gchan = K7Bot.getInstance().getShardManager().getGuildChannelById(chanid);
-        GuildMessageChannel channel;
-
-        if (gchan instanceof GuildMessageChannel) {
-            channel = (GuildMessageChannel) gchan;
-
-            channel.sendMessage(data).queue();
-
-        } else {
-            log.error("Could not find the Discord target for the Subscription\nSubscriptionId: {}\nDiscord(Canary GuildMessageChannel)Id: {}", s.getId(), s.getTargetDiscordId());
         }
 
     }

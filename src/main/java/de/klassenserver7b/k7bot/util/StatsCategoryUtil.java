@@ -23,13 +23,14 @@ public class StatsCategoryUtil {
 
     private static final Logger log = LoggerFactory.getLogger(StatsCategoryUtil.class);
 
-    public static void fillCategory(Category cat, boolean devmode) {
-        if (!devmode) {
-            try (KAutoCloseable ignored = LoggingFilter.getInstance().blockEventExecution()) {
-                VoiceChannel vc = cat.createVoiceChannel("🟢 Bot Online").complete();
-                LoggingFilter.getInstance().getLoggingBlocker().block(vc.getIdLong());
-            }
+    public static void fillCategory(Category cat) {
+        try (AutoCloseable _ = LoggingFilter.getInstance().blockEventExecution()) {
+            VoiceChannel vc = cat.createVoiceChannel("🟢 Bot Online").complete();
+            LoggingFilter.getInstance().getLoggingBlocker().block(vc.getIdLong());
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
+
 
         cat.getManager()
                 .putPermissionOverride(cat.getGuild().getPublicRole(), null, EnumSet.of(Permission.VOICE_CONNECT))
@@ -37,7 +38,7 @@ public class StatsCategoryUtil {
 
     }
 
-    public static void onStartup(boolean devmode) {
+    public static void onStartup() {
         K7Bot.getInstance().getShardManager().getGuilds().forEach(guild -> {
             try (ResultSet set = LiteSQL.onQuery("SELECT categoryId FROM statschannels WHERE guildId = ?;",
                     guild.getIdLong())) {
@@ -46,14 +47,13 @@ public class StatsCategoryUtil {
                     long catid = set.getLong("categoryId");
                     Category cat = guild.getCategoryById(catid);
 
-                    if (!devmode) {
-                        cat.getChannels().forEach(chan -> {
-                            LoggingFilter.getInstance().getLoggingBlocker().block(chan.getIdLong());
-                            chan.delete().complete();
+                    cat.getChannels().forEach(chan -> {
+                        LoggingFilter.getInstance().getLoggingBlocker().block(chan.getIdLong());
+                        chan.delete().complete();
 
-                        });
-                    }
-                    fillCategory(cat, devmode);
+                    });
+
+                    fillCategory(cat);
 
                 }
             } catch (SQLException e) {
@@ -63,7 +63,7 @@ public class StatsCategoryUtil {
         });
     }
 
-    public static void onShutdown(boolean devmode) {
+    public static void onShutdown() {
         K7Bot.getInstance().getShardManager().getGuilds().forEach(guild -> {
 
             try (ResultSet set = LiteSQL.onQuery("SELECT categoryId FROM statschannels WHERE guildId = ?;",
@@ -73,22 +73,21 @@ public class StatsCategoryUtil {
                     long catid = set.getLong("categoryId");
                     Category cat = guild.getCategoryById(catid);
 
-                    if (!devmode) {
-                        try (KAutoCloseable ignored = LoggingFilter.getInstance().blockEventExecution()) {
+                    try (AutoCloseable ignored = LoggingFilter.getInstance().blockEventExecution()) {
 
-                            cat.getChannels().forEach(chan -> {
-                                LoggingFilter.getInstance().getLoggingBlocker().block(chan.getIdLong());
-                                chan.delete().complete();
+                        cat.getChannels().forEach(chan -> {
+                            LoggingFilter.getInstance().getLoggingBlocker().block(chan.getIdLong());
+                            chan.delete().complete();
 
-                            });
+                        });
 
-                            VoiceChannel vc = cat.createVoiceChannel("🔴 Bot offline").complete();
-                            LoggingFilter.getInstance().getLoggingBlocker().block(vc.getIdLong());
-                        }
-
+                        VoiceChannel vc = cat.createVoiceChannel("🔴 Bot offline").complete();
+                        LoggingFilter.getInstance().getLoggingBlocker().block(vc.getIdLong());
                     }
+
+
                 }
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 log.error(e.getMessage(), e);
             }
         });

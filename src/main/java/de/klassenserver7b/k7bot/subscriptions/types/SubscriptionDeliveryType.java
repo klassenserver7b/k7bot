@@ -25,11 +25,6 @@ public enum SubscriptionDeliveryType {
     NEWS(3, true),
 
     /**
-     * A Type for subscriptions which are only used in DevMode
-     */
-    CANARY(5, false),
-
-    /**
      * Unknown Subscription channel type. Should never happen and would only
      * possibly happen if Discord implemented a new channel type and JDA/K7Bot had
      * yet to implement support for it.
@@ -44,6 +39,22 @@ public enum SubscriptionDeliveryType {
         this.id = id;
         this.isGuild = isguild;
 
+    }
+
+    /**
+     * Static accessor for retrieving a channel type based on its K7Bot id key.
+     *
+     * @param id The id key of the requested channel type.
+     * @return The {@link SubscriptionDeliveryType} that is referred to by the
+     * provided key. If the id key is unknown, {@link #UNKNOWN} is returned.
+     */
+    @NotNull
+    public static SubscriptionDeliveryType fromId(int id) {
+        for (SubscriptionDeliveryType type : values()) {
+            if (type.id == id)
+                return type;
+        }
+        return UNKNOWN;
     }
 
     /**
@@ -65,21 +76,5 @@ public enum SubscriptionDeliveryType {
      */
     public boolean isGuild() {
         return isGuild;
-    }
-
-    /**
-     * Static accessor for retrieving a channel type based on its K7Bot id key.
-     *
-     * @param id The id key of the requested channel type.
-     * @return The {@link SubscriptionDeliveryType} that is referred to by the
-     * provided key. If the id key is unknown, {@link #UNKNOWN} is returned.
-     */
-    @NotNull
-    public static SubscriptionDeliveryType fromId(int id) {
-        for (SubscriptionDeliveryType type : values()) {
-            if (type.id == id)
-                return type;
-        }
-        return UNKNOWN;
     }
 }
