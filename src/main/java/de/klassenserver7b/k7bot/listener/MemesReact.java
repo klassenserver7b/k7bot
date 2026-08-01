@@ -1,6 +1,7 @@
+/* (C)2026 */
 package de.klassenserver7b.k7bot.listener;
 
-import de.klassenserver7b.k7bot.sql.LiteSQL;
+import de.klassenserver7b.k7bot.K7Bot;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -14,38 +15,38 @@ import java.sql.SQLException;
 
 public class MemesReact extends ListenerAdapter {
 
-    private final Logger log;
+	private final Logger log;
 
-    public MemesReact() {
-        log = LoggerFactory.getLogger(getClass());
-    }
+	public MemesReact() {
+		log = LoggerFactory.getLogger(getClass());
+	}
 
-    @Override
-    public void onMessageReceived(MessageReceivedEvent event) {
-        if (event.isFromType(ChannelType.TEXT)) {
+	@Override
+	public void onMessageReceived(MessageReceivedEvent event) {
+		if (event.isFromType(ChannelType.TEXT)) {
 
-            GuildMessageChannel chan = event.getChannel().asGuildMessageChannel();
-            long channelId = chan.getIdLong();
+			GuildMessageChannel chan = event.getChannel().asGuildMessageChannel();
+			long channelId = chan.getIdLong();
 
-            try (ResultSet set = LiteSQL.onQuery("SELECT channelId FROM memechannels WHERE channelId=?", channelId)) {
+			try (ResultSet set = K7Bot.getInstance().getDb()
+					.query("SELECT channelId FROM memechannels WHERE channelId=?", channelId)) {
 
-                long msgId = event.getMessage().getIdLong();
+				long msgId = event.getMessage().getIdLong();
 
-                if (set.next()) {
-                    react(msgId, chan);
-                }
+				if (set.next()) {
+					react(msgId, chan);
+				}
 
-            } catch (SQLException e) {
-                log.error(e.getMessage(), e);
-            }
+			} catch (SQLException e) {
+				log.error(e.getMessage(), e);
+			}
+		}
+	}
 
-        }
-    }
+	public void react(long msgId, GuildMessageChannel chan) {
 
-    public void react(long msgId, GuildMessageChannel chan) {
+		chan.addReactionById(msgId, Emoji.fromFormatted("U+2B06")).queue();
 
-        chan.addReactionById(msgId, Emoji.fromFormatted("U+2B06")).queue();
-
-        chan.addReactionById(msgId, Emoji.fromFormatted("U+2B07")).queue();
-    }
+		chan.addReactionById(msgId, Emoji.fromFormatted("U+2B07")).queue();
+	}
 }

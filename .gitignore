@@ -16,3 +16,7 @@ bot.properties
 /localmaven.txt
 /Songs.csv
 /settings.xml
+
+.env
+*/.env
+**/*/.env

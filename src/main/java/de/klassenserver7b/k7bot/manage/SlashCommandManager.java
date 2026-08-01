@@ -1,14 +1,12 @@
+/* (C)2026 */
 package de.klassenserver7b.k7bot.manage;
 
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.audio.commands.slash.AudioSlashCommands;
 import de.klassenserver7b.k7bot.commands.slash.logging.LoggingConfigSlashCommand;
 import de.klassenserver7b.k7bot.commands.slash.logging.SystemChannelSlashCommand;
-import de.klassenserver7b.k7bot.commands.slash.subscriptions.SubscribeSlashCommand;
-import de.klassenserver7b.k7bot.commands.slash.subscriptions.UnsubscribeSlashCommand;
 import de.klassenserver7b.k7bot.commands.slash.util.*;
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
-import de.klassenserver7b.k7bot.sql.LiteSQL;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
@@ -23,68 +21,71 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SlashCommandManager {
 
-    public final ConcurrentHashMap<String, TopLevelSlashCommand> commands;
-    public final Logger commandlog = LoggerFactory.getLogger("Commandlog");
+	public final ConcurrentHashMap<String, TopLevelSlashCommand> commands;
+	public final Logger commandlog = LoggerFactory.getLogger("Commandlog");
 
-    public SlashCommandManager() {
+	public SlashCommandManager() {
 
-        this.commands = new ConcurrentHashMap<>();
+		this.commands = new ConcurrentHashMap<>();
 
-        List<TopLevelSlashCommand> registerSchedule = new ArrayList<>();
+		List<TopLevelSlashCommand> registerSchedule = new ArrayList<>();
 
-        registerSchedule.add(new HelpSlashCommand());
-        registerSchedule.add(new ClearSlashCommand());
-        registerSchedule.add(new PingSlashCommand());
-        registerSchedule.add(new ToEmbedSlashCommand());
-        registerSchedule.add(new ReactRolesSlashCommand());
-        registerSchedule.add(new SubscribeSlashCommand());
-        registerSchedule.add(new UnsubscribeSlashCommand());
-        registerSchedule.add(new VotingCommand());
-        registerSchedule.add(new TUNavigateSlashCommand());
-        registerSchedule.add(new MemesChannelSlashCommand());
-        registerSchedule.add(new LoggingConfigSlashCommand());
-        registerSchedule.add(new SystemChannelSlashCommand());
-        
-        registerSchedule.addAll(AudioSlashCommands.getAllCommands());
+		registerSchedule.add(new HelpSlashCommand());
+		registerSchedule.add(new ClearSlashCommand());
+		registerSchedule.add(new PingSlashCommand());
+		registerSchedule.add(new ToEmbedSlashCommand());
+		registerSchedule.add(new ReactRolesSlashCommand());
+		registerSchedule.add(new TUNavigateSlashCommand());
+		registerSchedule.add(new MemesChannelSlashCommand());
+		registerSchedule.add(new LoggingConfigSlashCommand());
+		registerSchedule.add(new SystemChannelSlashCommand());
 
-        for (JDA shard : K7Bot.getInstance().getShardManager().getShards()) {
-            CommandListUpdateAction commup = shard.updateCommands();
+		registerSchedule.addAll(AudioSlashCommands.getAllCommands());
 
-            for (TopLevelSlashCommand command : registerSchedule) {
-                SlashCommandData cdata = command.getCommandData();
-                this.commands.put(cdata.getName(), command);
-                //noinspection ResultOfMethodCallIgnored
-                commup.addCommands(cdata);
-            }
+		for (JDA shard : K7Bot.getInstance().getShardManager().getShards()) {
+			CommandListUpdateAction commup = shard.updateCommands();
 
-            commup.complete();
+			for (TopLevelSlashCommand command : registerSchedule) {
+				SlashCommandData cdata = command.getCommandData();
+				this.commands.put(cdata.getName(), command);
+				// noinspection ResultOfMethodCallIgnored
+				commup.addCommands(cdata);
+			}
 
-        }
-    }
+			commup.complete();
+		}
+	}
 
-    public boolean perform(SlashCommandInteraction event) {
-        TopLevelSlashCommand cmd = this.commands.get(event.getName().toLowerCase());
+	public boolean perform(SlashCommandInteraction event) {
+		TopLevelSlashCommand cmd = this.commands.get(event.getName().toLowerCase());
 
-        if (cmd == null) {
-            return false;
-        }
+		if (cmd == null) {
+			return false;
+		}
 
-        String guild = "PRIVATE";
-        if (event.isFromGuild()) {
-            guild = event.getGuild().getName();
-        }
+		String guild = "PRIVATE";
+		if (event.isFromGuild()) {
+			guild = event.getGuild().getName();
+		}
 
-        commandlog.info("SlashCommand - see next lines:\n\nUser: {} | \nGuild: {} | \nChannel: {} | \nMessage: {}\n", event.getUser().getName(), guild, event.getChannel().getName(), event.getCommandString());
+		commandlog.info("""
+				SlashCommand - see next lines:
 
-        LiteSQL.onUpdate(
-                "INSERT INTO slashcommandlog (command, guildId, userId, timestamp, commandstring) VALUES (?, ?, ?, ?, ?)",
-                event.getName(), ((event.getGuild() != null) ? event.getGuild().getIdLong() : 0),
-                event.getUser().getIdLong(),
-                event.getTimeCreated().format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss")),
-                event.getCommandString());
+				User: {} |\s
+				Guild: {} |\s
+				Channel: {} |\s
+				Message: {}
+				""", event.getUser().getName(), guild, event.getChannel().getName(), event.getCommandString());
 
-        cmd.performSlashCommand(event);
+		K7Bot.getInstance().getDb().update(
+				"INSERT INTO slashcommandlog (command, guildId, userId, timestamp,"
+						+ " commandstring) VALUES (?, ?, ?, ?, ?)",
+				event.getName(), ((event.getGuild() != null) ? event.getGuild().getIdLong() : 0),
+				event.getUser().getIdLong(),
+				event.getTimeCreated().format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss")), event.getCommandString());
 
-        return true;
-    }
+		cmd.performSlashCommand(event);
+
+		return true;
+	}
 }
