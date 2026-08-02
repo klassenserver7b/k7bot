@@ -1,10 +1,11 @@
-/**
- *
- */
+/* (C)2026 */
 package de.klassenserver7b.k7bot.commands.slash.util;
 
-import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
-import de.klassenserver7b.k7bot.sql.LiteSQL;
+import de.klassenserver7b.k7bot.commands.types.GuildSlashCommand;
+import de.klassenserver7b.k7bot.util.CommandUtils;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import de.klassenserver7b.k7bot.database.dao.MemeChannelDAO;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
@@ -25,49 +26,46 @@ import java.awt.*;
 /**
  *
  */
-public class MemesChannelSlashCommand implements TopLevelSlashCommand {
+public class MemesChannelSlashCommand implements GuildSlashCommand {
 
-    @Override
-    public void performSlashCommand(SlashCommandInteraction event) {
+	@Override
+	public void performGuildSlashCommand(@NotNull SlashCommandInteraction event, @NotNull Guild guild,
+			@NotNull Member member) {
 
-        InteractionHook hook = event.deferReply(false).complete();
+		InteractionHook hook = event.deferReply(false).complete();
 
-        OptionMapping channelOption = event.getOption("channel");
+		OptionMapping channelOption = CommandUtils.getRequiredOption(event, "channel");
 
-        assert channelOption != null : "channel is null";
+		GuildChannelUnion channel = channelOption.getAsChannel();
+		Long channelId = channel.getIdLong();
 
-        GuildChannelUnion channel = channelOption.getAsChannel();
-        Long channelId = channel.getIdLong();
+		if (event.getFullCommandName().split(" ")[1].equalsIgnoreCase("add")) {
+			new MemeChannelDAO().addChannel(channelId);
 
-        if (event.getFullCommandName().split(" ")[1].equalsIgnoreCase("add")) {
-            LiteSQL.onUpdate("INSERT INTO memechannels(channelId) VALUES(?)", channelId);
+			new GenericMessageSendHandler(hook)
+					.sendMessageEmbeds(new EmbedBuilder().setColor(Color.green)
+							.setDescription("Successfully added " + channel.getAsMention() + " as Memechannel").build())
+					.queue();
+		} else {
 
-            new GenericMessageSendHandler(hook)
-                    .sendMessageEmbeds(new EmbedBuilder().setColor(Color.green)
-                            .setDescription("Successfully added " + channel.getAsMention() + " as Memechannel").build())
-                    .queue();
-        } else {
+			new MemeChannelDAO().removeChannel(channelId);
 
-            LiteSQL.onUpdate("REMOVE FROM memechannels WHERE channelId = ?", channelId);
+			new GenericMessageSendHandler(hook).sendMessageEmbeds(new EmbedBuilder().setColor(Color.green)
+					.setDescription("Successfully removed " + channel.getAsMention() + " as Memechannel").build())
+					.queue();
+		}
+	}
 
-            new GenericMessageSendHandler(hook).sendMessageEmbeds(new EmbedBuilder().setColor(Color.green)
-                            .setDescription("Successfully removed " + channel.getAsMention() + " as Memechannel").build())
-                    .queue();
-        }
-
-    }
-
-    @NotNull
-    @Override
-    public SlashCommandData getCommandData() {
-        return Commands.slash("memeschannel", "modify memechannels")
-                .addSubcommands(new SubcommandData("add", "adds a memechannel")
-                        .addOptions(new OptionData(OptionType.CHANNEL, "channel", "the channel to use")
-                                .setRequired(true).setChannelTypes(ChannelType.TEXT)))
-                .addSubcommands(new SubcommandData("remove", "removes a memechannel")
-                        .addOptions(new OptionData(OptionType.CHANNEL, "channel", "the channel to use")
-                                .setRequired(true).setChannelTypes(ChannelType.TEXT)))
-                .setContexts(InteractionContextType.GUILD);
-    }
-
+	@NotNull
+	@Override
+	public SlashCommandData getCommandData() {
+		return Commands.slash("memeschannel", "modify memechannels")
+				.addSubcommands(new SubcommandData("add", "adds a memechannel")
+						.addOptions(new OptionData(OptionType.CHANNEL, "channel", "the channel to use")
+								.setRequired(true).setChannelTypes(ChannelType.TEXT)))
+				.addSubcommands(new SubcommandData("remove", "removes a memechannel")
+						.addOptions(new OptionData(OptionType.CHANNEL, "channel", "the channel to use")
+								.setRequired(true).setChannelTypes(ChannelType.TEXT)))
+				.setContexts(InteractionContextType.GUILD);
+	}
 }

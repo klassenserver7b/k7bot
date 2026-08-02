@@ -1,9 +1,21 @@
+/* (C)2026 */
 package de.klassenserver7b.k7bot.listener;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.klassenserver7b.k7bot.K7Bot;
-import de.klassenserver7b.k7bot.sql.LiteSQL;
+import de.klassenserver7b.k7bot.database.dao.ReactRolesDAO;
+import de.klassenserver7b.k7bot.database.dao.UserReactsDAO;
+import de.klassenserver7b.k7bot.database.entities.ReactRolesEntity;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.emoji.EmojiUnion;
@@ -11,232 +23,219 @@ import net.dv8tion.jda.api.events.message.react.GenericMessageReactionEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 public class ReactRoleListener extends ListenerAdapter implements InitRequiringListener {
 
-    private final Logger log;
+	private final Logger log;
 
-    public ReactRoleListener() {
-        log = LoggerFactory.getLogger(this.getClass());
-    }
+	public ReactRoleListener() {
+		log = LoggerFactory.getLogger(this.getClass());
+	}
 
-    @Override
-    public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
-        performAction(event, true);
-    }
+	@Override
+	public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
+		performAction(event, true);
+	}
 
-    @Override
-    public void onMessageReactionRemove(@NotNull MessageReactionRemoveEvent event) {
-        performAction(event, false);
-    }
+	@Override
+	public void onMessageReactionRemove(@NotNull MessageReactionRemoveEvent event) {
+		performAction(event, false);
+	}
 
-    protected void performAction(GenericMessageReactionEvent event, boolean add) {
-        if (event.getChannelType() == ChannelType.TEXT) {
-            long guildId = event.getGuild().getIdLong();
-            long channelId = event.getChannel().getIdLong();
-            long messageId = event.getMessageIdLong();
+	protected void performAction(GenericMessageReactionEvent event, boolean add) {
+		if (event.getChannelType() == ChannelType.TEXT) {
+			long guildId = event.getGuild().getIdLong();
+			long channelId = event.getChannel().getIdLong();
+			long messageId = event.getMessageIdLong();
 
-            if (event.retrieveUser().complete().isBot()) {
-                return;
-            }
+			if (event.retrieveUser().complete().isBot()) {
+				return;
+			}
 
-            EmojiUnion emote = event.getEmoji();
+			EmojiUnion emote = event.getEmoji();
 
-            try (ResultSet set = LiteSQL.onQuery(
-                    "SELECT roleId FROM reactroles WHERE guildId = ? AND channelId = ? AND messageId = ? AND emote = ?;",
-                    guildId, channelId, messageId, emote.getName())) {
+			try {
+				ReactRolesEntity reactRole = new ReactRolesDAO().getRole(guildId, channelId, messageId, emote.getName())
+						.join();
 
-                if (set.next()) {
-                    long roleId = set.getLong("roleId");
+				if (reactRole != null) {
+					long roleId = reactRole.getRoleId();
 
-                    Guild guild = event.getGuild();
-                    Member member = event.getMember();
+					Guild guild = event.getGuild();
+					Member member = event.getMember();
 
-                    if (member == null) {
-                        return;
-                    }
+					if (member == null) {
+						return;
+					}
 
-                    if (add) {
-                        guild.addRoleToMember(member, guild.getRoleById(roleId)).queue();
+					Role r = guild.getRoleById(roleId);
+					if (r == null) {
+						log.warn("ReactRole Role not found by JDA - deleting");
+						new ReactRolesDAO().deleteByRoleId(roleId);
+						return;
+					}
 
-                        LiteSQL.onUpdate(
-                                "INSERT OR REPLACE INTO userreacts(userId, guildId, messageId, emote) VALUES(?,?,?,?);",
-                                event.getUserIdLong(), guildId, messageId, emote.getName());
-                    } else {
-                        guild.removeRoleFromMember(member, guild.getRoleById(roleId)).queue();
+					if (add) {
+						guild.addRoleToMember(member, r).queue();
+						new UserReactsDAO().insertReaction(event.getUserIdLong(), guildId, messageId, emote.getName())
+								.join();
+					} else {
+						guild.removeRoleFromMember(member, r).queue();
+						new UserReactsDAO().deleteReaction(event.getUserIdLong(), guildId, messageId, emote.getName())
+								.join();
+					}
+				}
+			} catch (Exception e) {
+				log.error(e.getMessage(), e);
+			}
+		}
+	}
 
-                        LiteSQL.onUpdate(
-                                "REMOVE FROM userreacts WHERE userId = ? AND guildId = ? AND messageId = ? AND emote = ?;",
-                                event.getUserIdLong(), guildId, messageId, emote.getName());
-                    }
-                }
-            } catch (SQLException | IllegalArgumentException e) {
-                log.error(e.getMessage(), e);
-            }
-        }
-    }
+	/**
+	 * Initializes the Listener (checks for reactions happened in off time)
+	 *
+	 * @return {@link CompletableFuture} which retuns the "exit code" of the
+	 *         initialization
+	 */
+	@Override
+	public CompletableFuture<Integer> initialize() {
 
-    /**
-     * Initializes the Listener (checks for reactions happened in off time)
-     *
-     * @return {@link CompletableFuture} which retuns the "exit code" of the
-     * initialization
-     */
-    @Override
-    public CompletableFuture<Integer> initialize() {
+		CompletableFuture<Integer> completableFuture = new CompletableFuture<>();
 
-        CompletableFuture<Integer> completableFuture = new CompletableFuture<>();
+		new ReactRoleRunnable(completableFuture).start();
 
-        new ReactRoleRunnable(completableFuture).start();
+		return completableFuture;
+	}
 
-        return completableFuture;
+	/**
+	 * SubClass representing the {@link Runnable} for the {@link CompletableFuture}
+	 * of {@link ReactRoleListener#initialize()}
+	 *
+	 * @author K7
+	 */
+	protected class ReactRoleRunnable implements Runnable {
 
-    }
+		private final CompletableFuture<Integer> completableFuture;
 
-    /**
-     * SubClass representing the {@link Runnable} for the {@link CompletableFuture}
-     * of {@link ReactRoleListener#initialize()}
-     *
-     * @author K7
-     */
-    protected class ReactRoleRunnable implements Runnable {
+		public ReactRoleRunnable(CompletableFuture<Integer> future) {
+			this.completableFuture = future;
+		}
 
-        private final CompletableFuture<Integer> completableFuture;
+		public void start() {
+			Thread.startVirtualThread(this);
+		}
 
-        public ReactRoleRunnable(CompletableFuture<Integer> future) {
-            this.completableFuture = future;
-        }
+		@Override
+		public void run() {
 
-        public void start() {
-            Thread.startVirtualThread(this);
-        }
+			try {
+				java.util.List<ReactRolesEntity> reactRoles = new ReactRolesDAO().getAllRoles().join();
+				// loop through all registered reaction roles
+				for (ReactRolesEntity reactRole : reactRoles) {
 
-        @Override
-        public void run() {
+					/*
+					 * retrieving the GuildChannel which should always be a GuildMessageChannel
+					 * (can't create reactions in other than that)
+					 */
 
-            try (ResultSet reactRoles = LiteSQL
-                    .onQuery("SELECT channelId, messageId, emote, roleId FROM reactroles;")) {
-                // loop through all registered reaction roles
-                while (reactRoles.next()) {
+					GuildChannel guildChannel = K7Bot.getInstance().getShardManager()
+							.getGuildChannelById(reactRole.getChannelId());
 
-                    /*
-                     * retrieving the GuildChannel which should always be a GuildMessageChannel
-                     * (can't create reactions in other than that)
-                     */
+					if (guildChannel == null) {
+						log.warn("ReactRole Channel not found by JDA - deleting");
+						new ReactRolesDAO().deleteByChannelId(reactRole.getChannelId());
+						return;
+					}
 
-                    GuildMessageChannel msgChannel = (GuildMessageChannel) K7Bot.getInstance()
-                            .getShardManager().getGuildChannelById(reactRoles.getLong("channelId"));
+					if (guildChannel instanceof GuildMessageChannel msgChannel) {
 
-                    // get Objects from db data
-                    long messageId = reactRoles.getLong("messageId");
+						// get Objects from db data
+						long messageId = reactRole.getMessageId();
 
-                    Message mess = msgChannel.retrieveMessageById(messageId).complete();
+						Message mess = msgChannel.retrieveMessageById(messageId).complete();
 
-                    Guild guild = mess.getGuild();
-                    Role role = guild.getRoleById(reactRoles.getLong("roleId"));
+						Guild guild = mess.getGuild();
+						Role role = guild.getRoleById(reactRole.getRoleId());
 
-                    String emoji = reactRoles.getString("emote");
+						String emoji = reactRole.getEmote();
 
-                    MessageReaction reaction = mess.getReaction(Emoji.fromFormatted(emoji));
+						MessageReaction reaction = mess.getReaction(Emoji.fromFormatted(emoji));
 
-                    List<Long> userIds = new ArrayList<>();
-                    if (reaction != null) {
-                        for (User u : reaction.retrieveUsers().complete()) {
-                            if (!u.isBot()) {
-                                userIds.add(u.getIdLong());
-                            }
-                        }
-                    }
+						List<Long> userIds = new ArrayList<>();
+						if (reaction != null) {
+							for (User u : reaction.retrieveUsers().complete()) {
+								if (!u.isBot()) {
+									userIds.add(u.getIdLong());
+								}
+							}
+						}
 
-                    String sql = "SELECT userId from userreacts WHERE messageId = ? AND emote = ?;";
+						java.util.List<Long> oldUserReactData = new UserReactsDAO().getUsersByReaction(messageId, emoji)
+								.join();
 
-                    try (ResultSet oldUserReactData = LiteSQL.onQuery(sql, messageId, emoji)) {
+						// loop through all data logged while the bot wasn't running and resolving
+						// changes
+						for (long dbUserId : oldUserReactData) {
+							if (checkRoleRemove(userIds, messageId, emoji, role, guild, dbUserId)) {
+								userIds.remove(dbUserId);
+							}
+						}
 
-                        // loop through all data logged while the bot was running and resolving changes
-                        while (oldUserReactData.next()) {
-                            long dbUserId = oldUserReactData.getLong("userId");
+						// Add roles to every user which wasn't logged but has now reacted
+						addRoles(userIds, messageId, emoji, role, guild);
+					}
+				}
 
-                            /*
-                             * Remove roles, db entry, userIds entry from the users that have removed their
-                             * reaction
-                             */
-                            if (checkRoleRemove(userIds, messageId, emoji, role, guild, dbUserId)) {
-                                userIds.remove(dbUserId);
-                            }
-                        }
-                    }
+			} catch (Exception e) {
+				log.error(e.getMessage(), e);
+				completableFuture.complete(1);
+				return;
+			}
+			completableFuture.complete(0);
+		}
 
-                    // Add roles to every user which wasn't logged but has now reacted
-                    addRoles(userIds, messageId, emoji, role, guild);
+		/**
+		 * Remove roles from all users that have removed their reaction and remove their
+		 * db entry
+		 *
+		 * @param userIds   {@link List} with all users that have currently reacted
+		 * @param messageId {@link Message} of the ReactRole
+		 * @param emoji     {@link String Emoji} the users have/had to react with
+		 * @param role      {@link Role} that should get removed
+		 * @param guild     {@link Guild} the Guild of the Message
+		 * @param dbUserId  {@link Long} The {@link UserSnowflake} of the user which
+		 *                  should be checked
+		 * @return A boolean representing if the user has removed their reaction (true
+		 *         means 'has removed')
+		 */
+		protected boolean checkRoleRemove(List<Long> userIds, long messageId, String emoji, Role role, Guild guild,
+				long dbUserId) {
 
-                }
+			if (!userIds.contains(dbUserId)) {
+				guild.removeRoleFromMember(UserSnowflake.fromId(dbUserId), role).queue();
+				new UserReactsDAO().deleteReaction(dbUserId, guild.getIdLong(), messageId, emoji).join();
+				return true;
+			}
 
-            } catch (SQLException e) {
-                log.error(e.getMessage(), e);
-                completableFuture.complete(1);
-                return;
-            }
-            completableFuture.complete(0);
-        }
+			return false;
+		}
 
-        /**
-         * Remove roles from all users that have removed their reaction and remove their
-         * db entry
-         *
-         * @param userIds   {@link List} with all users that have currently reacted
-         * @param messageId {@link Message} of the ReactRole
-         * @param emoji     {@link String Emoji} the users have/had to react with
-         * @param role      {@link Role} that should get removed
-         * @param guild     {@link Guild} the Guild of the Message
-         * @param dbUserId  {@link Long} The {@link UserSnowflake} of the user which
-         *                  should be checked
-         * @return A boolean representing if the user has removed their reaction (true
-         * means 'has removed')
-         */
-        protected boolean checkRoleRemove(List<Long> userIds, long messageId, String emoji, Role role, Guild guild,
-                                          long dbUserId) {
+		/**
+		 * Add roles from all users that have added a reaction and add a db entry for
+		 * them
+		 *
+		 * @param userIds   {@link List} with all users that have currently reacted
+		 * @param messageId {@link Message} of the ReactRole
+		 * @param emoji     {@link String Emoji} the users have/had to react with
+		 * @param role      {@link Role} that should be granted
+		 * @param guild     {@link Guild} the Guild of the Message
+		 */
+		protected void addRoles(List<Long> userIds, long messageId, String emoji, Role role, Guild guild) {
+			for (long userId : userIds) {
 
-            if (!userIds.contains(dbUserId)) {
-                guild.removeRoleFromMember(UserSnowflake.fromId(dbUserId), role).queue();
-                LiteSQL.onUpdate("DELETE FROM userreacts WHERE userId = ? AND messageId = ? AND emote=?", dbUserId,
-                        messageId, emoji);
-                return true;
-            }
-
-            return false;
-
-        }
-
-        /**
-         * Add roles from all users that have added a reaction and add a db entry for
-         * them
-         *
-         * @param userIds   {@link List} with all users that have currently reacted
-         * @param messageId {@link Message} of the ReactRole
-         * @param emoji     {@link String Emoji} the users have/had to react with
-         * @param role      {@link Role} that should be granted
-         * @param guild     {@link Guild} the Guild of the Message
-         */
-        protected void addRoles(List<Long> userIds, long messageId, String emoji, Role role, Guild guild) {
-            for (long userId : userIds) {
-
-                guild.addRoleToMember(UserSnowflake.fromId(userId), role).queue();
-                LiteSQL.onUpdate(
-                        "INSERT OR REPLACE INTO userreacts(userId, guildId, messageId, emote) VALUES(?,?,?,?);", userId,
-                        guild.getIdLong(), messageId, emoji);
-
-            }
-        }
-
-    }
-
+				guild.addRoleToMember(UserSnowflake.fromId(userId), role).queue();
+				new UserReactsDAO().insertReaction(userId, guild.getIdLong(), messageId, emoji).join();
+			}
+		}
+	}
 }

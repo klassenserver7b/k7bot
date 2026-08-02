@@ -1,10 +1,9 @@
-/**
- *
- */
+/* (C)2026 */
 package de.klassenserver7b.k7bot.logging;
 
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
+import de.klassenserver7b.k7bot.util.InternalStatusCodes;
 import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -34,291 +33,284 @@ import java.util.List;
  */
 public class LoggingConfigEmbedProvider extends ListenerAdapter {
 
-    private final long guildId;
-    private final LoopedEvent timeoutCheckEvent;
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
-    private InteractionHook hook;
-    private LoggingOptions category;
+	private final long guildId;
+	private final LoopedEvent timeoutCheckEvent;
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
+	private InteractionHook hook;
+	private LoggingOptions category;
+
+	/**
+	 *
+	 */
+	public LoggingConfigEmbedProvider(InteractionHook hook) {
+		this.hook = hook;
+		this.guildId = hook.getInteraction().getGuild().getIdLong();
+
+		try (AutoCloseable _ = LoggingFilter.getInstance().blockEventExecution()) {
+			Message m = hook.sendMessageEmbeds(buildCatSelectEmbed()).setComponents(buildCatSelectActionRows())
+					.complete();
+			LoggingFilter.getInstance().getLoggingBlocker().block(m.getIdLong());
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
+
+		timeoutCheckEvent = new HookTimeoutLoop("logging-config-" + guildId + "-" + System.currentTimeMillis(), this);
+		K7Bot.getInstance().getLoopedEventManager().registerEvent(timeoutCheckEvent, true);
+	}
+
+	@Override
+	public void onStringSelectInteraction(StringSelectInteractionEvent event) {
+
+		if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+			return;
+		}
+
+		hook = event.deferEdit().complete();
+		String compId = event.getComponentId();
+		String matcher = compId.replaceAll("(.*)-(\\d+)?$", "$1");
+		int optId = Integer.parseInt(event.getSelectedOptions().getFirst().getValue().replace("logging-catid-", ""));
+
+		switch (matcher) {
+			case "logging-single-select" -> LoggingConfigDBHandler.toggleOption(LoggingOptions.byId(optId), guildId);
+
+			case "logging-choose-category" -> category = LoggingOptions.byId(optId);
+
+			default -> {
+				return;
+			}
+		}
+
+		sendCatOptionsEmbed();
+	}
+
+	@Override
+	public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
+
+		if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+			return;
+		}
+
+		hook = event.deferEdit().complete();
+		String compId = event.getComponentId();
+
+		if (compId.equalsIgnoreCase("logging-conf-exit")) {
+			exit();
+			return;
+		}
 
-    /**
-     *
-     */
-    public LoggingConfigEmbedProvider(InteractionHook hook) {
-        this.hook = hook;
-        this.guildId = hook.getInteraction().getGuild().getIdLong();
+		if (!compId.startsWith("logging-cat-")) {
+			return;
+		}
 
-        try (AutoCloseable _ = LoggingFilter.getInstance().blockEventExecution()) {
-            Message m = hook.sendMessageEmbeds(buildCatSelectEmbed()).setComponents(buildCatSelectActionRows()).complete();
-            LoggingFilter.getInstance().getLoggingBlocker().block(m.getIdLong());
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
+		compId = compId.replace("logging-cat-", "");
+		LoggingOptions option = LoggingOptions.byId(Integer.parseInt(compId.split("-")[1]));
 
-        timeoutCheckEvent = new HookTimeoutLoop("logging-config-" + guildId + "-" + System.currentTimeMillis(), this);
-        K7Bot.getInstance().getLoopedEventManager().registerEvent(timeoutCheckEvent, true);
-    }
-
-    @Override
-    public void onStringSelectInteraction(StringSelectInteractionEvent event) {
-
-        if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
-            return;
-        }
-
-        hook = event.deferEdit().complete();
-        String compId = event.getComponentId();
-        String matcher = compId.replaceAll("(.*)-(\\d+)?$", "$1");
-        int optId = Integer.parseInt(event.getSelectedOptions().getFirst().getValue().replace("logging-catid-", ""));
+		switch (compId.split("-")[0]) {
+			case "disableall" -> changeCat(option, false);
 
-        switch (matcher) {
+			case "enableall" -> changeCat(option, true);
 
-            case "logging-single-select" -> LoggingConfigDBHandler.toggleOption(LoggingOptions.byId(optId), guildId);
+			case "back" -> {
+				sendCatSelectEmbed();
+				return;
+			}
 
-            case "logging-choose-category" -> category = LoggingOptions.byId(optId);
+			default -> {
+				return;
+			}
+		}
 
-            default -> {
-                return;
-            }
-        }
+		sendCatOptionsEmbed();
+	}
 
-        sendCatOptionsEmbed();
+	protected void exit() {
+		try (AutoCloseable ignored = LoggingFilter.getInstance()
+				.blockEventExecution(hook.retrieveOriginal().complete().getIdLong())) {
+			hook.deleteOriginal().queue();
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
+		K7Bot.getInstance().getShardManager().removeEventListener(this);
+		K7Bot.getInstance().getLoopedEventManager().removeEvent(timeoutCheckEvent);
+	}
 
-    }
+	protected void sendCatSelectEmbed() {
+		hook.editOriginalEmbeds(buildCatSelectEmbed()).setComponents(buildCatSelectActionRows()).queue();
+	}
 
-    @Override
-    public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
+	protected MessageEmbed buildCatSelectEmbed() {
+		EmbedBuilder embbuild = EmbedUtils.getDefault();
+		embbuild.setTitle("Logging Config");
+		embbuild.setColor(Color.blue);
 
-        if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
-            return;
-        }
+		StringBuilder strbuild = new StringBuilder();
+		strbuild.append("Please select the type of Logging you want to configure");
+		strbuild.append("\n\n");
+		strbuild.append("Available are:");
+		strbuild.append("\n");
 
-        hook = event.deferEdit().complete();
-        String compId = event.getComponentId();
+		for (LoggingOptions option : LoggingOptions.values()) {
+			if (option.getId() % 10 == 0) {
+				strbuild.append(option);
+				strbuild.append(",");
+				strbuild.append("\n");
+			}
+		}
 
-        if (compId.equalsIgnoreCase("logging-conf-exit")) {
-            exit();
-            return;
-        }
+		embbuild.setDescription(strbuild);
 
-        if (!compId.startsWith("logging-cat-")) {
-            return;
-        }
+		return embbuild.build();
+	}
 
-        compId = compId.replace("logging-cat-", "");
-        LoggingOptions option = LoggingOptions.byId(Integer.parseInt(compId.split("-")[1]));
+	protected List<MessageTopLevelComponent> buildCatSelectActionRows() {
 
-        switch (compId.split("-")[0]) {
+		List<MessageTopLevelComponent> rows = new LinkedList<>();
+		List<ActionRowChildComponent> strSelect = new LinkedList<>();
 
-            case "disableall" -> changeCat(option, false);
+		Builder strSelectBuilder = StringSelectMenu.create("logging-choose-category");
 
-            case "enableall" -> changeCat(option, true);
+		for (LoggingOptions option : LoggingOptions.values()) {
+			if (option.getId() % 10 == 0) {
+				strSelectBuilder.addOption(option.toString(), "logging-catid-" + option.getId());
+			}
+		}
 
-            case "back" -> {
-                sendCatSelectEmbed();
-                return;
-            }
+		strSelect.add(strSelectBuilder.build());
 
-            default -> {
-                return;
-            }
-        }
+		rows.add(ActionRow.of(strSelect));
+		rows.add(ActionRow.of(Button.danger("logging-conf-exit", "Exit")));
 
-        sendCatOptionsEmbed();
+		return rows;
+	}
 
-    }
+	protected void sendCatOptionsEmbed() {
 
-    protected void exit() {
-        try (AutoCloseable ignored = LoggingFilter.getInstance().blockEventExecution(hook.retrieveOriginal().complete().getIdLong())) {
-            hook.deleteOriginal().queue();
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-        K7Bot.getInstance().getShardManager().removeEventListener(this);
-        K7Bot.getInstance().getLoopedEventManager().removeEvent(timeoutCheckEvent);
-    }
+		int idRange = category.getId();
 
-    protected void sendCatSelectEmbed() {
-        hook.editOriginalEmbeds(buildCatSelectEmbed()).setComponents(buildCatSelectActionRows()).queue();
-    }
+		List<Integer> catids = Arrays.stream(LoggingOptions.values())
+				.filter(opt -> (opt.getId() > idRange && opt.getId() < idRange + 10)).map(LoggingOptions::getId)
+				.toList();
 
-    protected MessageEmbed buildCatSelectEmbed() {
-        EmbedBuilder embbuild = EmbedUtils.getDefault();
-        embbuild.setTitle("Logging Config");
-        embbuild.setColor(Color.blue);
+		hook.editOriginalEmbeds(buildCatOptionsEmbed(catids)).setComponents(buildCatOptionsActionRows(catids)).queue();
+	}
 
-        StringBuilder strbuild = new StringBuilder();
-        strbuild.append("Please select the type of Logging you want to configure");
-        strbuild.append("\n\n");
-        strbuild.append("Available are:");
-        strbuild.append("\n");
+	protected MessageEmbed buildCatOptionsEmbed(List<Integer> catids) {
 
-        for (LoggingOptions option : LoggingOptions.values()) {
-            if (option.getId() % 10 == 0) {
-                strbuild.append(option);
-                strbuild.append(",");
-                strbuild.append("\n");
-            }
-        }
+		String catname = category.toString();
 
-        embbuild.setDescription(strbuild);
+		EmbedBuilder embbuild = EmbedUtils.getDefault();
+		embbuild.setColor(Color.blue);
+		embbuild.setTitle("LoggingConfig - " + catname);
 
-        return embbuild.build();
-    }
+		StringBuilder strbuild = new StringBuilder();
+		strbuild.append("Option");
 
-    protected List<MessageTopLevelComponent> buildCatSelectActionRows() {
+		strbuild.repeat(" ", 30);
 
-        List<MessageTopLevelComponent> rows = new LinkedList<>();
-        List<ActionRowChildComponent> strSelect = new LinkedList<>();
+		strbuild.append(" - State");
+		strbuild.append("\n\n");
 
-        Builder strSelectBuilder = StringSelectMenu.create("logging-choose-category");
+		for (int catid : catids) {
 
-        for (LoggingOptions option : LoggingOptions.values()) {
-            if (option.getId() % 10 == 0) {
-                strSelectBuilder.addOption(option.toString(), "logging-catid-" + option.getId());
-            }
-        }
+			LoggingOptions opt = LoggingOptions.byId(catid);
 
-        strSelect.add(strSelectBuilder.build());
+			strbuild.append("`");
+			strbuild.append(opt.toString());
 
-        rows.add(ActionRow.of(strSelect));
-        rows.add(ActionRow.of(Button.danger("logging-conf-exit", "Exit")));
+			strbuild.repeat(" ", Math.max(0, 30 - opt.toString().length()));
 
-        return rows;
-    }
+			strbuild.append(" - ");
+			strbuild.append("`");
 
-    protected void sendCatOptionsEmbed() {
+			boolean enabled = !LoggingConfigDBHandler.isOptionDisabled(opt, guildId);
+			strbuild.append((enabled ? ":white_check_mark:" : ":x:"));
 
-        int idRange = category.getId();
+			strbuild.append("\n");
+		}
 
-        List<Integer> catids = Arrays.stream(LoggingOptions.values())
-                .filter(opt -> (opt.getId() > idRange && opt.getId() < idRange + 10)).map(LoggingOptions::getId).toList();
+		embbuild.setDescription(strbuild);
 
-        hook.editOriginalEmbeds(buildCatOptionsEmbed(catids)).setComponents(buildCatOptionsActionRows(catids)).queue();
-    }
+		return embbuild.build();
+	}
 
-    protected MessageEmbed buildCatOptionsEmbed(List<Integer> catids) {
+	protected List<MessageTopLevelComponent> buildCatOptionsActionRows(List<Integer> catIds) {
 
-        String catname = category.toString();
+		int idRange = category.getId();
 
-        EmbedBuilder embbuild = EmbedUtils.getDefault();
-        embbuild.setColor(Color.blue);
-        embbuild.setTitle("LoggingConfig - " + catname);
+		List<ActionRowChildComponent> buttonRow = new LinkedList<>();
 
-        StringBuilder strbuild = new StringBuilder();
-        strbuild.append("Option");
+		buttonRow.add(Button.primary("logging-cat-enableall-" + idRange, "Enable All"));
+		buttonRow.add(Button.primary("logging-cat-disableall-" + idRange, "Disable All"));
+		buttonRow.add(Button.danger("logging-cat-back-00", "Back"));
 
-        strbuild.repeat(" ", 30);
+		Builder strSelectBuilder = StringSelectMenu.create("logging-single-select");
 
-        strbuild.append(" - State");
-        strbuild.append("\n\n");
+		for (int catid : catIds) {
+			strSelectBuilder.addOption(LoggingOptions.byId(catid).toString(), "logging-catid-" + catid);
+		}
 
-        for (int catid : catids) {
+		List<MessageTopLevelComponent> rows = new LinkedList<>();
+		rows.add(ActionRow.of(buttonRow));
+		rows.add(ActionRow.of(strSelectBuilder.build()));
 
-            LoggingOptions opt = LoggingOptions.byId(catid);
+		return rows;
+	}
 
-            strbuild.append("`");
-            strbuild.append(opt.toString());
+	protected void changeCat(LoggingOptions cat, boolean enable) {
 
-            strbuild.repeat(" ", Math.max(0, 30 - opt.toString().length()));
+		for (int optId = cat.getId() + 1; optId < cat.getId() + 10; optId++) {
 
-            strbuild.append(" - ");
-            strbuild.append("`");
+			LoggingOptions option;
+			if ((option = LoggingOptions.byId(optId)) != LoggingOptions.UNKNOWN) {
 
-            boolean enabled = !LoggingConfigDBHandler.isOptionDisabled(opt, guildId);
-            strbuild.append((enabled ? ":white_check_mark:" : ":x:"));
+				if (enable) {
+					LoggingConfigDBHandler.enableOption(option, guildId);
+				} else {
+					LoggingConfigDBHandler.disableOption(option, guildId);
+				}
+			}
+		}
+	}
 
-            strbuild.append("\n");
+	static class HookTimeoutLoop implements LoopedEvent {
 
-        }
+		private final String identifier;
+		private final LoggingConfigEmbedProvider listener;
 
-        embbuild.setDescription(strbuild);
+		public HookTimeoutLoop(String identifier, LoggingConfigEmbedProvider listener) {
+			this.identifier = identifier;
+			this.listener = listener;
+		}
 
-        return embbuild.build();
-    }
+		@Override
+		public InternalStatusCodes checkforUpdates() {
 
-    protected List<MessageTopLevelComponent> buildCatOptionsActionRows(List<Integer> catIds) {
+			if (listener.hook.isExpired()) {
+				shutdown();
+			}
 
-        int idRange = category.getId();
+			return InternalStatusCodes.SUCCESS;
+		}
 
-        List<ActionRowChildComponent> buttonRow = new LinkedList<>();
+		@Override
+		public boolean isAvailable() {
+			return true;
+		}
 
-        buttonRow.add(Button.primary("logging-cat-enableall-" + idRange, "Enable All"));
-        buttonRow.add(Button.primary("logging-cat-disableall-" + idRange, "Disable All"));
-        buttonRow.add(Button.danger("logging-cat-back-00", "Back"));
+		@Override
+		public void shutdown() {
+			K7Bot.getInstance().getShardManager().removeEventListener(listener);
+			K7Bot.getInstance().getLoopedEventManager().removeEvent(this);
+		}
 
-        Builder strSelectBuilder = StringSelectMenu.create("logging-single-select");
+		@Override
+		public boolean restart() {
+			return false;
+		}
 
-        for (int catid : catIds) {
-            strSelectBuilder.addOption(LoggingOptions.byId(catid).toString(), "logging-catid-" + catid);
-        }
-
-        List<MessageTopLevelComponent> rows = new LinkedList<>();
-        rows.add(ActionRow.of(buttonRow));
-        rows.add(ActionRow.of(strSelectBuilder.build()));
-
-        return rows;
-    }
-
-    protected void changeCat(LoggingOptions cat, boolean enable) {
-
-        for (int optId = cat.getId() + 1; optId < cat.getId() + 10; optId++) {
-
-            LoggingOptions option;
-            if ((option = LoggingOptions.byId(optId)) != LoggingOptions.UNKNOWN) {
-
-                if (enable) {
-                    LoggingConfigDBHandler.enableOption(option, guildId);
-                } else {
-                    LoggingConfigDBHandler.disableOption(option, guildId);
-                }
-            }
-
-        }
-
-    }
-
-    static class HookTimeoutLoop implements LoopedEvent {
-
-        private final String identifier;
-        private final LoggingConfigEmbedProvider listener;
-
-        public HookTimeoutLoop(String identifier, LoggingConfigEmbedProvider listener) {
-            this.identifier = identifier;
-            this.listener = listener;
-
-        }
-
-        @Override
-        public int checkforUpdates() {
-
-            if (listener.hook.isExpired()) {
-                shutdown();
-            }
-
-            return 0;
-        }
-
-        @Override
-        public boolean isAvailable() {
-            return true;
-        }
-
-        @Override
-        public void shutdown() {
-            K7Bot.getInstance().getShardManager().removeEventListener(listener);
-            K7Bot.getInstance().getLoopedEventManager().removeEvent(this);
-        }
-
-        @Override
-        public boolean restart() {
-            return false;
-        }
-
-        @Override
-        public String getIdentifier() {
-            return identifier;
-        }
-
-    }
-
+		@Override
+		public String getIdentifier() {
+			return identifier;
+		}
+	}
 }

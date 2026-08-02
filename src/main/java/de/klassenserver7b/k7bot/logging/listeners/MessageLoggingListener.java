@@ -1,11 +1,10 @@
-/**
- *
- */
+/* (C)2026 */
 package de.klassenserver7b.k7bot.logging.listeners;
 
+import de.klassenserver7b.k7bot.database.dao.MessageLogsDAO;
+import de.klassenserver7b.k7bot.database.entities.MessageLogsEntity;
 import de.klassenserver7b.k7bot.logging.LoggingConfigDBHandler;
 import de.klassenserver7b.k7bot.logging.LoggingOptions;
-import de.klassenserver7b.k7bot.sql.LiteSQL;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -14,12 +13,12 @@ import net.dv8tion.jda.api.events.message.MessageBulkDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static de.klassenserver7b.k7bot.util.ChannelUtil.getSystemChannel;
 
@@ -28,95 +27,94 @@ import static de.klassenserver7b.k7bot.util.ChannelUtil.getSystemChannel;
  */
 public class MessageLoggingListener extends ListenerAdapter {
 
-    private final Logger log;
+	private final Logger log;
 
-    /**
-     *
-     */
-    public MessageLoggingListener() {
-        super();
-        log = LoggerFactory.getLogger(getClass());
-    }
+	/**
+	 *
+	 */
+	public MessageLoggingListener() {
+		super();
+		log = LoggerFactory.getLogger(getClass());
+	}
 
-    @Override
-    public void onMessageUpdate(MessageUpdateEvent event) {
+	@Override
+	public void onMessageUpdate(MessageUpdateEvent event) {
 
-        if (isIgnoredEvent(LoggingOptions.MESSAGE_EDITED, event.getMessageIdLong(), event.getGuild())) {
-            return;
-        }
+		if (isIgnoredEvent(LoggingOptions.MESSAGE_EDITED, event.getMessageIdLong(), event.getGuild())) {
+			return;
+		}
 
-        GuildMessageChannel system = getSystemChannel(event.getGuild());
+		GuildMessageChannel system = getSystemChannel(event.getGuild());
 
-        EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
 
-        embbuild.setColor(Color.yellow);
-        embbuild.setTitle("Message edited in " + event.getChannel().getAsMention());
-        embbuild.setDescription("**User: **" + event.getAuthor().getAsMention() + "\n**Message: **" + event.getJumpUrl());
+		embbuild.setColor(Color.yellow);
+		embbuild.setTitle("Message edited in " + event.getChannel().getAsMention());
+		embbuild.setDescription(
+				"**User: **" + event.getAuthor().getAsMention() + "\n**Message: **" + event.getJumpUrl());
 
-        system.sendMessageEmbeds(embbuild.build()).queue();
+		system.sendMessageEmbeds(embbuild.build()).queue();
+	}
 
-    }
+	@Override
+	public void onMessageDelete(MessageDeleteEvent event) {
 
-    @Override
-    public void onMessageDelete(MessageDeleteEvent event) {
+		if (isIgnoredEvent(LoggingOptions.MESSAGE_DELETED, event.getMessageIdLong(), event.getGuild())) {
+			return;
+		}
+		GuildMessageChannel system = getSystemChannel(event.getGuild());
 
-        if (isIgnoredEvent(LoggingOptions.MESSAGE_DELETED, event.getMessageIdLong(), event.getGuild())) {
-            return;
-        }
-        GuildMessageChannel system = getSystemChannel(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
 
-        EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		embbuild.setColor(Color.red);
+		embbuild.setTitle("Message deleted in " + event.getChannel().getAsMention());
+		embbuild.setDescription("**Message: **" + event.getJumpUrl() + "\n**MessageId: **" + event.getMessageIdLong());
 
-        embbuild.setColor(Color.red);
-        embbuild.setTitle("Message deleted in " + event.getChannel().getAsMention());
-        embbuild.setDescription("**Message: **" + event.getJumpUrl() + "\n**MessageId: **" + event.getMessageIdLong());
+		system.sendMessageEmbeds(embbuild.build()).queue();
+	}
 
-        system.sendMessageEmbeds(embbuild.build()).queue();
+	@Override
+	public void onMessageBulkDelete(MessageBulkDeleteEvent event) {
 
-    }
+		if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.MESSAGE_BULK_DELETED, event.getGuild())) {
+			return;
+		}
 
-    @Override
-    public void onMessageBulkDelete(MessageBulkDeleteEvent event) {
+		GuildMessageChannel system = getSystemChannel(event.getGuild());
 
-        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.MESSAGE_BULK_DELETED, event.getGuild())) {
-            return;
-        }
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
 
-        GuildMessageChannel system = getSystemChannel(event.getGuild());
+		embbuild.setColor(Color.red);
+		embbuild.setTitle("Messages deleted in " + event.getChannel().getAsMention());
+		embbuild.setDescription("**Amount: **" + event.getMessageIds().size());
 
-        EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		system.sendMessageEmbeds(embbuild.build()).queue();
+	}
 
-        embbuild.setColor(Color.red);
-        embbuild.setTitle("Messages deleted in " + event.getChannel().getAsMention());
-        embbuild.setDescription("**Amount: **" + event.getMessageIds().size());
+	protected boolean isIgnoredEvent(@NotNull LoggingOptions option, long messageId, @Nullable Guild guild) {
 
-        system.sendMessageEmbeds(embbuild.build()).queue();
+		if (guild == null) {
+			return true;
+		}
 
-    }
+		if (LoggingConfigDBHandler.isOptionDisabled(option, guild)) {
+			return true;
+		}
 
-    protected boolean isIgnoredEvent(LoggingOptions option, long messageId, Guild guild) {
+		return isBotMessage(messageId, guild);
+	}
 
-        if (LoggingConfigDBHandler.isOptionDisabled(option, guild)) {
-            return true;
-        }
+	protected boolean isBotMessage(long messageId, Guild guild) {
 
-        return isBotMessage(messageId, guild);
+		try {
+			MessageLogsEntity logEntity = new MessageLogsDAO().getLog(messageId).join();
+			if (logEntity != null && logEntity.getGuildId() == guild.getIdLong()) {
+				return logEntity.getAuthorId() == guild.getSelfMember().getUser().getIdLong();
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
 
-    }
-
-    protected boolean isBotMessage(long messageId, Guild guild) {
-
-        try (ResultSet set = LiteSQL.onQuery("SELECT authorId FROM messagelogs WHERE messageId = ? AND guildId = ?;", messageId, guild.getIdLong())) {
-
-            assert set != null;
-            if (set.next()) {
-                return set.getLong("authorId") == guild.getSelfMember().getUser().getIdLong();
-            }
-
-        } catch (SQLException e) {
-            log.error(e.getMessage(), e);
-        }
-
-        return false;
-    }
+		return false;
+	}
 }
