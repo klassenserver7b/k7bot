@@ -21,6 +21,7 @@ import dev.arbjerg.lavalink.client.Link;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -218,7 +219,8 @@ public class AudioSlashCommands {
 		@NotNull
 		@Override
 		public SlashCommandData getCommandData() {
-			return Commands.slash("skip", "Skip current track");
+			return Commands.slash("skip", "Skip current track").addOption(OptionType.INTEGER, "amount",
+					"Songs to skip (0 = next song, 1 = song after next)", false);
 		}
 
 		@Override
@@ -229,8 +231,19 @@ public class AudioSlashCommands {
 
 			long guildId = guild.getIdLong();
 			GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
-			gam.getTrackScheduler().nextTrack();
-			event.replyEmbeds(EmbedUtils.getSuccessEmbed("Skipped the current track.", guildId).build()).queue();
+
+			int amount = 0;
+			OptionMapping amountOpt = event.getOption("amount");
+			if (amountOpt != null) {
+				amount = amountOpt.getAsInt();
+			}
+			if (amount < 0)
+				amount = 0;
+
+			gam.getTrackScheduler().skipTracks(amount);
+
+			String msg = amount > 0 ? "Skipped " + amount + " tracks from the queue." : "Skipped the current track.";
+			event.replyEmbeds(EmbedUtils.getSuccessEmbed(msg, guildId).build()).queue();
 		}
 	}
 
@@ -346,7 +359,7 @@ public class AudioSlashCommands {
 			if (!isMemberConnectedToSameVc(event, guild, m))
 				return;
 
-			int vol = CommandUtils.getRequiredOption(event, "amount").getAsInt();
+			int vol = CommandUtils.getRequiredOption(event, "level").getAsInt();
 			long guildId = guild.getIdLong();
 			GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
 			gam.getTrackScheduler().setVolume(vol);

@@ -187,6 +187,15 @@ public class TrackScheduler {
 		}, e -> System.err.println("Lavalink operation failed: " + e.getMessage()));
 	}
 
+	public void skipTracks(int amount) {
+		if (amount > 0) {
+			for (int i = 0; i < amount; i++) {
+				this.queue.poll();
+			}
+		}
+		nextTrack();
+	}
+
 	public void nextTrack() {
 		Track nextTrack = this.queue.poll();
 		if (nextTrack != null) {

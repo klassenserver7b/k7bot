@@ -86,7 +86,7 @@ public class AudioServerCommand implements ServerCommand {
 			case STOP -> handleStop(channel, gam);
 			case PAUSE -> handlePause(channel, gam);
 			case RESUME -> handleResume(channel, gam);
-			case SKIP -> handleSkip(channel, gam);
+			case SKIP -> handleSkip(args, channel, gam);
 			case QUEUE -> handleQueue(channel, gam);
 			case CLEAR_QUEUE -> handleClearQueue(channel, gam);
 			case NOW_PLAYING -> handleNowPlaying(channel, gam);
@@ -158,10 +158,24 @@ public class AudioServerCommand implements ServerCommand {
 		channel.sendMessageEmbeds(EmbedUtils.getSuccessEmbed("Resumed playback.", guildId).build()).queue();
 	}
 
-	private void handleSkip(GuildMessageChannel channel, GuildAudioManager gam) {
+	private void handleSkip(String[] args, GuildMessageChannel channel, GuildAudioManager gam) {
 		long guildId = channel.getGuild().getIdLong();
-		gam.getTrackScheduler().nextTrack();
-		channel.sendMessageEmbeds(EmbedUtils.getSuccessEmbed("Skipped the current track.", guildId).build()).queue();
+		int amount = 0;
+		if (args.length >= 2) {
+			try {
+				amount = Integer.parseInt(args[1]);
+			} catch (NumberFormatException e) {
+				channel.sendMessageEmbeds(EmbedUtils.getErrorEmbed("Invalid amount.", guildId).build()).queue();
+				return;
+			}
+		}
+		if (amount < 0)
+			amount = 0;
+
+		gam.getTrackScheduler().skipTracks(amount);
+
+		String msg = amount > 0 ? "Skipped " + amount + " tracks from the queue." : "Skipped the current track.";
+		channel.sendMessageEmbeds(EmbedUtils.getSuccessEmbed(msg, guildId).build()).queue();
 	}
 
 	private void handleQueue(GuildMessageChannel channel, GuildAudioManager gam) {
