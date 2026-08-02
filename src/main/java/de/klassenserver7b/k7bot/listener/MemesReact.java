@@ -1,14 +1,15 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.listener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.klassenserver7b.k7bot.database.dao.MemeChannelDAO;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MemesReact extends ListenerAdapter {
 

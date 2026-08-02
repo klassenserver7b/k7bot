@@ -1,12 +1,12 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.util.errorhandler;
 
+import java.util.concurrent.TimeUnit;
+
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.interactions.InteractionHook;
-
-import java.util.concurrent.TimeUnit;
 
 public class PermissionError {
 	public static void onPermissionError(GenericMessageSendHandler channel, Member m) {

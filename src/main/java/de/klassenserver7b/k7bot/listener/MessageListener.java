@@ -1,10 +1,11 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.listener;
 
+import org.jetbrains.annotations.NotNull;
+
 import de.klassenserver7b.k7bot.database.dao.MessageLogsDAO;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
 
 /**
  *

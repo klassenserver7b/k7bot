@@ -1,10 +1,10 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.database.dao;
 
+import java.util.concurrent.CompletableFuture;
+
 import de.klassenserver7b.k7bot.database.HibernateManager;
 import de.klassenserver7b.k7bot.database.entities.MessageLogsEntity;
-
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Data Access Object for handling MessageLogsEntity operations. Provides

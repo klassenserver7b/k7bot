@@ -1,6 +1,14 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.manage;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.apache.commons.text.similarity.LevenshteinDistance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.klassenserver7b.k7bot.audio.commands.common.AudioServerCommand;
 import de.klassenserver7b.k7bot.commands.common.logging.SystemChannelCommand;
 import de.klassenserver7b.k7bot.commands.common.moderation.*;
@@ -10,13 +18,6 @@ import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
-import org.apache.commons.text.similarity.LevenshteinDistance;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * @author Klassenserver7b

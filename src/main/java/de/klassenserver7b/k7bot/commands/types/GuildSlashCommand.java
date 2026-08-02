@@ -1,10 +1,11 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.commands.types;
 
+import org.jetbrains.annotations.NotNull;
+
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
-import org.jetbrains.annotations.NotNull;
 
 public interface GuildSlashCommand extends TopLevelSlashCommand {
 

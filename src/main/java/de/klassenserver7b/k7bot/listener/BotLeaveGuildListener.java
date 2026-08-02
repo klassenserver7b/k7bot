@@ -1,12 +1,13 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.listener;
 
+import org.jetbrains.annotations.NotNull;
+
 import de.klassenserver7b.k7bot.database.dao.BotUtilDAO;
 import de.klassenserver7b.k7bot.database.dao.ReactRolesDAO;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.guild.UnavailableGuildLeaveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
 
 public class BotLeaveGuildListener extends ListenerAdapter {
 

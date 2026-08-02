@@ -1,7 +1,10 @@
-/**
- *
- */
+/* (C)2026 */
 package de.klassenserver7b.k7bot.logging.listeners;
+
+import static de.klassenserver7b.k7bot.util.ChannelUtil.getSystemChannel;
+
+import java.awt.*;
+import java.util.Objects;
 
 import de.klassenserver7b.k7bot.logging.LoggingConfigDBHandler;
 import de.klassenserver7b.k7bot.logging.LoggingOptions;
@@ -15,218 +18,200 @@ import net.dv8tion.jda.api.events.guild.scheduledevent.ScheduledEventUserRemoveE
 import net.dv8tion.jda.api.events.guild.scheduledevent.update.*;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-import java.awt.*;
-import java.util.Objects;
-
-import static de.klassenserver7b.k7bot.util.ChannelUtil.getSystemChannel;
-
 /**
  *
  */
 public class EventLoggingListener extends ListenerAdapter {
 
-    public EventLoggingListener() {
-        super();
-    }
+	public EventLoggingListener() {
+		super();
+	}
 
-    @Override
-    public void onScheduledEventCreate(ScheduledEventCreateEvent event) {
+	@Override
+	public void onScheduledEventCreate(ScheduledEventCreateEvent event) {
 
-        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EVENT_CREATE, event.getGuild())) {
-            return;
-        }
+		if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EVENT_CREATE, event.getGuild())) {
+			return;
+		}
 
-        EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
-        embbuild.setTitle("Event created");
-        embbuild.setColor(Color.green);
-        embbuild.setDescription(createScheduledEventMessage(event.getScheduledEvent()));
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		embbuild.setTitle("Event created");
+		embbuild.setColor(Color.green);
+		embbuild.setDescription(createScheduledEventMessage(event.getScheduledEvent()));
 
-        getSystemChannel(event).sendMessageEmbeds(embbuild.build()).queue();
+		getSystemChannel(event).sendMessageEmbeds(embbuild.build()).queue();
 
-    }
+	}
 
-    @Override
-    public void onScheduledEventDelete(ScheduledEventDeleteEvent event) {
+	@Override
+	public void onScheduledEventDelete(ScheduledEventDeleteEvent event) {
 
-        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EVENT_DELETE, event.getGuild())) {
-            return;
-        }
+		if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EVENT_DELETE, event.getGuild())) {
+			return;
+		}
 
-        EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
-        embbuild.setTitle("Event removed");
-        embbuild.setColor(Color.red);
-        embbuild.setDescription(createScheduledEventMessage(event.getScheduledEvent()));
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		embbuild.setTitle("Event removed");
+		embbuild.setColor(Color.red);
+		embbuild.setDescription(createScheduledEventMessage(event.getScheduledEvent()));
 
-        getSystemChannel(event).sendMessageEmbeds(embbuild.build()).queue();
+		getSystemChannel(event).sendMessageEmbeds(embbuild.build()).queue();
 
-    }
+	}
 
-    @Override
-    public void onScheduledEventUpdateStatus(ScheduledEventUpdateStatusEvent event) {
+	@Override
+	public void onScheduledEventUpdateStatus(ScheduledEventUpdateStatusEvent event) {
 
-        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EVENT_UPDATE_STATUS, event.getGuild())) {
-            return;
-        }
+		if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EVENT_UPDATE_STATUS, event.getGuild())) {
+			return;
+		}
 
-        EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
-        embbuild.setTitle("Event status updated");
-        embbuild.setColor(Color.yellow);
-        embbuild.setDescription(
-                "**Event: **" + event.getScheduledEvent().getName()
-                        + "\n**Old status: **" + event.getOldStatus().name()
-                        + "\n**New status: **" + event.getNewStatus().name()
-        );
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		embbuild.setTitle("Event status updated");
+		embbuild.setColor(Color.yellow);
+		embbuild.setDescription("**Event: **" + event.getScheduledEvent().getName() + "\n**Old status: **"
+				+ event.getOldStatus().name() + "\n**New status: **" + event.getNewStatus().name());
 
-        getSystemChannel(event).sendMessageEmbeds(embbuild.build()).queue();
+		getSystemChannel(event).sendMessageEmbeds(embbuild.build()).queue();
 
-    }
+	}
 
-    @Override
-    public void onScheduledEventUpdateName(ScheduledEventUpdateNameEvent event) {
+	@Override
+	public void onScheduledEventUpdateName(ScheduledEventUpdateNameEvent event) {
 
-        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EVENT_UPDATE_NAME, event.getGuild())) {
-            return;
-        }
+		if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EVENT_UPDATE_NAME, event.getGuild())) {
+			return;
+		}
 
-        EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
-        embbuild.setTitle("Event name updated");
-        embbuild.setColor(Color.yellow);
-        embbuild.setDescription(
-                "**New name: **" + event.getNewName()
-                        + "\n**Old name: **" + event.getOldName()
-        );
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		embbuild.setTitle("Event name updated");
+		embbuild.setColor(Color.yellow);
+		embbuild.setDescription("**New name: **" + event.getNewName() + "\n**Old name: **" + event.getOldName());
 
-        getSystemChannel(event).sendMessageEmbeds(embbuild.build()).queue();
+		getSystemChannel(event).sendMessageEmbeds(embbuild.build()).queue();
 
-    }
+	}
 
-    @Override
-    public void onScheduledEventUpdateStartTime(ScheduledEventUpdateStartTimeEvent event) {
+	@Override
+	public void onScheduledEventUpdateStartTime(ScheduledEventUpdateStartTimeEvent event) {
 
-        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EVENT_UPDATE_STARTTIME, event.getGuild())) {
-            return;
-        }
+		if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EVENT_UPDATE_STARTTIME, event.getGuild())) {
+			return;
+		}
 
-        EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
-        embbuild.setTitle("Event StartTime updated");
-        embbuild.setColor(Color.yellow);
-        embbuild.setDescription(
-                "**New time: **<t:" + event.getNewStartTime().toEpochSecond() + ">"
-                        + "\n**Old time: **" + event.getOldStartTime().toEpochSecond() + ">"
-        );
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		embbuild.setTitle("Event StartTime updated");
+		embbuild.setColor(Color.yellow);
+		embbuild.setDescription("**New time: **<t:" + event.getNewStartTime().toEpochSecond() + ">" + "\n**Old time: **"
+				+ event.getOldStartTime().toEpochSecond() + ">");
 
-        getSystemChannel(event).sendMessageEmbeds(embbuild.build()).queue();
+		getSystemChannel(event).sendMessageEmbeds(embbuild.build()).queue();
 
-    }
+	}
 
-    @Override
-    public void onScheduledEventUpdateEndTime(ScheduledEventUpdateEndTimeEvent event) {
+	@Override
+	public void onScheduledEventUpdateEndTime(ScheduledEventUpdateEndTimeEvent event) {
 
-        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EVENT_UPDATE_ENDTIME, event.getGuild())) {
-            return;
-        }
+		if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EVENT_UPDATE_ENDTIME, event.getGuild())) {
+			return;
+		}
 
-        EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
-        embbuild.setTitle("Event StartTime updated");
-        embbuild.setColor(Color.yellow);
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		embbuild.setTitle("Event StartTime updated");
+		embbuild.setColor(Color.yellow);
 
-        StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 
-        if (event.getNewEndTime() != null) {
-            sb.append("**New time: **<t:").append(event.getNewEndTime().toEpochSecond()).append(">");
-        }
-        if (event.getOldEndTime() != null) {
-            sb.append("\n**Old time: **").append(event.getOldEndTime().toEpochSecond()).append(">");
-        }
+		if (event.getNewEndTime() != null) {
+			sb.append("**New time: **<t:").append(event.getNewEndTime().toEpochSecond()).append(">");
+		}
+		if (event.getOldEndTime() != null) {
+			sb.append("\n**Old time: **").append(event.getOldEndTime().toEpochSecond()).append(">");
+		}
 
-        embbuild.setDescription(sb);
+		embbuild.setDescription(sb);
 
-        getSystemChannel(event).sendMessageEmbeds(embbuild.build()).queue();
+		getSystemChannel(event).sendMessageEmbeds(embbuild.build()).queue();
 
-    }
+	}
 
-    @Override
-    public void onScheduledEventUpdateLocation(ScheduledEventUpdateLocationEvent event) {
+	@Override
+	public void onScheduledEventUpdateLocation(ScheduledEventUpdateLocationEvent event) {
 
-        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EVENT_UPDATE_LOCATION, event.getGuild())) {
-            return;
-        }
+		if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EVENT_UPDATE_LOCATION, event.getGuild())) {
+			return;
+		}
 
-        EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
-        embbuild.setTitle("Event location updated");
-        embbuild.setColor(Color.yellow);
-        embbuild.setDescription(
-                "**New location: **" + event.getNewLocation()
-                        + "\n**Old location: **" + event.getOldLocation()
-        );
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		embbuild.setTitle("Event location updated");
+		embbuild.setColor(Color.yellow);
+		embbuild.setDescription(
+				"**New location: **" + event.getNewLocation() + "\n**Old location: **" + event.getOldLocation());
 
-        getSystemChannel(event).sendMessageEmbeds(embbuild.build()).queue();
+		getSystemChannel(event).sendMessageEmbeds(embbuild.build()).queue();
 
-    }
+	}
 
-    @Override
-    public void onScheduledEventUserAdd(ScheduledEventUserAddEvent event) {
+	@Override
+	public void onScheduledEventUserAdd(ScheduledEventUserAddEvent event) {
 
-        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EVENT_MEMBER_JOIN, event.getGuild())) {
-            return;
-        }
+		if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EVENT_MEMBER_JOIN, event.getGuild())) {
+			return;
+		}
 
-        EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
-        embbuild.setTitle("Member joined event");
-        embbuild.setColor(Color.green);
-        embbuild.setDescription(
-                "**Event: **" + event.getScheduledEvent().getName()
-                        + "\n**Member: **" + event.retrieveMember().complete().getAsMention()
-        );
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		embbuild.setTitle("Member joined event");
+		embbuild.setColor(Color.green);
+		embbuild.setDescription("**Event: **" + event.getScheduledEvent().getName() + "\n**Member: **"
+				+ event.retrieveMember().complete().getAsMention());
 
-        getSystemChannel(event).sendMessageEmbeds(embbuild.build()).queue();
+		getSystemChannel(event).sendMessageEmbeds(embbuild.build()).queue();
 
-    }
+	}
 
-    @Override
-    public void onScheduledEventUserRemove(ScheduledEventUserRemoveEvent event) {
+	@Override
+	public void onScheduledEventUserRemove(ScheduledEventUserRemoveEvent event) {
 
-        if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EVENT_MEMBER_LEAVE, event.getGuild())) {
-            return;
-        }
+		if (LoggingConfigDBHandler.isOptionDisabled(LoggingOptions.EVENT_MEMBER_LEAVE, event.getGuild())) {
+			return;
+		}
 
-        EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
-        embbuild.setTitle("Member left event");
-        embbuild.setColor(Color.red);
-        embbuild.setDescription(
-                "**Event: **" + event.getScheduledEvent().getName()
-                        + "\n**Member: **" + event.retrieveMember().complete().getAsMention()
-        );
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		embbuild.setTitle("Member left event");
+		embbuild.setColor(Color.red);
+		embbuild.setDescription("**Event: **" + event.getScheduledEvent().getName() + "\n**Member: **"
+				+ event.retrieveMember().complete().getAsMention());
 
-        getSystemChannel(event).sendMessageEmbeds(embbuild.build()).queue();
+		getSystemChannel(event).sendMessageEmbeds(embbuild.build()).queue();
 
-    }
+	}
 
-    /**
-     * Creates a message for the given ScheduledEvent.
-     *
-     * @param event The ScheduledEvent to create the message for.
-     * @return The message.
-     */
+	/**
+	 * Creates a message for the given ScheduledEvent.
+	 *
+	 * @param event The ScheduledEvent to create the message for.
+	 * @return The message.
+	 */
 
-    protected String createScheduledEventMessage(ScheduledEvent event) {
+	protected String createScheduledEventMessage(ScheduledEvent event) {
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("**Name: **").append(event.getName());
+		StringBuilder sb = new StringBuilder();
+		sb.append("**Name: **").append(event.getName());
 
-        if (event.getCreator() != null) {
-            sb.append("\n**Creator: **").append(event.getCreator().getAsMention());
-        }
+		if (event.getCreator() != null) {
+			sb.append("\n**Creator: **").append(event.getCreator().getAsMention());
+		}
 
-        sb.append("\n**StartTime: **<t:").append(event.getStartTime().toEpochSecond()).append(">");
+		sb.append("\n**StartTime: **<t:").append(event.getStartTime().toEpochSecond()).append(">");
 
-        if (event.getType() == ScheduledEvent.Type.EXTERNAL) {
-            sb.append("\n**EndTime: **<t:").append(Objects.requireNonNull(event.getEndTime()).toEpochSecond()).append(">");
-        } else {
-            sb.append("\n**Location: **").append(Objects.requireNonNull(event.getChannel()).getAsMention());
-        }
+		if (event.getType() == ScheduledEvent.Type.EXTERNAL) {
+			sb.append("\n**EndTime: **<t:").append(Objects.requireNonNull(event.getEndTime()).toEpochSecond())
+					.append(">");
+		} else {
+			sb.append("\n**Location: **").append(Objects.requireNonNull(event.getChannel()).getAsMention());
+		}
 
-        return sb.toString();
-    }
+		return sb.toString();
+	}
 
 }

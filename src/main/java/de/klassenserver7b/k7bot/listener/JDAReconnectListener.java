@@ -1,11 +1,12 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.listener;
 
+import org.jetbrains.annotations.NotNull;
+
 import de.klassenserver7b.k7bot.K7Bot;
 import net.dv8tion.jda.api.events.session.SessionRecreateEvent;
 import net.dv8tion.jda.api.events.session.SessionResumeEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author K7

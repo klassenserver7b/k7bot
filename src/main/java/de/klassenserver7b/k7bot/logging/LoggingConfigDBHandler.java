@@ -1,10 +1,11 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.logging;
 
-import de.klassenserver7b.k7bot.database.dao.LoggingConfigDAO;
-import net.dv8tion.jda.api.entities.Guild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.klassenserver7b.k7bot.database.dao.LoggingConfigDAO;
+import net.dv8tion.jda.api.entities.Guild;
 
 /**
  *

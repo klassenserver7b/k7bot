@@ -1,12 +1,12 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.database.dao;
 
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
 import de.klassenserver7b.k7bot.database.HibernateManager;
 import de.klassenserver7b.k7bot.database.entities.UserReactsEntity;
 import de.klassenserver7b.k7bot.database.entities.UserReactsId;
-
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Data Access Object for handling UserReactsEntity operations. Provides methods

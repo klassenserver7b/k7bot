@@ -1,6 +1,19 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot;
 
+import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.klassenserver7b.k7bot.audio.AudioManager;
 import de.klassenserver7b.k7bot.database.config.SqliteConfig;
 import de.klassenserver7b.k7bot.exceptions.InvalidConfigException;
@@ -22,17 +35,6 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 public class K7Bot {
 
@@ -295,7 +297,7 @@ public class K7Bot {
 	 * @param guildid the Guild's ID
 	 * @return the Bot's Name
 	 */
-	public String getSelfName(Long guildid) {
+	public String getSelfName(@Nullable Long guildid) {
 
 		Guild g;
 

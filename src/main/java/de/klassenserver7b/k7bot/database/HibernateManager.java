@@ -1,13 +1,14 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.database;
 
-import de.klassenserver7b.k7bot.database.entities.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import de.klassenserver7b.k7bot.database.entities.*;
 
 public class HibernateManager {
 	private static SessionFactory sessionFactory;

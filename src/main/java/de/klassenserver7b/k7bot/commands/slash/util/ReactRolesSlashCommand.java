@@ -1,13 +1,15 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.commands.slash.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import de.klassenserver7b.k7bot.commands.types.GuildSlashCommand;
-import de.klassenserver7b.k7bot.util.CommandUtils;
-import net.dv8tion.jda.api.entities.Guild;
 import de.klassenserver7b.k7bot.database.dao.ReactRolesDAO;
+import de.klassenserver7b.k7bot.util.CommandUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import de.klassenserver7b.k7bot.util.errorhandler.PermissionError;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
@@ -18,7 +20,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
-import org.jetbrains.annotations.NotNull;
 
 public class ReactRolesSlashCommand implements GuildSlashCommand {
 

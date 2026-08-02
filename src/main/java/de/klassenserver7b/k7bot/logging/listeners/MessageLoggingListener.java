@@ -1,6 +1,15 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.logging.listeners;
 
+import static de.klassenserver7b.k7bot.util.ChannelUtil.getSystemChannel;
+
+import java.awt.*;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.klassenserver7b.k7bot.database.dao.MessageLogsDAO;
 import de.klassenserver7b.k7bot.database.entities.MessageLogsEntity;
 import de.klassenserver7b.k7bot.logging.LoggingConfigDBHandler;
@@ -13,14 +22,6 @@ import net.dv8tion.jda.api.events.message.MessageBulkDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.awt.*;
-
-import static de.klassenserver7b.k7bot.util.ChannelUtil.getSystemChannel;
 
 /**
  *

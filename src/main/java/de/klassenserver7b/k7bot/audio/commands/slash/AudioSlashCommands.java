@@ -1,29 +1,35 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.audio.commands.slash;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
+
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.audio.AudioLoadOption;
-import de.klassenserver7b.k7bot.audio.AudioLoadResultHandler;
 import de.klassenserver7b.k7bot.audio.GuildAudioManager;
+import de.klassenserver7b.k7bot.audio.commands.common.AudioCommandUtils;
+import de.klassenserver7b.k7bot.audio.commands.common.EQPreset;
 import de.klassenserver7b.k7bot.audio.commands.common.LyricsFetcher;
-import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
+import de.klassenserver7b.k7bot.commands.types.GuildSlashCommand;
+import de.klassenserver7b.k7bot.util.CommandUtils;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import dev.arbjerg.lavalink.client.Link;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class AudioSlashCommands {
 
-	public static List<TopLevelSlashCommand> getAllCommands() {
-		List<TopLevelSlashCommand> list = new ArrayList<>();
+	public static List<GuildSlashCommand> getAllCommands() {
+		List<GuildSlashCommand> list = new ArrayList<>();
 		list.add(new PlayCommand());
 		list.add(new PlayNextCommand());
 		list.add(new AddQueueCommand());
@@ -31,7 +37,7 @@ public class AudioSlashCommands {
 		list.add(new PauseCommand());
 		list.add(new ResumeCommand());
 		list.add(new SkipCommand());
-		list.add(new QueueCommand());
+		list.add(new ListQueueCommand());
 		list.add(new ClearQueueCommand());
 		list.add(new NowPlayingCommand());
 		list.add(new VolumeCommand());
@@ -47,30 +53,59 @@ public class AudioSlashCommands {
 		return list;
 	}
 
-	private static boolean ensureConnected(SlashCommandInteraction event, Member caller) {
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
+	private static boolean isMemberConnectedToSameVc(SlashCommandInteraction event, Guild guild, Member caller) {
 		GuildVoiceState memberVoiceState = caller.getVoiceState();
-		if (memberVoiceState == null || !memberVoiceState.inAudioChannel()) {
+		Objects.requireNonNull(memberVoiceState, "CacheFlag.VOICE_STATE should be enabled");
+
+		if (!memberVoiceState.inAudioChannel()) {
 			if (event.isAcknowledged()) {
-				event.getHook()
-						.sendMessageEmbeds(
-								EmbedUtils.getErrorEmbed("You must be in a voice channel to use this" + " command!",
-										event.getGuild().getIdLong()).build())
-						.queue();
+				event.getHook().sendMessageEmbeds(EmbedUtils
+						.getErrorEmbed("You must be in a voice channel to use this" + " command!", guild.getIdLong())
+						.build()).queue();
 			} else {
-				event.replyEmbeds(EmbedUtils.getErrorEmbed("You must be in a voice channel to use this" + " command!",
-						event.getGuild().getIdLong()).build()).queue();
+				event.replyEmbeds(EmbedUtils
+						.getErrorEmbed("You must be in a voice channel to use this" + " command!", guild.getIdLong())
+						.build()).queue();
 			}
 			return false;
 		}
 
-		GuildVoiceState botVoiceState = event.getGuild().getSelfMember().getVoiceState();
-		if (botVoiceState == null || !botVoiceState.inAudioChannel()) {
-			event.getGuild().getJDA().getDirectAudioController().connect(memberVoiceState.getChannel());
+		GuildVoiceState botVoiceState = guild.getSelfMember().getVoiceState();
+		Objects.requireNonNull(botVoiceState, "CacheFlag.VOICE_STATE should be enabled");
+
+		if (!botVoiceState.inAudioChannel()) {
+			guild.getJDA().getDirectAudioController()
+					.connect(Objects.requireNonNull(memberVoiceState.getChannel(), "Member left vc after check"));
 		}
 		return true;
 	}
 
-	public static class PlayCommand implements TopLevelSlashCommand {
+	public static void handleLoadCommand(SlashCommandInteraction event, Guild guild, Member m, AudioLoadOption option,
+			String responsePrefix) {
+		event.deferReply().queue();
+
+		GuildVoiceState botVoiceState = guild.getSelfMember().getVoiceState();
+		Objects.requireNonNull(botVoiceState, "CacheFlag.VOICE_STATE should be enabled");
+		boolean justConnected = !botVoiceState.inAudioChannel();
+		if (!isMemberConnectedToSameVc(event, guild, m))
+			return;
+
+		String query = CommandUtils.getRequiredOption(event, "query").getAsString();
+		query = AudioCommandUtils.resolveQuery(query);
+
+		long guildId = guild.getIdLong();
+		Link link = K7Bot.getInstance().getLavalinkClient().getOrCreateLink(guildId);
+		GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
+		gam.setChannelId(event.getChannel().getIdLong());
+
+		AudioCommandUtils.loadItem(link, query, gam, m.getIdLong(), option, justConnected,
+				EmbedUtils.getLavalinkErrorHandler(event.getHook(), guildId));
+
+		event.getHook().sendMessageEmbeds(EmbedUtils.getInfoEmbed(responsePrefix + query, guildId).build()).queue();
+	}
+
+	public static class PlayCommand implements GuildSlashCommand {
 		@NotNull
 		@Override
 		public SlashCommandData getCommandData() {
@@ -79,37 +114,43 @@ public class AudioSlashCommands {
 		}
 
 		@Override
-		public void performSlashCommand(SlashCommandInteraction event) {
-			event.deferReply().queue();
-			Member m = event.getMember();
-			GuildVoiceState botVoiceState = event.getGuild().getSelfMember().getVoiceState();
-			boolean justConnected = botVoiceState == null || !botVoiceState.inAudioChannel();
-			if (m == null || !ensureConnected(event, m))
-				return;
-
-			String query = event.getOption("query").getAsString();
-			if (!query.startsWith("http"))
-				query = "ytsearch:" + query;
-
-			long guildId = event.getGuild().getIdLong();
-			Link link = K7Bot.getInstance().getLavalinkClient().getOrCreateLink(guildId);
-			GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
-			gam.setChannelId(event.getChannel().getIdLong());
-
-			if (justConnected) {
-				reactor.core.publisher.Mono.delay(java.time.Duration.ofMillis(600)).then(link.loadItem(query))
-						.subscribe(new AudioLoadResultHandler(gam, AudioLoadOption.REPLACE, m.getIdLong()),
-								EmbedUtils.getLavalinkErrorHandler(event.getHook(), gam.getGuildId()));
-			} else {
-				link.loadItem(query).subscribe(new AudioLoadResultHandler(gam, AudioLoadOption.REPLACE, m.getIdLong()),
-						EmbedUtils.getLavalinkErrorHandler(event.getHook(), gam.getGuildId()));
-			}
-			event.getHook().sendMessageEmbeds(EmbedUtils.getInfoEmbed("Loading track: " + query, guildId).build())
-					.queue();
+		public void performGuildSlashCommand(@NonNull SlashCommandInteraction event, @NonNull Guild guild,
+				@NonNull Member m) {
+			handleLoadCommand(event, guild, m, AudioLoadOption.REPLACE, "Loading track: ");
 		}
 	}
 
-	public static class StopCommand implements TopLevelSlashCommand {
+	public static class PlayNextCommand implements GuildSlashCommand {
+		@NotNull
+		@Override
+		public SlashCommandData getCommandData() {
+			return Commands.slash("playnext", "Play a track next in queue").addOption(OptionType.STRING, "query",
+					"URL or search query", true);
+		}
+
+		@Override
+		public void performGuildSlashCommand(@NonNull SlashCommandInteraction event, @NonNull Guild guild,
+				@NonNull Member m) {
+			handleLoadCommand(event, guild, m, AudioLoadOption.NEXT, "Loading next: ");
+		}
+	}
+
+	public static class AddQueueCommand implements GuildSlashCommand {
+		@NotNull
+		@Override
+		public SlashCommandData getCommandData() {
+			return Commands.slash("addqueue", "Add a track to the queue").addOption(OptionType.STRING, "query",
+					"URL or search query", true);
+		}
+
+		@Override
+		public void performGuildSlashCommand(@NonNull SlashCommandInteraction event, @NonNull Guild guild,
+				@NonNull Member m) {
+			handleLoadCommand(event, guild, m, AudioLoadOption.APPEND, "Searching and adding to queue: ");
+		}
+	}
+
+	public static class StopCommand implements GuildSlashCommand {
 		@NotNull
 		@Override
 		public SlashCommandData getCommandData() {
@@ -117,21 +158,23 @@ public class AudioSlashCommands {
 		}
 
 		@Override
-		public void performSlashCommand(SlashCommandInteraction event) {
-			Member m = event.getMember();
-			if (m == null || !ensureConnected(event, m))
+		public void performGuildSlashCommand(@NonNull SlashCommandInteraction event, @NonNull Guild guild,
+				@NonNull Member m) {
+			event.deferReply().queue();
+
+			if (!isMemberConnectedToSameVc(event, guild, m))
 				return;
 
-			long guildId = event.getGuild().getIdLong();
+			long guildId = guild.getIdLong();
 			GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
 			gam.stop();
-			event.getGuild().getJDA().getDirectAudioController().disconnect(event.getGuild());
+			guild.getJDA().getDirectAudioController().disconnect(guild);
 			event.replyEmbeds(EmbedUtils.getSuccessEmbed("Stopped playback and left the channel.", guildId).build())
 					.queue();
 		}
 	}
 
-	public static class PauseCommand implements TopLevelSlashCommand {
+	public static class PauseCommand implements GuildSlashCommand {
 		@NotNull
 		@Override
 		public SlashCommandData getCommandData() {
@@ -139,19 +182,19 @@ public class AudioSlashCommands {
 		}
 
 		@Override
-		public void performSlashCommand(SlashCommandInteraction event) {
-			Member m = event.getMember();
-			if (m == null || !ensureConnected(event, m))
+		public void performGuildSlashCommand(@NonNull SlashCommandInteraction event, @NonNull Guild guild,
+				@NonNull Member m) {
+			if (!isMemberConnectedToSameVc(event, guild, m))
 				return;
 
-			long guildId = event.getGuild().getIdLong();
+			long guildId = guild.getIdLong();
 			GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
 			gam.getTrackScheduler().setPaused(true);
 			event.replyEmbeds(EmbedUtils.getSuccessEmbed("Paused playback.", guildId).build()).queue();
 		}
 	}
 
-	public static class ResumeCommand implements TopLevelSlashCommand {
+	public static class ResumeCommand implements GuildSlashCommand {
 		@NotNull
 		@Override
 		public SlashCommandData getCommandData() {
@@ -159,19 +202,19 @@ public class AudioSlashCommands {
 		}
 
 		@Override
-		public void performSlashCommand(SlashCommandInteraction event) {
-			Member m = event.getMember();
-			if (m == null || !ensureConnected(event, m))
+		public void performGuildSlashCommand(@NonNull SlashCommandInteraction event, @NonNull Guild guild,
+				@NonNull Member m) {
+			if (!isMemberConnectedToSameVc(event, guild, m))
 				return;
 
-			long guildId = event.getGuild().getIdLong();
+			long guildId = guild.getIdLong();
 			GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
 			gam.getTrackScheduler().setPaused(false);
 			event.replyEmbeds(EmbedUtils.getSuccessEmbed("Resumed playback.", guildId).build()).queue();
 		}
 	}
 
-	public static class SkipCommand implements TopLevelSlashCommand {
+	public static class SkipCommand implements GuildSlashCommand {
 		@NotNull
 		@Override
 		public SlashCommandData getCommandData() {
@@ -179,19 +222,19 @@ public class AudioSlashCommands {
 		}
 
 		@Override
-		public void performSlashCommand(SlashCommandInteraction event) {
-			Member m = event.getMember();
-			if (m == null || !ensureConnected(event, m))
+		public void performGuildSlashCommand(@NonNull SlashCommandInteraction event, @NonNull Guild guild,
+				@NonNull Member m) {
+			if (!isMemberConnectedToSameVc(event, guild, m))
 				return;
 
-			long guildId = event.getGuild().getIdLong();
+			long guildId = guild.getIdLong();
 			GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
 			gam.getTrackScheduler().nextTrack();
 			event.replyEmbeds(EmbedUtils.getSuccessEmbed("Skipped the current track.", guildId).build()).queue();
 		}
 	}
 
-	public static class QueueCommand implements TopLevelSlashCommand {
+	public static class ListQueueCommand implements GuildSlashCommand {
 		@NotNull
 		@Override
 		public SlashCommandData getCommandData() {
@@ -199,27 +242,15 @@ public class AudioSlashCommands {
 		}
 
 		@Override
-		public void performSlashCommand(SlashCommandInteraction event) {
-			long guildId = event.getGuild().getIdLong();
+		public void performGuildSlashCommand(@NonNull SlashCommandInteraction event, @NonNull Guild guild,
+				@NonNull Member m) {
+			long guildId = guild.getIdLong();
 			GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
-
-			StringBuilder sb = new StringBuilder("**Current Queue:**\n");
-			int i = 1;
-			for (var track : gam.getTrackScheduler().queue) {
-				sb.append(i++).append(". ").append(track.getInfo().getTitle()).append("\n");
-				if (i > 10)
-					break;
-			}
-			if (i == 1)
-				sb.append("Empty");
-
-			var embed = EmbedUtils.getBuilderOf(java.awt.Color.decode("#14cdc8"), sb.toString(), guildId)
-					.setTitle("Queue List");
-			event.replyEmbeds(embed.build()).queue();
+			event.replyEmbeds(AudioCommandUtils.formatQueue(gam, guildId)).queue();
 		}
 	}
 
-	public static class ClearQueueCommand implements TopLevelSlashCommand {
+	public static class ClearQueueCommand implements GuildSlashCommand {
 		@NotNull
 		@Override
 		public SlashCommandData getCommandData() {
@@ -227,19 +258,19 @@ public class AudioSlashCommands {
 		}
 
 		@Override
-		public void performSlashCommand(SlashCommandInteraction event) {
-			Member m = event.getMember();
-			if (m == null || !ensureConnected(event, m))
+		public void performGuildSlashCommand(@NonNull SlashCommandInteraction event, @NonNull Guild guild,
+				@NonNull Member m) {
+			if (!isMemberConnectedToSameVc(event, guild, m))
 				return;
 
-			long guildId = event.getGuild().getIdLong();
+			long guildId = guild.getIdLong();
 			GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
 			gam.getTrackScheduler().clearQueue();
 			event.replyEmbeds(EmbedUtils.getSuccessEmbed("Queue cleared.", guildId).build()).queue();
 		}
 	}
 
-	public static class NowPlayingCommand implements TopLevelSlashCommand {
+	public static class NowPlayingCommand implements GuildSlashCommand {
 		@NotNull
 		@Override
 		public SlashCommandData getCommandData() {
@@ -247,31 +278,17 @@ public class AudioSlashCommands {
 		}
 
 		@Override
-		public void performSlashCommand(SlashCommandInteraction event) {
-			long guildId = event.getGuild().getIdLong();
+		public void performGuildSlashCommand(@NonNull SlashCommandInteraction event, @NonNull Guild guild,
+				@NonNull Member m) {
+			long guildId = guild.getIdLong();
 			GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
-
-			var player = gam.getPlayer().orElse(null);
-			if (player != null && player.getTrack() != null) {
-				var track = player.getTrack();
-				var info = track.getInfo();
-				long pos = player.getPosition();
-				long len = info.getLength();
-
-				String posStr = String.format("%02d:%02d", (pos / 1000) / 60, (pos / 1000) % 60);
-				String lenStr = String.format("%02d:%02d", (len / 1000) / 60, (len / 1000) % 60);
-
-				var embed = de.klassenserver7b.k7bot.util.EmbedUtils.getDefault(event.getGuild())
-						.setTitle("Now Playing").setDescription("[" + info.getTitle() + "](" + info.getUri() + ")\n\n"
-								+ "Author: " + info.getAuthor() + "\n" + "Position: `" + posStr + " / " + lenStr + "`");
-				event.replyEmbeds(embed.build()).queue();
-			} else {
-				event.replyEmbeds(EmbedUtils.getErrorEmbed("Nothing is playing right now.", guildId).build()).queue();
-			}
+			var embed = AudioCommandUtils.formatNowPlaying(gam, guildId);
+			event.replyEmbeds(Objects.requireNonNullElseGet(embed,
+					() -> EmbedUtils.getErrorEmbed("Nothing is playing right now.", guildId).build())).queue();
 		}
 	}
 
-	public static class ForwardCommand implements TopLevelSlashCommand {
+	public static class ForwardCommand implements GuildSlashCommand {
 		@NotNull
 		@Override
 		public SlashCommandData getCommandData() {
@@ -280,20 +297,20 @@ public class AudioSlashCommands {
 		}
 
 		@Override
-		public void performSlashCommand(SlashCommandInteraction event) {
-			Member m = event.getMember();
-			if (m == null || !ensureConnected(event, m))
+		public void performGuildSlashCommand(@NonNull SlashCommandInteraction event, @NonNull Guild guild,
+				@NonNull Member m) {
+			if (!isMemberConnectedToSameVc(event, guild, m))
 				return;
 
-			long pos = event.getOption("amount").getAsInt();
-			long guildId = event.getGuild().getIdLong();
+			long pos = CommandUtils.getRequiredOption(event, "amount").getAsInt();
+			long guildId = guild.getIdLong();
 			GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
 			gam.getTrackScheduler().forward(pos);
 			event.replyEmbeds(EmbedUtils.getSuccessEmbed("Forwarded by " + pos + "ms", guildId).build()).queue();
 		}
 	}
 
-	public static class BackCommand implements TopLevelSlashCommand {
+	public static class BackCommand implements GuildSlashCommand {
 		@NotNull
 		@Override
 		public SlashCommandData getCommandData() {
@@ -302,20 +319,20 @@ public class AudioSlashCommands {
 		}
 
 		@Override
-		public void performSlashCommand(SlashCommandInteraction event) {
-			Member m = event.getMember();
-			if (m == null || !ensureConnected(event, m))
+		public void performGuildSlashCommand(@NonNull SlashCommandInteraction event, @NonNull Guild guild,
+				@NonNull Member m) {
+			if (!isMemberConnectedToSameVc(event, guild, m))
 				return;
 
-			long pos = event.getOption("amount").getAsInt();
-			long guildId = event.getGuild().getIdLong();
+			long pos = CommandUtils.getRequiredOption(event, "amount").getAsInt();
+			long guildId = guild.getIdLong();
 			GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
 			gam.getTrackScheduler().back(pos);
 			event.replyEmbeds(EmbedUtils.getSuccessEmbed("Rewound by " + pos + "ms", guildId).build()).queue();
 		}
 	}
 
-	public static class VolumeCommand implements TopLevelSlashCommand {
+	public static class VolumeCommand implements GuildSlashCommand {
 		@NotNull
 		@Override
 		public SlashCommandData getCommandData() {
@@ -324,20 +341,20 @@ public class AudioSlashCommands {
 		}
 
 		@Override
-		public void performSlashCommand(SlashCommandInteraction event) {
-			Member m = event.getMember();
-			if (m == null || !ensureConnected(event, m))
+		public void performGuildSlashCommand(@NonNull SlashCommandInteraction event, @NonNull Guild guild,
+				@NonNull Member m) {
+			if (!isMemberConnectedToSameVc(event, guild, m))
 				return;
 
-			int vol = event.getOption("level").getAsInt();
-			long guildId = event.getGuild().getIdLong();
+			int vol = CommandUtils.getRequiredOption(event, "amount").getAsInt();
+			long guildId = guild.getIdLong();
 			GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
 			gam.getTrackScheduler().setVolume(vol);
 			event.replyEmbeds(EmbedUtils.getSuccessEmbed("Volume set to " + vol, guildId).build()).queue();
 		}
 	}
 
-	public static class SeekCommand implements TopLevelSlashCommand {
+	public static class SeekCommand implements GuildSlashCommand {
 		@NotNull
 		@Override
 		public SlashCommandData getCommandData() {
@@ -346,20 +363,20 @@ public class AudioSlashCommands {
 		}
 
 		@Override
-		public void performSlashCommand(SlashCommandInteraction event) {
-			Member m = event.getMember();
-			if (m == null || !ensureConnected(event, m))
+		public void performGuildSlashCommand(@NonNull SlashCommandInteraction event, @NonNull Guild guild,
+				@NonNull Member m) {
+			if (!isMemberConnectedToSameVc(event, guild, m))
 				return;
 
-			long pos = event.getOption("position").getAsInt();
-			long guildId = event.getGuild().getIdLong();
+			long pos = CommandUtils.getRequiredOption(event, "position").getAsInt();
+			long guildId = guild.getIdLong();
 			GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
 			gam.getTrackScheduler().setPosition(pos);
 			event.replyEmbeds(EmbedUtils.getSuccessEmbed("Seeked to " + pos + "ms", guildId).build()).queue();
 		}
 	}
 
-	public static class LoopCommand implements TopLevelSlashCommand {
+	public static class LoopCommand implements GuildSlashCommand {
 		@NotNull
 		@Override
 		public SlashCommandData getCommandData() {
@@ -367,12 +384,12 @@ public class AudioSlashCommands {
 		}
 
 		@Override
-		public void performSlashCommand(SlashCommandInteraction event) {
-			Member m = event.getMember();
-			if (m == null || !ensureConnected(event, m))
+		public void performGuildSlashCommand(@NonNull SlashCommandInteraction event, @NonNull Guild guild,
+				@NonNull Member m) {
+			if (!isMemberConnectedToSameVc(event, guild, m))
 				return;
 
-			long guildId = event.getGuild().getIdLong();
+			long guildId = guild.getIdLong();
 			GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
 			boolean repeating = gam.getTrackScheduler().isRepeating();
 			gam.getTrackScheduler().setRepeating(!repeating);
@@ -382,7 +399,7 @@ public class AudioSlashCommands {
 		}
 	}
 
-	public static class ShuffleCommand implements TopLevelSlashCommand {
+	public static class ShuffleCommand implements GuildSlashCommand {
 		@NotNull
 		@Override
 		public SlashCommandData getCommandData() {
@@ -390,12 +407,12 @@ public class AudioSlashCommands {
 		}
 
 		@Override
-		public void performSlashCommand(SlashCommandInteraction event) {
-			Member m = event.getMember();
-			if (m == null || !ensureConnected(event, m))
+		public void performGuildSlashCommand(@NonNull SlashCommandInteraction event, @NonNull Guild guild,
+				@NonNull Member m) {
+			if (!isMemberConnectedToSameVc(event, guild, m))
 				return;
 
-			long guildId = event.getGuild().getIdLong();
+			long guildId = guild.getIdLong();
 			GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
 			gam.getTrackScheduler().shuffle();
 			event.replyEmbeds(
@@ -404,7 +421,7 @@ public class AudioSlashCommands {
 		}
 	}
 
-	public static class EQCommand implements TopLevelSlashCommand {
+	public static class EQCommand implements GuildSlashCommand {
 		@NotNull
 		@Override
 		public SlashCommandData getCommandData() {
@@ -416,63 +433,27 @@ public class AudioSlashCommands {
 		}
 
 		@Override
-		public void performSlashCommand(SlashCommandInteraction event) {
-			Member m = event.getMember();
-			if (m == null || !ensureConnected(event, m))
+		public void performGuildSlashCommand(@NonNull SlashCommandInteraction event, @NonNull Guild guild,
+				@NonNull Member m) {
+			if (!isMemberConnectedToSameVc(event, guild, m))
 				return;
 
-			int id = event.getOption("preset").getAsInt();
-			long guildId = event.getGuild().getIdLong();
+			int id = CommandUtils.getRequiredOption(event, "preset").getAsInt();
+			long guildId = guild.getIdLong();
 			GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
 
-			float[] bands;
-			String name;
-			switch (id) {
-				case 0 -> {
-					bands = new float[15];
-					name = "Off";
-				}
-				case 1 -> {
-					bands = new float[] { -0.2f, -0.15f, -0.1f, -0.05f, 0.0f, 0.05f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f,
-							0.1f, 0.1f, 0.1f };
-					name = "Ultra Low Bass";
-				}
-				case 2 -> {
-					bands = new float[] { -0.15f, -0.1f, -0.05f, -0.05f, 0.0f, 0.0f, 0.05f, 0.05f, 0.05f, 0.05f, 0.05f,
-							0.05f, 0.1f, 0.1f, 0.1f };
-					name = "Low Bass";
-				}
-				case 3 -> {
-					bands = new float[] { -0.1f, -0.075f, -0.05f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.05f, 0.05f, 0.05f,
-							0.05f, 0.05f, 0.05f, 0.05f };
-					name = "Less Low Bass";
-				}
-				case 4 -> {
-					bands = new float[] { 0.1f, 0.075f, 0.05f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -0.05f, -0.05f, -0.05f,
-							-0.05f, -0.1f, -0.05f, -0.05f };
-					name = "Less Bass Boost";
-				}
-				case 5 -> {
-					bands = new float[] { 0.15f, 0.1f, 0.05f, 0.05f, 0.0f, -0.0f, -0.05f, -0.05f, -0.05f, -0.05f,
-							-0.05f, -0.05f, -0.1f, -0.1f, -0.1f };
-					name = "Bass Boost";
-				}
-				case 6 -> {
-					bands = new float[] { 0.2f, 0.15f, 0.1f, 0.05f, 0.0f, -0.05f, -0.1f, -0.1f, -0.1f, -0.1f, -0.1f,
-							-0.1f, -0.1f, -0.1f, -0.1f };
-					name = "Ultra Bass Boost";
-				}
-				default -> {
-					event.replyEmbeds(EmbedUtils.getErrorEmbed("Unknown EQ ID", guildId).build()).queue();
-					return;
-				}
+			EQPreset preset = EQPreset.byId(id);
+			if (preset == null) {
+				event.replyEmbeds(EmbedUtils.getErrorEmbed("Unknown EQ ID", guildId).build()).queue();
+				return;
 			}
-			gam.getTrackScheduler().setEQ(bands);
-			event.replyEmbeds(EmbedUtils.getSuccessEmbed("EQ Preset applied: " + name, guildId).build()).queue();
+			gam.getTrackScheduler().setEQ(preset.getBands());
+			event.replyEmbeds(EmbedUtils.getSuccessEmbed("EQ Preset applied: " + preset.getName(), guildId).build())
+					.queue();
 		}
 	}
 
-	public static class SpeedCommand implements TopLevelSlashCommand {
+	public static class SpeedCommand implements GuildSlashCommand {
 		@NotNull
 		@Override
 		public SlashCommandData getCommandData() {
@@ -481,20 +462,20 @@ public class AudioSlashCommands {
 		}
 
 		@Override
-		public void performSlashCommand(SlashCommandInteraction event) {
-			Member m = event.getMember();
-			if (m == null || !ensureConnected(event, m))
+		public void performGuildSlashCommand(@NonNull SlashCommandInteraction event, @NonNull Guild guild,
+				@NonNull Member m) {
+			if (!isMemberConnectedToSameVc(event, guild, m))
 				return;
 
-			double speed = event.getOption("factor").getAsDouble();
-			long guildId = event.getGuild().getIdLong();
+			double speed = CommandUtils.getRequiredOption(event, "factor").getAsDouble();
+			long guildId = guild.getIdLong();
 			GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
 			gam.getTrackScheduler().setSpeed(speed);
 			event.replyEmbeds(EmbedUtils.getSuccessEmbed("Speed set to " + speed + "x", guildId).build()).queue();
 		}
 	}
 
-	public static class PitchCommand implements TopLevelSlashCommand {
+	public static class PitchCommand implements GuildSlashCommand {
 		@NotNull
 		@Override
 		public SlashCommandData getCommandData() {
@@ -503,102 +484,20 @@ public class AudioSlashCommands {
 		}
 
 		@Override
-		public void performSlashCommand(SlashCommandInteraction event) {
-			Member m = event.getMember();
-			if (m == null || !ensureConnected(event, m))
+		public void performGuildSlashCommand(@NonNull SlashCommandInteraction event, @NonNull Guild guild,
+				@NonNull Member m) {
+			if (!isMemberConnectedToSameVc(event, guild, m))
 				return;
 
-			double pitch = event.getOption("factor").getAsDouble();
-			long guildId = event.getGuild().getIdLong();
+			double pitch = CommandUtils.getRequiredOption(event, "factor").getAsDouble();
+			long guildId = guild.getIdLong();
 			GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
 			gam.getTrackScheduler().setPitch(pitch);
 			event.replyEmbeds(EmbedUtils.getSuccessEmbed("Pitch set to " + pitch + "x", guildId).build()).queue();
 		}
 	}
 
-	public static class PlayNextCommand implements TopLevelSlashCommand {
-		@NotNull
-		@Override
-		public SlashCommandData getCommandData() {
-			return Commands.slash("playnext", "Play a track next in queue").addOption(OptionType.STRING, "query",
-					"URL or search query", true);
-		}
-
-		@Override
-		public void performSlashCommand(SlashCommandInteraction event) {
-			event.deferReply().queue();
-			Member m = event.getMember();
-			GuildVoiceState botVoiceState = event.getGuild().getSelfMember().getVoiceState();
-			boolean justConnected = botVoiceState == null || !botVoiceState.inAudioChannel();
-			if (m == null || !ensureConnected(event, m))
-				return;
-
-			String query = event.getOption("query").getAsString();
-			if (!query.startsWith("http")) {
-				query = "ytsearch:" + query;
-			}
-
-			long guildId = event.getGuild().getIdLong();
-			Link link = K7Bot.getInstance().getLavalinkClient().getOrCreateLink(guildId);
-			GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
-			gam.setChannelId(event.getChannel().getIdLong());
-
-			if (justConnected) {
-				reactor.core.publisher.Mono.delay(java.time.Duration.ofMillis(600)).then(link.loadItem(query))
-						.subscribe(new AudioLoadResultHandler(gam, AudioLoadOption.NEXT, m.getIdLong()),
-								EmbedUtils.getLavalinkErrorHandler(event.getHook(), gam.getGuildId()));
-			} else {
-				link.loadItem(query).subscribe(new AudioLoadResultHandler(gam, AudioLoadOption.NEXT, m.getIdLong()),
-						EmbedUtils.getLavalinkErrorHandler(event.getHook(), gam.getGuildId()));
-			}
-			event.getHook().sendMessageEmbeds(EmbedUtils.getInfoEmbed("Loading next: " + query, guildId).build())
-					.queue();
-		}
-	}
-
-	public static class AddQueueCommand implements TopLevelSlashCommand {
-		@NotNull
-		@Override
-		public SlashCommandData getCommandData() {
-			return Commands.slash("addqueue", "Add a track to the queue").addOption(OptionType.STRING, "query",
-					"URL or search query", true);
-		}
-
-		@Override
-		public void performSlashCommand(SlashCommandInteraction event) {
-			event.deferReply().queue();
-			Member m = event.getMember();
-			GuildVoiceState botVoiceState = event.getGuild().getSelfMember().getVoiceState();
-			boolean justConnected = botVoiceState == null || !botVoiceState.inAudioChannel();
-			if (m == null || !ensureConnected(event, m))
-				return;
-
-			String query = event.getOption("query").getAsString();
-			if (!query.startsWith("http")) {
-				query = "ytsearch:" + query;
-			}
-
-			long guildId = event.getGuild().getIdLong();
-			Link link = K7Bot.getInstance().getLavalinkClient().getOrCreateLink(guildId);
-			GuildAudioManager gam = K7Bot.getInstance().getAudioManager().getGuildAudioManager(guildId);
-			gam.setChannelId(event.getChannel().getIdLong());
-
-			if (justConnected) {
-				reactor.core.publisher.Mono.delay(java.time.Duration.ofMillis(600)).then(link.loadItem(query))
-						.subscribe(new AudioLoadResultHandler(gam, AudioLoadOption.APPEND, m.getIdLong()),
-								EmbedUtils.getLavalinkErrorHandler(event.getHook(), gam.getGuildId()));
-			} else {
-				link.loadItem(query).subscribe(new AudioLoadResultHandler(gam, AudioLoadOption.APPEND, m.getIdLong()),
-						EmbedUtils.getLavalinkErrorHandler(event.getHook(), gam.getGuildId()));
-			}
-			event.getHook()
-					.sendMessageEmbeds(
-							EmbedUtils.getInfoEmbed("Searching and adding to queue: " + query, guildId).build())
-					.queue();
-		}
-	}
-
-	public static class LyricsCommand implements TopLevelSlashCommand {
+	public static class LyricsCommand implements GuildSlashCommand {
 		@NotNull
 		@Override
 		public SlashCommandData getCommandData() {
@@ -606,12 +505,12 @@ public class AudioSlashCommands {
 		}
 
 		@Override
-		public void performSlashCommand(SlashCommandInteraction event) {
-			Member m = event.getMember();
-			if (m == null || !ensureConnected(event, m))
+		public void performGuildSlashCommand(@NonNull SlashCommandInteraction event, @NonNull Guild guild,
+				@NonNull Member m) {
+			if (!isMemberConnectedToSameVc(event, guild, m))
 				return;
 
-			long guildId = event.getGuild().getIdLong();
+			long guildId = guild.getIdLong();
 			Link link = K7Bot.getInstance().getLavalinkClient().getOrCreateLink(guildId);
 			event.deferReply().queue(hook -> LyricsFetcher.fetchAndSendLyrics(link.getNode(), guildId,
 					embed -> hook.sendMessageEmbeds(embed).queue()));

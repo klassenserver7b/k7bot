@@ -1,20 +1,22 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.audio.commands.common;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import de.klassenserver7b.k7bot.manage.LavaLinkManager;
-import de.klassenserver7b.k7bot.util.EmbedUtils;
-import dev.arbjerg.lavalink.client.LavalinkNode;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.function.Consumer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import de.klassenserver7b.k7bot.manage.LavaLinkManager;
+import de.klassenserver7b.k7bot.util.EmbedUtils;
+import dev.arbjerg.lavalink.client.LavalinkNode;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 
 public class LyricsFetcher {
 	private static final Logger log = LoggerFactory.getLogger(LyricsFetcher.class);
@@ -55,9 +57,8 @@ public class LyricsFetcher {
 					if (obj.has("text") && !obj.get("text").isJsonNull()) {
 						sb.append(obj.get("text").getAsString());
 					} else if (obj.has("lines")) {
-						obj.getAsJsonArray("lines").forEach(line -> {
-							sb.append(line.getAsJsonObject().get("line").getAsString()).append("\n");
-						});
+						obj.getAsJsonArray("lines").forEach(
+								line -> sb.append(line.getAsJsonObject().get("line").getAsString()).append("\n"));
 					}
 
 					String lyrics = sb.toString().trim();

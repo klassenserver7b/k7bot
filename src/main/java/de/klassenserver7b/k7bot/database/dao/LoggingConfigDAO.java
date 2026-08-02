@@ -1,11 +1,11 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.database.dao;
 
+import java.util.concurrent.CompletableFuture;
+
 import de.klassenserver7b.k7bot.database.HibernateManager;
 import de.klassenserver7b.k7bot.database.entities.LoggingConfigEntity;
 import net.dv8tion.jda.api.utils.data.DataArray;
-
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Data Access Object for handling LoggingConfigEntity operations. Provides

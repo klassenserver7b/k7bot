@@ -1,6 +1,9 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.commands.common.util;
 
+import java.awt.*;
+import java.util.concurrent.TimeUnit;
+
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
@@ -13,9 +16,6 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
-
-import java.awt.*;
-import java.util.concurrent.TimeUnit;
 
 public class ClearCommand implements ServerCommand {
 

@@ -1,6 +1,16 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.logging;
 
+import java.awt.*;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.InternalStatusCodes;
@@ -13,20 +23,13 @@ import net.dv8tion.jda.api.components.actionrow.ActionRowChildComponent;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.components.selections.StringSelectMenu;
 import net.dv8tion.jda.api.components.selections.StringSelectMenu.Builder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.InteractionHook;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.awt.*;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  *
@@ -44,6 +47,10 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
 	 */
 	public LoggingConfigEmbedProvider(InteractionHook hook) {
 		this.hook = hook;
+
+		Guild guild = hook.getInteraction().getGuild();
+		Objects.requireNonNull(guild, "LoggingConfigEmbedProvider can only get created for guilds");
+
 		this.guildId = hook.getInteraction().getGuild().getIdLong();
 
 		try (AutoCloseable _ = LoggingFilter.getInstance().blockEventExecution()) {
@@ -60,6 +67,10 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
 
 	@Override
 	public void onStringSelectInteraction(StringSelectInteractionEvent event) {
+
+		if (event.getMember() == null) {
+			return;
+		}
 
 		if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
 			return;
@@ -85,6 +96,10 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
 
 	@Override
 	public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
+
+		if (event.getMember() == null) {
+			return;
+		}
 
 		if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
 			return;

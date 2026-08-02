@@ -1,10 +1,12 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.util;
 
+import java.util.Objects;
+
+import org.jetbrains.annotations.NotNull;
+
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
-import org.jetbrains.annotations.NotNull;
-import java.util.Objects;
 
 public class CommandUtils {
 

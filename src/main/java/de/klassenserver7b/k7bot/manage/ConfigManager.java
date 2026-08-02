@@ -1,13 +1,6 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.manage;
 
-import de.klassenserver7b.k7bot.exceptions.InvalidConfigException;
-import io.github.cdimascio.dotenv.Dotenv;
-import net.vieiro.toml.TOML;
-import net.vieiro.toml.TOMLParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -15,11 +8,21 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.Base64;
+import java.util.Objects;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.klassenserver7b.k7bot.exceptions.InvalidConfigException;
+import io.github.cdimascio.dotenv.Dotenv;
+import net.vieiro.toml.TOML;
+import net.vieiro.toml.TOMLParser;
 
 public class ConfigManager {
 
 	public static final String BOT_TOKEN_ENV_NAME = "BOT_TOKEN";
 
+	@SuppressWarnings("FieldCanBeLocal")
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 	private final Dotenv env;
 	private final TOML toml;
@@ -36,9 +39,9 @@ public class ConfigManager {
 			if (!new File(config_loc).exists()) {
 				log.info("Creating config file at {}", config_loc);
 				try {
-					String defaultConfig = new BufferedReader(new InputStreamReader(
-							this.getClass().getClassLoader().getResourceAsStream("defaultConfig.toml")))
-							.readAllAsString();
+					String defaultConfig = new BufferedReader(new InputStreamReader(Objects.requireNonNull(
+							this.getClass().getClassLoader().getResourceAsStream("defaultConfig.toml"),
+							"Check that maven config forces existence of defaultConfig.toml"))).readAllAsString();
 					Files.writeString(new File(config_loc).toPath(), defaultConfig, StandardOpenOption.CREATE);
 					toml = TOMLParser.parseFromString(defaultConfig);
 				} catch (IOException e) {
@@ -88,6 +91,7 @@ public class ConfigManager {
 		return env.get(name);
 	}
 
+	@SuppressWarnings("unused")
 	public String getEnvVar(String name, String defaultValue) {
 		return env.get(name, defaultValue);
 	}

@@ -1,9 +1,9 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.database.config;
 
-import org.hibernate.cfg.Configuration;
-
 import java.io.File;
+
+import org.hibernate.cfg.Configuration;
 
 public class SqliteConfig extends Configuration {
 

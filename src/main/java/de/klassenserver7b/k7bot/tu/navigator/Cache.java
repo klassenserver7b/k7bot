@@ -1,13 +1,5 @@
+/* (C)2026 */
 package de.klassenserver7b.k7bot.tu.navigator;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
-import org.apache.hc.client5.http.classic.methods.HttpGet;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -15,87 +7,101 @@ import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.jspecify.annotations.Nullable;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+
 public class Cache {
-    private final ArrayList<Entry> entries;
-    private final CloseableHttpClient httpClient;
-    public Cache() {
-        entries = new ArrayList<>();
-        httpClient = HttpClients.createDefault();
-    }
+	private final ArrayList<Entry> entries;
+	private final CloseableHttpClient httpClient;
 
-    public void shutdown() {
-        entries.clear();
+	public Cache() {
+		entries = new ArrayList<>();
+		httpClient = HttpClients.createDefault();
+	}
 
-        try {
-            httpClient.close();
-        } catch (IOException ignored) {
-        }
-    }
+	public void shutdown() {
+		entries.clear();
 
-    public JsonElement request(String url) {
-        Entry cacheEntry = entries.stream().filter(entry -> entry.url.equals(url)).findAny().orElse(null);
-        LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
+		try {
+			httpClient.close();
+		} catch (IOException ignored) {
+		}
+	}
 
-        if (cacheEntry != null && ChronoUnit.HOURS.between(now, cacheEntry.time) <= 1)
-            return cacheEntry.value;
+	public @Nullable JsonElement request(String url) {
+		Entry cacheEntry = entries.stream().filter(entry -> entry.url.equals(url)).findAny().orElse(null);
+		LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
 
-        String hash = requestHash(url);
-        if (hash == null) return requestInner(url);
+		if (cacheEntry != null && ChronoUnit.HOURS.between(now, cacheEntry.time) <= 1)
+			return cacheEntry.value;
 
-        if (cacheEntry != null && cacheEntry.hash.equals(hash)) {
-            Entry newEntry = new Entry(url, hash, cacheEntry.value, now);
-            entries.remove(cacheEntry);
-            entries.add(newEntry);
+		String hash = requestHash(url);
+		if (hash == null)
+			return requestInner(url);
 
-            return cacheEntry.value;
-        }
+		if (cacheEntry != null && cacheEntry.hash.equals(hash)) {
+			Entry newEntry = new Entry(url, hash, cacheEntry.value, now);
+			entries.remove(cacheEntry);
+			entries.add(newEntry);
 
-        JsonElement value = requestInner(url);
-        if (value == null) {
-            Entry newEntry = new Entry(url, "", null, now);
-            entries.remove(cacheEntry);
-            entries.add(newEntry);
+			return cacheEntry.value;
+		}
 
-            return null;
-        }
+		JsonElement value = requestInner(url);
+		if (value == null) {
+			Entry newEntry = new Entry(url, "", null, now);
+			entries.remove(cacheEntry);
+			entries.add(newEntry);
 
-        Entry newEntry = new Entry(url, hash, value, now);
-        entries.remove(cacheEntry);
-        entries.add(newEntry);
+			return null;
+		}
 
-        return value;
-    }
+		Entry newEntry = new Entry(url, hash, value, now);
+		entries.remove(cacheEntry);
+		entries.add(newEntry);
 
-    private String requestHash(String url) {
-        String hashUrl;
-        if (url.endsWith("/all"))
-            hashUrl = url.replaceFirst("/all$", "/hash");
-        else hashUrl = url + "/hash";
+		return value;
+	}
 
-        JsonElement response = requestInner(hashUrl);
-        if (response == null || !response.isJsonObject() || !response.getAsJsonObject().has("hash"))
-            return null;
+	private @Nullable String requestHash(String url) {
+		String hashUrl;
+		if (url.endsWith("/all"))
+			hashUrl = url.replaceFirst("/all$", "/hash");
+		else
+			hashUrl = url + "/hash";
 
-        return response.getAsJsonObject().get("hash").getAsString();
-    }
+		JsonElement response = requestInner(hashUrl);
+		if (response == null || !response.isJsonObject() || !response.getAsJsonObject().has("hash"))
+			return null;
 
-    private JsonElement requestInner(String url) {
-        HttpGet request = new HttpGet(url);
+		return response.getAsJsonObject().get("hash").getAsString();
+	}
 
-        try {
-            return httpClient.execute(request, response -> {
-                String content = EntityUtils.toString(response.getEntity());
-                try {
-                    return JsonParser.parseString(content);
-                } catch (JsonSyntaxException e) {
-                    return JsonNull.INSTANCE;
-                }
-            });
-        } catch (IOException e) {
-            return null;
-        }
-    }
+	private @Nullable JsonElement requestInner(String url) {
+		HttpGet request = new HttpGet(url);
 
-    record Entry(String url, String hash, JsonElement value, LocalDateTime time) {
-    }
+		try {
+			return httpClient.execute(request, response -> {
+				String content = EntityUtils.toString(response.getEntity());
+				try {
+					return JsonParser.parseString(content);
+				} catch (JsonSyntaxException e) {
+					return JsonNull.INSTANCE;
+				}
+			});
+		} catch (IOException e) {
+			return null;
+		}
+	}
+
+	record Entry(String url, String hash, JsonElement value, LocalDateTime time) {
+	}
 }

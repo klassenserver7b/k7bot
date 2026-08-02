@@ -1,6 +1,13 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.util;
 
+import java.util.*;
+
+import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
@@ -9,11 +16,6 @@ import net.dv8tion.jda.api.requests.FluentRestAction;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.*;
 
 /**
  * @author K7
@@ -55,7 +57,7 @@ public class GenericMessageSendHandler {
 		}
 	}
 
-	public FluentRestAction<Message, ?> sendMessage(@NotNull MessageCreateData data) {
+	public @Nullable FluentRestAction<Message, ?> sendMessage(@NotNull MessageCreateData data) {
 		try {
 			switch (selectedid) {
 				case HookId -> {
@@ -84,7 +86,8 @@ public class GenericMessageSendHandler {
 		return sendMessageEmbeds(embedlist);
 	}
 
-	public FluentRestAction<Message, ?> sendMessageEmbeds(@NotNull Collection<? extends MessageEmbed> embeds) {
+	public @Nullable FluentRestAction<Message, ?> sendMessageEmbeds(
+			@NotNull Collection<? extends MessageEmbed> embeds) {
 		try {
 			switch (selectedid) {
 				case HookId -> {
@@ -109,7 +112,7 @@ public class GenericMessageSendHandler {
 		return sendFiles(list);
 	}
 
-	public FluentRestAction<Message, ?> sendFiles(@NotNull Collection<? extends FileUpload> files) {
+	public @Nullable FluentRestAction<Message, ?> sendFiles(@NotNull Collection<? extends FileUpload> files) {
 		try {
 			switch (selectedid) {
 				case HookId -> {
@@ -128,7 +131,8 @@ public class GenericMessageSendHandler {
 	}
 
 	@SuppressWarnings("unused")
-	public FluentRestAction<Message, ?> sendMessageFormat(@NotNull String format, @NotNull Object... objects) {
+	public @Nullable FluentRestAction<Message, ?> sendMessageFormat(@NotNull String format,
+			@NotNull Object... objects) {
 		try {
 			switch (selectedid) {
 				case HookId -> {
@@ -160,7 +164,7 @@ public class GenericMessageSendHandler {
 	}
 
 	@SuppressWarnings("unused")
-	public Class<?> getSelectedClass() {
+	public @Nullable Class<?> getSelectedClass() {
 		switch (selectedid) {
 			case HookId -> {
 				assert hook != null;

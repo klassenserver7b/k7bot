@@ -1,11 +1,11 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.database.dao;
 
-import de.klassenserver7b.k7bot.database.HibernateManager;
-import de.klassenserver7b.k7bot.database.entities.BotUtilEntity;
-
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+
+import de.klassenserver7b.k7bot.database.HibernateManager;
+import de.klassenserver7b.k7bot.database.entities.BotUtilEntity;
 
 /**
  * Data Access Object for handling BotUtilEntity operations. Provides methods

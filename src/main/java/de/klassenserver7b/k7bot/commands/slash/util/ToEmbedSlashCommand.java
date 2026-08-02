@@ -1,7 +1,13 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.commands.slash.util;
 
+import java.awt.*;
+import java.util.Objects;
+
+import org.jetbrains.annotations.NotNull;
+
 import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
+import de.klassenserver7b.k7bot.util.CommandUtils;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.errorhandler.PermissionError;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -12,33 +18,29 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
-import org.jetbrains.annotations.NotNull;
-
-import java.awt.*;
 
 public class ToEmbedSlashCommand implements TopLevelSlashCommand {
 
 	@Override
 	public void performSlashCommand(SlashCommandInteraction event) {
 
-		if (event.getMember().hasPermission(Permission.MESSAGE_SEND)) {
+		if (!event.isFromGuild() || Objects.requireNonNull(event.getMember()).hasPermission(Permission.MESSAGE_SEND)) {
 
-			OptionMapping title = event.getOption("title");
-			OptionMapping description = event.getOption("description");
-			OptionMapping coloropt = event.getOption("color");
+			OptionMapping title = CommandUtils.getRequiredOption(event, "title");
+			OptionMapping description = CommandUtils.getRequiredOption(event, "description");
+			OptionMapping colorOpt = event.getOption("color");
 
 			InteractionHook hook = event.deferReply().complete();
 
 			EmbedBuilder builder = EmbedUtils.getBuilderOf(description.getAsString().replace("<br>", "\n"),
-					event.getGuild().getIdLong());
+					event.getGuild());
 
 			builder.setTitle(title.getAsString());
-			builder.setFooter("requested by @" + event.getMember().getEffectiveName());
+			builder.setFooter("requested by @" + event.getUser().getEffectiveName());
 
-			if (coloropt != null) {
-
+			if (colorOpt != null) {
 				String colortxt;
-				colortxt = coloropt.getAsString();
+				colortxt = colorOpt.getAsString();
 
 				if (!colortxt.startsWith("#")) {
 					colortxt = "#" + colortxt;

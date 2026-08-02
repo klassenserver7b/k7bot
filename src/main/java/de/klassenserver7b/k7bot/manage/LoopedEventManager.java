@@ -1,17 +1,18 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.manage;
 
-import de.klassenserver7b.k7bot.util.InternalStatusCodes;
-import de.klassenserver7b.k7bot.util.customapis.DBAutodelete;
-import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.klassenserver7b.k7bot.util.InternalStatusCodes;
+import de.klassenserver7b.k7bot.util.customapis.DBAutodelete;
+import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
 
 /**
  * @author Klassenserver7b
@@ -74,6 +75,7 @@ public class LoopedEventManager {
 	/**
 	 * @param identifier the identifier of the event to be removed
 	 */
+	@SuppressWarnings("unused")
 	public void enableEvent(String identifier) {
 
 		LoopedEvent selectedevent = null;
@@ -98,6 +100,7 @@ public class LoopedEventManager {
 	/**
 	 * @param identifier the identifier of the event to be removed
 	 */
+	@SuppressWarnings("unused")
 	public void disableEvent(String identifier) {
 		LoopedEvent selectedevent = null;
 
@@ -132,6 +135,7 @@ public class LoopedEventManager {
 	 * @param events the events to be registered
 	 * @param enable wether the api should be enabled
 	 */
+	@SuppressWarnings("unused")
 	public void registerEvents(Collection<? extends LoopedEvent> events, boolean enable) {
 		registeredEvents.addAll(events);
 
@@ -143,6 +147,7 @@ public class LoopedEventManager {
 	/**
 	 * @param identifier the identifier of the event to be removed
 	 */
+	@SuppressWarnings("unused")
 	public void removeEvent(String identifier) {
 		List<LoopedEvent> change = new ArrayList<>();
 
@@ -160,6 +165,7 @@ public class LoopedEventManager {
 	/**
 	 * @param identifiers the identifiers of the events to be removed
 	 */
+	@SuppressWarnings("unused")
 	public void removeEvents(@NotNull String... identifiers) {
 		removeEvents(Arrays.asList(identifiers));
 	}
@@ -182,6 +188,7 @@ public class LoopedEventManager {
 	/**
 	 * restarts only all ACTIVE {@link LoopedEvent LoopedEvents}
 	 */
+	@SuppressWarnings("unused")
 	public void restart() {
 
 		for (LoopedEvent activeEvent : activeEvents) {

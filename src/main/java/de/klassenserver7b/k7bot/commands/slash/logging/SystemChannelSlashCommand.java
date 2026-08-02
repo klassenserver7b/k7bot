@@ -1,13 +1,15 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.commands.slash.logging;
 
+import org.jetbrains.annotations.NotNull;
+
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.GuildSlashCommand;
+import de.klassenserver7b.k7bot.manage.SystemNotificationChannelManager;
 import de.klassenserver7b.k7bot.util.CommandUtils;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import de.klassenserver7b.k7bot.manage.SystemNotificationChannelManager;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.interactions.InteractionContextType;
@@ -18,7 +20,6 @@ import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
-import org.jetbrains.annotations.NotNull;
 
 public class SystemChannelSlashCommand implements GuildSlashCommand {
 

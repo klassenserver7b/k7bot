@@ -1,6 +1,12 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.listener;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.database.dao.CreatedPrivateVcsDAO;
 import de.klassenserver7b.k7bot.logging.LoggingFilter;
@@ -12,11 +18,6 @@ import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class VoiceListener extends ListenerAdapter {
 	public final List<Long> tempchannels = new ArrayList<>();
