@@ -2,9 +2,6 @@
 package de.klassenserver7b.k7bot;
 
 import de.klassenserver7b.k7bot.audio.AudioManager;
-import de.klassenserver7b.k7bot.database.Database;
-import de.klassenserver7b.k7bot.database.DatabaseType;
-import de.klassenserver7b.k7bot.database.SQLManager;
 import de.klassenserver7b.k7bot.database.config.SqliteConfig;
 import de.klassenserver7b.k7bot.exceptions.InvalidConfigException;
 import de.klassenserver7b.k7bot.listener.*;
@@ -33,6 +30,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -43,7 +41,6 @@ public class K7Bot {
 	private final Logger logger = LoggerFactory.getLogger("K7Bot-Main");
 
 	private final ConfigManager cfgMgr;
-	private Database db;
 
 	private ShardManager shardMgr;
 	private CommandManager cmdMgr;
@@ -102,12 +99,8 @@ public class K7Bot {
 
 	protected void setupDB() throws SQLException, IOException {
 
-		SqliteConfig cfg = new SqliteConfig(
-				new File(cfgMgr.getToml().getString("global/sqlite_path").orElse("resources/k7bot.db")));
-		this.db = DatabaseType.createFor(cfg);
-
-		db.connect(cfg);
-		SQLManager.onCreate();
+		String sqlitePath = cfgMgr.getToml().getString("global/sqlite_path").orElse("resources/k7bot.db");
+		de.klassenserver7b.k7bot.database.HibernateManager.init(new SqliteConfig(new File(sqlitePath)));
 	}
 
 	/**
@@ -232,22 +225,21 @@ public class K7Bot {
 			}
 		}
 
-		for (CompletableFuture<Integer> future : futures.keySet()) {
+		for (Map.Entry<CompletableFuture<Integer>, InitRequiringListener> entry : futures.entrySet()) {
 			int code;
 			try {
-				code = future.get();
+				code = entry.getKey().get();
 			} catch (InterruptedException | ExecutionException e) {
 				logger.error(e.getMessage(), e);
 				return;
 			}
 
 			if (code != 0) {
-				logger.warn("{} failed to initialize, ExitCode: {}", futures.get(future).getClass().getSimpleName(),
-						code);
+				logger.warn("{} failed to initialize, ExitCode: {}", entry.getValue().getClass().getSimpleName(), code);
 				continue;
 			}
 
-			logger.info("{} successfully initialized", futures.get(future).getClass().getSimpleName());
+			logger.info("{} successfully initialized", entry.getValue().getClass().getSimpleName());
 		}
 	}
 
@@ -268,7 +260,6 @@ public class K7Bot {
 			shardMgr.shutdown();
 			logger.info("Bot offline");
 
-			this.db.disconnect();
 			return;
 		}
 
@@ -277,7 +268,6 @@ public class K7Bot {
 	}
 
 	public void restart() {
-		this.db.disconnect();
 		this.stopLoop();
 		K7Bot.getInstance().getLoopedEventManager().shutdownLoopedEvents();
 
@@ -381,15 +371,9 @@ public class K7Bot {
 	/**
 	 * @return the ConfigManager
 	 */
+	@SuppressWarnings("unused")
 	public ConfigManager getConfigManager() {
 		return this.cfgMgr;
-	}
-
-	/**
-	 * @return the Database Connection
-	 */
-	public Database getDb() {
-		return db;
 	}
 
 	/**

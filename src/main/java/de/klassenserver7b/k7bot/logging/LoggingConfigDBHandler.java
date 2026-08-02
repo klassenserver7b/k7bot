@@ -1,47 +1,36 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.logging;
 
-import de.klassenserver7b.k7bot.K7Bot;
+import de.klassenserver7b.k7bot.database.dao.LoggingConfigDAO;
 import net.dv8tion.jda.api.entities.Guild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  *
  */
 public abstract class LoggingConfigDBHandler {
 
+	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(LoggingConfigDBHandler.class);
+	private static final LoggingConfigDAO dao = new LoggingConfigDAO();
 
+	@SuppressWarnings("unused")
 	public static int insertGuild(long guildId) {
-		return K7Bot.getInstance().getDb().update("INSERT OR IGNORE INTO loggingConfig(guildId) VALUES(?);", guildId);
+		dao.insertGuild(guildId);
+		return 1;
 	}
 
+	@SuppressWarnings("UnusedReturnValue")
 	public static int enableOption(LoggingOptions option, long guildId) {
-
-		insertGuild(guildId);
-
-		if (isOptionDisabled(option, guildId)) {
-			return K7Bot.getInstance().getDb().update(
-					"UPDATE loggingConfig SET optionJson = json_insert(optionJson,'$[#]',?)" + " WHERE guildId=?;",
-					option.getId(), guildId);
-		}
-
-		return 0;
+		dao.enableOption(option.getId(), guildId);
+		return 1;
 	}
 
+	@SuppressWarnings("UnusedReturnValue")
 	public static int disableOption(LoggingOptions option, long guildId) {
-
-		insertGuild(guildId);
-
-		return K7Bot
-				.getInstance().getDb().update(
-						"UPDATE loggingConfig SET optionJson = (SELECT json_group_array(value) FROM"
-								+ " json_each(optionJson) WHERE value != ?) WHERE guildId = ?;",
-						option.getId(), guildId);
+		dao.disableOption(option.getId(), guildId);
+		return 1;
 	}
 
 	public static boolean isOptionDisabled(LoggingOptions option, Guild guild) {
@@ -49,21 +38,7 @@ public abstract class LoggingConfigDBHandler {
 	}
 
 	public static boolean isOptionDisabled(LoggingOptions option, long guildId) {
-
-		insertGuild(guildId);
-
-		try (ResultSet set = K7Bot.getInstance().getDb()
-				.query("SELECT IIF((SELECT (SELECT 1 FROM json_each(optionJson) WHERE"
-						+ " value = ?) FROM loggingConfig WHERE guildId = ?), True," + " False) result;",
-						option.getId(), guildId)) {
-
-			return !set.isAfterLast() || !set.getBoolean("result");
-
-		} catch (SQLException e) {
-			log.error(e.getMessage(), e);
-		}
-
-		return false;
+		return dao.isOptionDisabled(option.getId(), guildId).join();
 	}
 
 	/**
@@ -73,8 +48,8 @@ public abstract class LoggingConfigDBHandler {
 	 * @param guildId the guild to toggle the option for
 	 * @return the new state of the option
 	 */
+	@SuppressWarnings("UnusedReturnValue")
 	public static boolean toggleOption(LoggingOptions option, long guildId) {
-
 		if (LoggingOptions.UNKNOWN == option) {
 			return false;
 		}

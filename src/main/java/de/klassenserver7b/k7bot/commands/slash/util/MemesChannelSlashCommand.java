@@ -1,8 +1,11 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.commands.slash.util;
 
-import de.klassenserver7b.k7bot.K7Bot;
-import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
+import de.klassenserver7b.k7bot.commands.types.GuildSlashCommand;
+import de.klassenserver7b.k7bot.util.CommandUtils;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import de.klassenserver7b.k7bot.database.dao.MemeChannelDAO;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
@@ -23,22 +26,21 @@ import java.awt.*;
 /**
  *
  */
-public class MemesChannelSlashCommand implements TopLevelSlashCommand {
+public class MemesChannelSlashCommand implements GuildSlashCommand {
 
 	@Override
-	public void performSlashCommand(SlashCommandInteraction event) {
+	public void performGuildSlashCommand(@NotNull SlashCommandInteraction event, @NotNull Guild guild,
+			@NotNull Member member) {
 
 		InteractionHook hook = event.deferReply(false).complete();
 
-		OptionMapping channelOption = event.getOption("channel");
-
-		assert channelOption != null : "channel is null";
+		OptionMapping channelOption = CommandUtils.getRequiredOption(event, "channel");
 
 		GuildChannelUnion channel = channelOption.getAsChannel();
 		Long channelId = channel.getIdLong();
 
 		if (event.getFullCommandName().split(" ")[1].equalsIgnoreCase("add")) {
-			K7Bot.getInstance().getDb().update("INSERT INTO memechannels(channelId) VALUES(?)", channelId);
+			new MemeChannelDAO().addChannel(channelId);
 
 			new GenericMessageSendHandler(hook)
 					.sendMessageEmbeds(new EmbedBuilder().setColor(Color.green)
@@ -46,7 +48,7 @@ public class MemesChannelSlashCommand implements TopLevelSlashCommand {
 					.queue();
 		} else {
 
-			K7Bot.getInstance().getDb().update("REMOVE FROM memechannels WHERE channelId = ?", channelId);
+			new MemeChannelDAO().removeChannel(channelId);
 
 			new GenericMessageSendHandler(hook).sendMessageEmbeds(new EmbedBuilder().setColor(Color.green)
 					.setDescription("Successfully removed " + channel.getAsMention() + " as Memechannel").build())

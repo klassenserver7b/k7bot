@@ -1,8 +1,8 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.commands.common.util;
 
-import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
+import de.klassenserver7b.k7bot.database.dao.ReactRolesDAO;
 import de.klassenserver7b.k7bot.util.HelpCategories;
 import de.klassenserver7b.k7bot.util.errorhandler.PermissionError;
 import de.klassenserver7b.k7bot.util.errorhandler.SyntaxError;
@@ -65,18 +65,14 @@ public class ReactRolesCommand implements ServerCommand {
 
 							tc.addReactionById(MessageId, emote).queue();
 
-							K7Bot.getInstance().getDb()
-									.update("INSERT INTO reactroles(guildid, channelid, messageid,"
-											+ " emote, roleid) VALUES(?, ?, ?, ?, ?);", channel.getGuild().getIdLong(),
-											tc.getIdLong(), MessageId, emote.getIdLong(), role.getIdLong());
+							new ReactRolesDAO().addRole(channel.getGuild().getIdLong(), tc.getIdLong(), MessageId,
+									emote.getFormatted(), role.getIdLong()).join();
 						} else {
 							String utfemote = args[3];
 							tc.addReactionById(MessageId, Emoji.fromUnicode(utfemote)).queue();
 
-							K7Bot.getInstance().getDb()
-									.update("INSERT INTO reactroles(guildid, channelid, messageid,"
-											+ " emote, roleid) VALUES(?, ?, ?, ?, ?);", channel.getGuild().getIdLong(),
-											tc.getIdLong(), MessageId, utfemote, role.getIdLong());
+							new ReactRolesDAO().addRole(channel.getGuild().getIdLong(), tc.getIdLong(), MessageId,
+									utfemote, role.getIdLong()).join();
 						}
 					} catch (NumberFormatException e) {
 						log.error(e.getMessage(), e);

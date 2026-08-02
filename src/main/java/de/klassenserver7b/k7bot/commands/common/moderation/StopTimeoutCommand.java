@@ -3,6 +3,8 @@ package de.klassenserver7b.k7bot.commands.common.moderation;
 
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
+import de.klassenserver7b.k7bot.database.dao.ModLogDAO;
+import de.klassenserver7b.k7bot.database.entities.ModLogEntity;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.HelpCategories;
 import de.klassenserver7b.k7bot.util.errorhandler.PermissionError;
@@ -92,11 +94,10 @@ public class StopTimeoutCommand implements ServerCommand {
 			}
 
 			String action = "stoptimeout";
-			K7Bot.getInstance().getDb()
-					.update("INSERT INTO modlogs(guildId, memberId, requesterId, memberName,"
-							+ " requesterName, action, reason, date) VALUES(?, ?, ?, ?, ?, ?," + " ?, ?);",
-							channel.getGuild().getIdLong(), u.getIdLong(), requester.getIdLong(), u.getEffectiveName(),
-							requester.getEffectiveName(), action, "null", OffsetDateTime.now());
+			ModLogEntity log = new ModLogEntity(channel.getGuild().getIdLong(), u.getIdLong(), requester.getIdLong(),
+					u.getEffectiveName(), requester.getEffectiveName(), action, "null",
+					OffsetDateTime.now().toString());
+			new ModLogDAO().saveLog(log);
 		} catch (HierarchyException e) {
 			PermissionError.onPermissionError(channel, requester);
 		}

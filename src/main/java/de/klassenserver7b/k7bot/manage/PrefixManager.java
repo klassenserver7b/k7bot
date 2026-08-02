@@ -2,12 +2,12 @@
 package de.klassenserver7b.k7bot.manage;
 
 import de.klassenserver7b.k7bot.K7Bot;
+import de.klassenserver7b.k7bot.database.dao.BotUtilDAO;
+import de.klassenserver7b.k7bot.database.entities.BotUtilEntity;
 import net.dv8tion.jda.api.entities.Guild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 
 /**
@@ -25,23 +25,16 @@ public class PrefixManager {
 	}
 
 	protected void reload() {
-
-		try (ResultSet set = K7Bot.getInstance().getDb().query("SELECT * FROM botutil;")) {
-
-			while (set.next()) {
-				long guildid = set.getLong("guildId");
-				String prefix = set.getString("prefix");
-
-				if (guildid == 0) {
+		try {
+			java.util.List<BotUtilEntity> list = new BotUtilDAO().getAll().get();
+			for (BotUtilEntity entity : list) {
+				long guildid = entity.getGuildId();
+				String prefix = entity.getPrefix();
+				if (guildid == 0)
 					continue;
-				}
-
-				assert prefix != null; // SET as NOT NULL AND DEFAULT '-' in DB
-
 				prefixl.put(guildid, prefix);
 			}
-
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
 
@@ -92,13 +85,11 @@ public class PrefixManager {
 	}
 
 	protected void applyPrefix(long guildid, String prefix) {
-
-		K7Bot.getInstance().getDb().update("INSERT OR REPLACE INTO botutil(guildId, prefix) VALUES(?, ?)", guildid,
-				prefix);
-
+		new BotUtilDAO().updatePrefix(guildid, prefix);
 		prefixl.put(guildid, prefix);
 	}
 
+	@SuppressWarnings("unused")
 	public String getPrefix(Guild guild) {
 		return this.prefixl.get(guild.getIdLong());
 	}

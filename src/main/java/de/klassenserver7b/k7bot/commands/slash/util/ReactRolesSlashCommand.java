@@ -1,8 +1,10 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.commands.slash.util;
 
-import de.klassenserver7b.k7bot.K7Bot;
-import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
+import de.klassenserver7b.k7bot.commands.types.GuildSlashCommand;
+import de.klassenserver7b.k7bot.util.CommandUtils;
+import net.dv8tion.jda.api.entities.Guild;
+import de.klassenserver7b.k7bot.database.dao.ReactRolesDAO;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import de.klassenserver7b.k7bot.util.errorhandler.PermissionError;
 import net.dv8tion.jda.api.Permission;
@@ -18,20 +20,20 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.jetbrains.annotations.NotNull;
 
-public class ReactRolesSlashCommand implements TopLevelSlashCommand {
+public class ReactRolesSlashCommand implements GuildSlashCommand {
 
 	@Override
-	public void performSlashCommand(SlashCommandInteraction event) {
+	public void performGuildSlashCommand(@NotNull SlashCommandInteraction event, @NotNull Guild guild,
+			@NotNull Member m) {
 
 		InteractionHook hook = event.deferReply(true).complete();
-		Member m = event.getMember();
 
 		if (m.hasPermission(Permission.MANAGE_ROLES)) {
 
-			OptionMapping channel = event.getOption("channel");
-			OptionMapping messageid = event.getOption("messageid");
-			OptionMapping emoteop = event.getOption("emoteid-oder-utfemote");
-			OptionMapping roleop = event.getOption("role");
+			OptionMapping channel = CommandUtils.getRequiredOption(event, "channel");
+			OptionMapping messageid = CommandUtils.getRequiredOption(event, "messageid");
+			OptionMapping emoteop = CommandUtils.getRequiredOption(event, "emoteid-oder-utfemote");
+			OptionMapping roleop = CommandUtils.getRequiredOption(event, "role");
 
 			GuildMessageChannel tc = channel.getAsChannel().asGuildMessageChannel();
 			Role role = roleop.getAsRole();
@@ -41,9 +43,8 @@ public class ReactRolesSlashCommand implements TopLevelSlashCommand {
 
 			tc.addReactionById(MessageId, emote).queue();
 
-			K7Bot.getInstance().getDb().update(
-					"INSERT INTO reactroles(guildid, channelid, messageid, emote, roleid)" + " VALUES(?, ?, ?, ?, ?);",
-					tc.getGuild().getIdLong(), tc.getIdLong(), MessageId, emote.getFormatted(), role.getIdLong());
+			new ReactRolesDAO().addRole(tc.getGuild().getIdLong(), tc.getIdLong(), MessageId, emote.getFormatted(),
+					role.getIdLong()).join();
 
 			hook.sendMessage("Reactrole was successfull set for Message: " + MessageId).queue();
 

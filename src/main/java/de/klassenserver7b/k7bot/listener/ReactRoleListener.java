@@ -1,9 +1,21 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.listener;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.klassenserver7b.k7bot.K7Bot;
+import de.klassenserver7b.k7bot.database.dao.ReactRolesDAO;
+import de.klassenserver7b.k7bot.database.dao.UserReactsDAO;
+import de.klassenserver7b.k7bot.database.entities.ReactRolesEntity;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.emoji.EmojiUnion;
@@ -11,15 +23,6 @@ import net.dv8tion.jda.api.events.message.react.GenericMessageReactionEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 public class ReactRoleListener extends ListenerAdapter implements InitRequiringListener {
 
@@ -51,13 +54,12 @@ public class ReactRoleListener extends ListenerAdapter implements InitRequiringL
 
 			EmojiUnion emote = event.getEmoji();
 
-			try (ResultSet set = K7Bot.getInstance().getDb()
-					.query("SELECT roleId FROM reactroles WHERE guildId = ? AND channelId"
-							+ " = ? AND messageId = ? AND emote = ?;", guildId, channelId, messageId,
-							emote.getName())) {
+			try {
+				ReactRolesEntity reactRole = new ReactRolesDAO().getRole(guildId, channelId, messageId, emote.getName())
+						.join();
 
-				if (set.next()) {
-					long roleId = set.getLong("roleId");
+				if (reactRole != null) {
+					long roleId = reactRole.getRoleId();
 
 					Guild guild = event.getGuild();
 					Member member = event.getMember();
@@ -66,23 +68,24 @@ public class ReactRoleListener extends ListenerAdapter implements InitRequiringL
 						return;
 					}
 
+					Role r = guild.getRoleById(roleId);
+					if (r == null) {
+						log.warn("ReactRole Role not found by JDA - deleting");
+						new ReactRolesDAO().deleteByRoleId(roleId);
+						return;
+					}
+
 					if (add) {
-						guild.addRoleToMember(member, guild.getRoleById(roleId)).queue();
-
-						K7Bot.getInstance().getDb()
-								.update("INSERT OR REPLACE INTO userreacts(userId, guildId,"
-										+ " messageId, emote) VALUES(?,?,?,?);", event.getUserIdLong(), guildId,
-										messageId, emote.getName());
+						guild.addRoleToMember(member, r).queue();
+						new UserReactsDAO().insertReaction(event.getUserIdLong(), guildId, messageId, emote.getName())
+								.join();
 					} else {
-						guild.removeRoleFromMember(member, guild.getRoleById(roleId)).queue();
-
-						K7Bot.getInstance().getDb()
-								.update("REMOVE FROM userreacts WHERE userId = ? AND guildId = ?"
-										+ " AND messageId = ? AND emote = ?;", event.getUserIdLong(), guildId,
-										messageId, emote.getName());
+						guild.removeRoleFromMember(member, r).queue();
+						new UserReactsDAO().deleteReaction(event.getUserIdLong(), guildId, messageId, emote.getName())
+								.join();
 					}
 				}
-			} catch (SQLException | IllegalArgumentException e) {
+			} catch (Exception e) {
 				log.error(e.getMessage(), e);
 			}
 		}
@@ -125,64 +128,65 @@ public class ReactRoleListener extends ListenerAdapter implements InitRequiringL
 		@Override
 		public void run() {
 
-			try (ResultSet reactRoles = K7Bot.getInstance().getDb()
-					.query("SELECT channelId, messageId, emote, roleId FROM reactroles;")) {
+			try {
+				java.util.List<ReactRolesEntity> reactRoles = new ReactRolesDAO().getAllRoles().join();
 				// loop through all registered reaction roles
-				while (reactRoles.next()) {
+				for (ReactRolesEntity reactRole : reactRoles) {
 
 					/*
 					 * retrieving the GuildChannel which should always be a GuildMessageChannel
 					 * (can't create reactions in other than that)
 					 */
 
-					GuildMessageChannel msgChannel = (GuildMessageChannel) K7Bot.getInstance().getShardManager()
-							.getGuildChannelById(reactRoles.getLong("channelId"));
+					GuildChannel guildChannel = K7Bot.getInstance().getShardManager()
+							.getGuildChannelById(reactRole.getChannelId());
 
-					// get Objects from db data
-					long messageId = reactRoles.getLong("messageId");
-
-					Message mess = msgChannel.retrieveMessageById(messageId).complete();
-
-					Guild guild = mess.getGuild();
-					Role role = guild.getRoleById(reactRoles.getLong("roleId"));
-
-					String emoji = reactRoles.getString("emote");
-
-					MessageReaction reaction = mess.getReaction(Emoji.fromFormatted(emoji));
-
-					List<Long> userIds = new ArrayList<>();
-					if (reaction != null) {
-						for (User u : reaction.retrieveUsers().complete()) {
-							if (!u.isBot()) {
-								userIds.add(u.getIdLong());
-							}
-						}
+					if (guildChannel == null) {
+						log.warn("ReactRole Channel not found by JDA - deleting");
+						new ReactRolesDAO().deleteByChannelId(reactRole.getChannelId());
+						return;
 					}
 
-					String sql = "SELECT userId from userreacts WHERE messageId = ? AND emote = ?;";
+					if (guildChannel instanceof GuildMessageChannel msgChannel) {
 
-					try (ResultSet oldUserReactData = K7Bot.getInstance().getDb().query(sql, messageId, emoji)) {
+						// get Objects from db data
+						long messageId = reactRole.getMessageId();
 
-						// loop through all data logged while the bot was running and resolving
+						Message mess = msgChannel.retrieveMessageById(messageId).complete();
+
+						Guild guild = mess.getGuild();
+						Role role = guild.getRoleById(reactRole.getRoleId());
+
+						String emoji = reactRole.getEmote();
+
+						MessageReaction reaction = mess.getReaction(Emoji.fromFormatted(emoji));
+
+						List<Long> userIds = new ArrayList<>();
+						if (reaction != null) {
+							for (User u : reaction.retrieveUsers().complete()) {
+								if (!u.isBot()) {
+									userIds.add(u.getIdLong());
+								}
+							}
+						}
+
+						java.util.List<Long> oldUserReactData = new UserReactsDAO().getUsersByReaction(messageId, emoji)
+								.join();
+
+						// loop through all data logged while the bot wasn't running and resolving
 						// changes
-						while (oldUserReactData.next()) {
-							long dbUserId = oldUserReactData.getLong("userId");
-
-							/*
-							 * Remove roles, db entry, userIds entry from the users that have removed their
-							 * reaction
-							 */
+						for (long dbUserId : oldUserReactData) {
 							if (checkRoleRemove(userIds, messageId, emoji, role, guild, dbUserId)) {
 								userIds.remove(dbUserId);
 							}
 						}
-					}
 
-					// Add roles to every user which wasn't logged but has now reacted
-					addRoles(userIds, messageId, emoji, role, guild);
+						// Add roles to every user which wasn't logged but has now reacted
+						addRoles(userIds, messageId, emoji, role, guild);
+					}
 				}
 
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				log.error(e.getMessage(), e);
 				completableFuture.complete(1);
 				return;
@@ -209,9 +213,7 @@ public class ReactRoleListener extends ListenerAdapter implements InitRequiringL
 
 			if (!userIds.contains(dbUserId)) {
 				guild.removeRoleFromMember(UserSnowflake.fromId(dbUserId), role).queue();
-				K7Bot.getInstance().getDb().update(
-						"DELETE FROM userreacts WHERE userId = ? AND messageId = ? AND" + " emote=?", dbUserId,
-						messageId, emoji);
+				new UserReactsDAO().deleteReaction(dbUserId, guild.getIdLong(), messageId, emoji).join();
 				return true;
 			}
 
@@ -232,9 +234,7 @@ public class ReactRoleListener extends ListenerAdapter implements InitRequiringL
 			for (long userId : userIds) {
 
 				guild.addRoleToMember(UserSnowflake.fromId(userId), role).queue();
-				K7Bot.getInstance().getDb().update(
-						"INSERT OR REPLACE INTO userreacts(userId, guildId, messageId," + " emote) VALUES(?,?,?,?);",
-						userId, guild.getIdLong(), messageId, emoji);
+				new UserReactsDAO().insertReaction(userId, guild.getIdLong(), messageId, emoji).join();
 			}
 		}
 	}

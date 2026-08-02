@@ -2,6 +2,7 @@
 package de.klassenserver7b.k7bot.audio;
 
 import de.klassenserver7b.k7bot.K7Bot;
+import de.klassenserver7b.k7bot.database.dao.MusicLogDAO;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import dev.arbjerg.lavalink.client.player.FilterBuilder;
 import dev.arbjerg.lavalink.client.player.LavalinkPlayer;
@@ -11,12 +12,15 @@ import dev.arbjerg.lavalink.protocol.v4.Timescale;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class TrackScheduler {
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 	private final GuildAudioManager guildMusicManager;
 	public final Deque<Track> queue = new LinkedList<>();
 	private boolean repeating = false;
@@ -31,33 +35,29 @@ public class TrackScheduler {
 	}
 
 	public void loadTrack(Track track, AudioLoadOption alo) {
-
 		switch (alo) {
 			case AudioLoadOption.APPEND -> enqueue(track);
 			case AudioLoadOption.NEXT -> enqueueNext(track);
 			case AudioLoadOption.REPLACE_QUEUE -> {
 				clearQueue();
-				enqueue(track);
+				startTrack(track);
 			}
-			case AudioLoadOption.REPLACE -> {
-				enqueueNext(track);
-				startTrack(queue.poll());
-			}
+			case AudioLoadOption.REPLACE -> startTrack(track);
 		}
 	}
 
 	public void loadPlaylist(List<Track> tracks, AudioLoadOption alo) {
-
 		switch (alo) {
 			case AudioLoadOption.APPEND -> enqueuePlaylist(tracks);
 			case AudioLoadOption.NEXT -> enqueueNextPlaylist(tracks);
 			case AudioLoadOption.REPLACE_QUEUE -> {
 				clearQueue();
-				enqueuePlaylist(tracks);
+				this.queue.addAll(tracks);
+				startTrack(this.queue.poll());
 			}
 			case AudioLoadOption.REPLACE -> {
-				enqueuePlaylist(tracks);
-				startTrack(queue.poll());
+				tracks.reversed().forEach(this.queue::addFirst);
+				startTrack(this.queue.poll());
 			}
 		}
 	}
@@ -133,7 +133,7 @@ public class TrackScheduler {
 							String uri = track.getInfo().getUri();
 							String videoId = uri.substring(uri.indexOf("v=") + 2);
 							if (videoId.contains("&"))
-								videoId = videoId.substring(0, videoId.indexOf("&"));
+								videoId = videoId.substring(0, videoId.indexOf('&'));
 							builder.setImage("https://img.youtube.com/vi/" + videoId + "/maxresdefault.jpg");
 						}
 						channel.sendMessageEmbeds(builder.build()).queue();
@@ -146,9 +146,8 @@ public class TrackScheduler {
 
 		try {
 			long datetime = Long.parseLong(LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss")));
-			K7Bot.getInstance().getDb().update(
-					"INSERT INTO musiclogs(songname, songauthor, guildId, timestamp)" + " VALUES(?, ?, ?, ?);",
-					track.getInfo().getTitle(), track.getInfo().getAuthor(), guildMusicManager.getGuildId(), datetime);
+			new MusicLogDAO().insertLog(track.getInfo().getTitle(), track.getInfo().getAuthor(),
+					guildMusicManager.getGuildId(), datetime).join();
 		} catch (Exception e) {
 			System.err.println("Failed to log track to SQLite: " + e.getMessage());
 		}
@@ -157,11 +156,14 @@ public class TrackScheduler {
 	public void onTrackEnd(Track lastTrack, Message.EmittedEvent.TrackEndEvent.AudioTrackEndReason endReason) {
 		if (endReason.getMayStartNext()) {
 			if (repeating && lastTrack != null) {
-				// Re-clone track using its info, or just offer the same track object if
-				// supported
-				// Lavalink 4 tracks can be reused by string
-				this.guildMusicManager.getLink().getNode().loadItem(lastTrack.getInfo().getUri())
-						.subscribe(new AudioLoadResultHandler(guildMusicManager, AudioLoadOption.APPEND, 0));
+				String uri = lastTrack.getInfo().getUri();
+				if (uri != null) {
+					this.guildMusicManager.getLink().getNode().loadItem(uri)
+							.subscribe(new AudioLoadResultHandler(guildMusicManager, AudioLoadOption.APPEND, 0));
+				} else {
+					log.warn("Track uri from last track was null although lastTrack wasn't null - lastTrack: {}",
+							lastTrack.getInfo());
+				}
 			}
 
 			final var nextTrack = this.queue.poll();
@@ -228,6 +230,7 @@ public class TrackScheduler {
 		this.applyFilters();
 	}
 
+	@SuppressWarnings("unused")
 	public void setRate(double rate) {
 		if (rate <= 0)
 			rate = 0.1;
@@ -293,6 +296,7 @@ public class TrackScheduler {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	public void clearFilters() {
 		this.speed = 1.0;
 		this.pitch = 1.0;

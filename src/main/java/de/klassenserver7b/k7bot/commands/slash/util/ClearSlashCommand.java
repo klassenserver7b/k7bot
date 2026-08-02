@@ -2,7 +2,10 @@
 package de.klassenserver7b.k7bot.commands.slash.util;
 
 import de.klassenserver7b.k7bot.K7Bot;
-import de.klassenserver7b.k7bot.commands.types.TopLevelSlashCommand;
+import de.klassenserver7b.k7bot.commands.types.GuildSlashCommand;
+import de.klassenserver7b.k7bot.util.CommandUtils;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import de.klassenserver7b.k7bot.util.MessageClearUtil;
@@ -23,13 +26,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
-public class ClearSlashCommand implements TopLevelSlashCommand {
+public class ClearSlashCommand implements GuildSlashCommand {
 	@Override
-	public void performSlashCommand(SlashCommandInteraction event) {
+	public void performGuildSlashCommand(@NotNull SlashCommandInteraction event, @NotNull Guild guild,
+			@NotNull Member member) {
 
-		if (event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
+		if (member.hasPermission(Permission.MESSAGE_MANAGE)) {
 
-			OptionMapping amountOption = event.getOption("amount");
+			OptionMapping amountOption = CommandUtils.getRequiredOption(event, "amount");
 
 			InteractionHook hook = event.deferReply(true).complete();
 			int amount;
@@ -46,14 +50,12 @@ public class ClearSlashCommand implements TopLevelSlashCommand {
 
 			hook.sendMessage(amount + " messages deleted.").queue();
 
-			EmbedBuilder builder = EmbedUtils
-					.getBuilderOf(Color.orange,
-							amount + " messages deleted!\n\n" + "**Channel: **\n" + "#"
-									+ event.getChannel().asGuildMessageChannel().getName(),
-							event.getGuild().getIdLong());
+			EmbedBuilder builder = EmbedUtils.getBuilderOf(Color.orange, amount + " messages deleted!\n\n"
+					+ "**Channel: **\n" + "#" + event.getChannel().asGuildMessageChannel().getName(),
+					guild.getIdLong());
 
-			builder.setFooter("requested by @" + event.getMember().getEffectiveName());
-			GuildMessageChannel system = K7Bot.getInstance().getSysChannelMgr().getSysChannel(event.getGuild());
+			builder.setFooter("requested by @" + member.getEffectiveName());
+			GuildMessageChannel system = K7Bot.getInstance().getSysChannelMgr().getSysChannel(guild);
 
 			if (system != null) {
 				system.sendMessageEmbeds(builder.build()).queue();
@@ -61,7 +63,7 @@ public class ClearSlashCommand implements TopLevelSlashCommand {
 
 		} else {
 			PermissionError.onPermissionError(new GenericMessageSendHandler(event.getChannel().asGuildMessageChannel()),
-					event.getMember());
+					member);
 		}
 	}
 

@@ -7,6 +7,6 @@ default_stages = ["pre-commit", "pre-push"]
 repo = "local"
 hooks = [
     { id = "maven-suite", name = "Maven Suite", entry = "mvn -q clean compile test", language = "system", pass_filenames = false, stages = ["pre-push"] },
-    { id = "spotless-check", name = "Spotless Check", entry = "mvn -q -o spotless:check", language = "system", pass_filenames = false, stages = ["pre-commit", "pre-push"] },
-    { id = "spotless-apply", name = "Spotless Apply", entry = "mvn -q -o spotless:apply", language = "system", pass_filenames = false, stages = ["pre-commit", "pre-push"] }
+    { id = "spotless-check", name = "Spotless Check", entry = "mvn -q spotless:check", language = "system", pass_filenames = false, stages = ["pre-commit", "pre-push"] },
+    { id = "spotless-apply", name = "Spotless Apply", entry = "mvn -q spotless:apply", language = "system", pass_filenames = false, stages = ["pre-commit", "pre-push"] }
 ]

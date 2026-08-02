@@ -1,7 +1,8 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.logging.listeners;
 
-import de.klassenserver7b.k7bot.K7Bot;
+import de.klassenserver7b.k7bot.database.dao.MessageLogsDAO;
+import de.klassenserver7b.k7bot.database.entities.MessageLogsEntity;
 import de.klassenserver7b.k7bot.logging.LoggingConfigDBHandler;
 import de.klassenserver7b.k7bot.logging.LoggingOptions;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
@@ -12,12 +13,12 @@ import net.dv8tion.jda.api.events.message.MessageBulkDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static de.klassenserver7b.k7bot.util.ChannelUtil.getSystemChannel;
 
@@ -90,7 +91,11 @@ public class MessageLoggingListener extends ListenerAdapter {
 		system.sendMessageEmbeds(embbuild.build()).queue();
 	}
 
-	protected boolean isIgnoredEvent(LoggingOptions option, long messageId, Guild guild) {
+	protected boolean isIgnoredEvent(@NotNull LoggingOptions option, long messageId, @Nullable Guild guild) {
+
+		if (guild == null) {
+			return true;
+		}
 
 		if (LoggingConfigDBHandler.isOptionDisabled(option, guild)) {
 			return true;
@@ -101,16 +106,12 @@ public class MessageLoggingListener extends ListenerAdapter {
 
 	protected boolean isBotMessage(long messageId, Guild guild) {
 
-		try (ResultSet set = K7Bot.getInstance().getDb().query(
-				"SELECT authorId FROM messagelogs WHERE messageId = ? AND guildId =" + " ?;", messageId,
-				guild.getIdLong())) {
-
-			assert set != null;
-			if (set.next()) {
-				return set.getLong("authorId") == guild.getSelfMember().getUser().getIdLong();
+		try {
+			MessageLogsEntity logEntity = new MessageLogsDAO().getLog(messageId).join();
+			if (logEntity != null && logEntity.getGuildId() == guild.getIdLong()) {
+				return logEntity.getAuthorId() == guild.getSelfMember().getUser().getIdLong();
 			}
-
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
 

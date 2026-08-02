@@ -1,9 +1,10 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.commands.common.moderation;
 
-import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.generic.moderation.GenericMemberLogsCommand;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
+import de.klassenserver7b.k7bot.database.dao.ModLogDAO;
+import de.klassenserver7b.k7bot.database.entities.ModLogEntity;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.HelpCategories;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -14,9 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -65,35 +63,21 @@ public class ModLogsCommand extends GenericMemberLogsCommand implements ServerCo
 
 			long reqid = memb.getIdLong();
 
-			try (ResultSet set = K7Bot.getInstance().getDb().query(
-					"SELECT memberName, action, reason, date FROM modlogs  WHERE" + " guildId = ? AND requesterId = ?",
-					guildid, reqid)) {
-
-				ArrayList<String> membName = new ArrayList<>();
-				ArrayList<String> action = new ArrayList<>();
-				ArrayList<String> reason = new ArrayList<>();
-				ArrayList<String> date = new ArrayList<>();
-
-				for (int i = 1; i < 51 && set.next(); i++) {
-					membName.add(set.getString("memberName"));
-					action.add(set.getString("action"));
-					reason.add(set.getString("reason"));
-					date.add(set.getString("date"));
-				}
-
-				if (!membName.isEmpty()) {
-					for (int j = 0; j < membName.size(); j++) {
-
+			new ModLogDAO().getLogsByRequester(guildid, reqid).thenAccept(logs -> {
+				if (logs != null && !logs.isEmpty()) {
+					for (int j = 0; j < Math.min(logs.size(), 50); j++) {
+						ModLogEntity logEntry = logs.get(j);
 						StringBuilder strbuilder = new StringBuilder();
-						strbuilder.append("moderator: ").append(mentionedMembers.getFirst().getEffectiveName());
+						strbuilder.append("moderator: ").append(memb.getEffectiveName());
 						strbuilder.append("\n");
-						strbuilder.append("action: ").append(action.get(j));
+						strbuilder.append("action: ").append(logEntry.getAction());
 						strbuilder.append("\n");
-						strbuilder.append("user: @").append(mentionedMembers.getFirst().getEffectiveName());
+						strbuilder.append("user: @").append(
+								logEntry.getMemberName() != null ? logEntry.getMemberName() : logEntry.getMemberId());
 						strbuilder.append("\n");
-						strbuilder.append("reason: ").append(reason.get(j));
+						strbuilder.append("reason: ").append(logEntry.getReason());
 						strbuilder.append("\n");
-						strbuilder.append("date: ").append(date.get(j));
+						strbuilder.append("date: ").append(logEntry.getDate());
 						strbuilder.append("\n");
 
 						EmbedBuilder embed = EmbedUtils.getBuilderOf(Color.orange, strbuilder,
@@ -106,13 +90,13 @@ public class ModLogsCommand extends GenericMemberLogsCommand implements ServerCo
 						channel.sendMessageEmbeds(embed.build()).queue();
 					}
 				} else {
-
-					channel.sendMessage("This moderator hasn't a log!").complete().delete().queueAfter(20L,
-							TimeUnit.SECONDS);
+					channel.sendMessage("This moderator hasn't a log!")
+							.queue(msg -> msg.delete().queueAfter(20L, TimeUnit.SECONDS));
 				}
-			} catch (SQLException e) {
+			}).exceptionally(e -> {
 				log.error(e.getMessage(), e);
-			}
+				return null;
+			});
 		}
 	}
 

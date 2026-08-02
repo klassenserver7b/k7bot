@@ -3,6 +3,7 @@ package de.klassenserver7b.k7bot.listener;
 
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.common.util.HelpCommand;
+import de.klassenserver7b.k7bot.database.dao.CommandLogDAO;
 import de.klassenserver7b.k7bot.util.BotState;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
@@ -143,8 +144,7 @@ public class CommandListener extends ListenerAdapter {
 		if (K7Bot.getInstance().getState() == BotState.STOPPING) {
 			return;
 		}
-		K7Bot.getInstance().getDb().update(
-				"INSERT INTO commandlog(command, guildId, userId, timestamp) VALUES(?, ?," + " ?, ?);", command,
-				guildid, userid, time.format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss")));
+		new CommandLogDAO().insertLog(command, guildid, userid,
+				Long.parseLong(time.format(DateTimeFormatter.ofPattern("uuuuMMddHHmmss"))));
 	}
 }

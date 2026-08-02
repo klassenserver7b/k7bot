@@ -1,65 +1,22 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.manage;
 
-import de.klassenserver7b.k7bot.K7Bot;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
-import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.concurrent.ConcurrentHashMap;
+import de.klassenserver7b.k7bot.K7Bot;
+import de.klassenserver7b.k7bot.database.dao.BotUtilDAO;
+import de.klassenserver7b.k7bot.database.entities.BotUtilEntity;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 public class SystemNotificationChannelManager {
 
-	private final ConcurrentHashMap<Guild, GuildMessageChannel> systemchannellist;
-	private final Logger log;
-
-	public SystemNotificationChannelManager() {
-
-		systemchannellist = new ConcurrentHashMap<>();
-		log = LoggerFactory.getLogger(this.getClass());
-		reload();
-	}
-
-	private void reload() {
-
-		try (ResultSet set = K7Bot.getInstance().getDb().query("SELECT * FROM botutil;")) {
-
-			while (set.next()) {
-				long guildid = set.getLong("guildId");
-				long systemchannel = set.getLong("syschannelId");
-
-				if (guildid == 0) {
-					continue;
-				}
-
-				Guild g = K7Bot.getInstance().getShardManager().getGuildById(guildid);
-
-				if (g == null) {
-					continue;
-				}
-
-				GuildChannel gchan = g.getGuildChannelById(systemchannel);
-
-				if (!(gchan instanceof GuildMessageChannel)) {
-					systemchannellist.put(g, g.getSystemChannel());
-					K7Bot.getInstance().getDb().update("UPDATE botutil SET syschannelId = ?;",
-							g.getSystemChannel().getIdLong());
-				}
-
-				assert gchan instanceof GuildMessageChannel;
-				GuildMessageChannel chan = (GuildMessageChannel) gchan;
-
-				systemchannellist.put(g, chan);
-			}
-		} catch (SQLException e) {
-			log.error(e.getMessage(), e);
-		}
-	}
+	@SuppressWarnings("unused")
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	/**
 	 * Puts the given {@link GuildMessageChannel SystemChannel} into the Hashmap
@@ -70,23 +27,8 @@ public class SystemNotificationChannelManager {
 	 *                use in this {@link Guild}.
 	 */
 	public void insertChannel(GuildMessageChannel channel) {
-
-		reload();
-
 		Guild guild = channel.getGuild();
-
-		if (systemchannellist.containsKey(guild)) {
-
-			K7Bot.getInstance().getDb().update("UPDATE botutil SET syschannelId = ? WHERE guildId = ?;",
-					channel.getIdLong(), guild.getIdLong());
-
-		} else {
-
-			K7Bot.getInstance().getDb().update("INSERT INTO botutil(guildId, syschannelId) VALUES(?, ?);",
-					guild.getIdLong(), channel.getIdLong());
-		}
-
-		systemchannellist.put(guild, channel);
+		new BotUtilDAO().updateSysChannelId(guild.getIdLong(), channel.getIdLong());
 	}
 
 	/**
@@ -95,13 +37,15 @@ public class SystemNotificationChannelManager {
 	 * @return The {@link GuildMessageChannel SystemChannel} for the Guild or
 	 *         {@code null} if no channel is listed.
 	 */
-	public GuildMessageChannel getSysChannel(@NotNull Guild guild) {
-
-		if (systemchannellist.get(guild) == null) {
-			return guild.getSystemChannel();
+	public @Nullable GuildMessageChannel getSysChannel(@NotNull Guild guild) {
+		BotUtilEntity entity = new BotUtilDAO().get(guild.getIdLong()).join();
+		if (entity != null && entity.getSyschannelId() != null) {
+			GuildChannel channel = guild.getGuildChannelById(entity.getSyschannelId());
+			if (channel instanceof GuildMessageChannel sysChannel) {
+				return sysChannel;
+			}
 		}
-
-		return systemchannellist.get(guild);
+		return guild.getSystemChannel();
 	}
 
 	/**
@@ -112,23 +56,11 @@ public class SystemNotificationChannelManager {
 	 *         {@code null} if no channel is listed.
 	 */
 	@SuppressWarnings("unused")
-	public GuildMessageChannel getSysChannel(@NotNull Long guildId) throws NullPointerException {
-
+	public @Nullable GuildMessageChannel getSysChannel(@NotNull Long guildId) throws NullPointerException {
 		Guild guild = K7Bot.getInstance().getShardManager().getGuildById(guildId);
-
-		return systemchannellist.get(guild);
-	}
-
-	/**
-	 * Only used if you want the full ConcurrentHashMap! If you want only one
-	 * {@link GuildMessageChannel SystemChannel} please use
-	 * {@link SystemNotificationChannelManager#getSysChannel(Guild)}
-	 *
-	 * @return The current HashMap of SystemChannels which is used by the Bot.
-	 */
-	@SuppressWarnings("unused")
-	public ConcurrentHashMap<Guild, GuildMessageChannel> getHashMap() {
-		reload();
-		return systemchannellist;
+		if (guild != null) {
+			return getSysChannel(guild);
+		}
+		return null;
 	}
 }

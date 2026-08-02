@@ -1,7 +1,7 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.listener;
 
-import de.klassenserver7b.k7bot.K7Bot;
+import de.klassenserver7b.k7bot.database.dao.MemeChannelDAO;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -9,9 +9,6 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class MemesReact extends ListenerAdapter {
 
@@ -28,16 +25,12 @@ public class MemesReact extends ListenerAdapter {
 			GuildMessageChannel chan = event.getChannel().asGuildMessageChannel();
 			long channelId = chan.getIdLong();
 
-			try (ResultSet set = K7Bot.getInstance().getDb()
-					.query("SELECT channelId FROM memechannels WHERE channelId=?", channelId)) {
-
-				long msgId = event.getMessage().getIdLong();
-
-				if (set.next()) {
+			try {
+				if (new MemeChannelDAO().isMemeChannel(channelId).join()) {
+					long msgId = event.getMessage().getIdLong();
 					react(msgId, chan);
 				}
-
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				log.error(e.getMessage(), e);
 			}
 		}

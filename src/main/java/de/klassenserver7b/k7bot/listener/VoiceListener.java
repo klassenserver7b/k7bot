@@ -2,6 +2,7 @@
 package de.klassenserver7b.k7bot.listener;
 
 import de.klassenserver7b.k7bot.K7Bot;
+import de.klassenserver7b.k7bot.database.dao.CreatedPrivateVcsDAO;
 import de.klassenserver7b.k7bot.logging.LoggingFilter;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -14,7 +15,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,8 +69,7 @@ public class VoiceListener extends ListenerAdapter {
 			Guild controller = vc.getGuild();
 			controller.moveVoiceMember(member, vc).queue();
 
-			K7Bot.getInstance().getDb().update("INSERT INTO createdprivatevcs(guildId, channelId) VALUES(?, ?);",
-					vc.getGuild().getIdLong(), vc.getIdLong());
+			new CreatedPrivateVcsDAO().addChannel(vc.getGuild().getIdLong(), vc.getIdLong()).join();
 
 			K7Bot.getInstance().getMainLogger().info(
 					"Created custom VoiceChannel for Member: {} with the following" + " Channel-ID: {}",
@@ -81,11 +80,9 @@ public class VoiceListener extends ListenerAdapter {
 	protected void onLeave(AudioChannel audioChannel) {
 
 		if (audioChannel.getMembers().isEmpty()) {
-			try (ResultSet set = K7Bot.getInstance().getDb().query("SELECT channelId FROM createdprivatevcs;")) {
+			try {
+				this.tempchannels.addAll(new CreatedPrivateVcsDAO().getAllChannelIds().join());
 
-				while (set.next()) {
-					this.tempchannels.add(set.getLong("channelId"));
-				}
 				if (this.tempchannels.contains(audioChannel.getIdLong())) {
 
 					try (AutoCloseable ignored = LoggingFilter.getInstance().blockEventExecution()) {
@@ -93,9 +90,7 @@ public class VoiceListener extends ListenerAdapter {
 						audioChannel.delete().queue();
 					}
 
-					K7Bot.getInstance().getDb().update(
-							"DELETE FROM createdprivatevcs WHERE channelId = ? AND" + " guildId=?;",
-							audioChannel.getIdLong(), audioChannel.getGuild().getIdLong());
+					new CreatedPrivateVcsDAO().removeChannel(audioChannel.getIdLong()).join();
 					this.tempchannels.clear();
 					K7Bot.getInstance().getMainLogger().info(
 							"Removed custom VoiceChannel with the Name: {} and the" + " following ID: {}",

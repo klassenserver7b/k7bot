@@ -8,7 +8,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Random;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Klassenserver7b
@@ -18,38 +20,53 @@ public class LoopThread implements Runnable {
 	private final Logger log;
 	private final String[] status = new String[] { "-help", "-getprefix", "YouTube", "Spotify", "SlashCommands",
 			"Logging" };
+	private ScheduledExecutorService executorService;
 	private ScheduledFuture<?> refreshTask;
 
 	public LoopThread() {
 		log = LoggerFactory.getLogger(this.getClass());
 	}
 
-	public void start() {
-		refreshTask = Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(this, 0, 10,
-				java.util.concurrent.TimeUnit.MINUTES);
+	public synchronized void start() {
+		if (executorService != null && !executorService.isShutdown()) {
+			return;
+		}
+		executorService = Executors.newSingleThreadScheduledExecutor();
+		refreshTask = executorService.scheduleAtFixedRate(this, 0, 10, TimeUnit.MINUTES);
 	}
 
 	@Override
 	public void run() {
-		K7Bot INSTANCE = K7Bot.getInstance();
+		try {
+			K7Bot INSTANCE = K7Bot.getInstance();
 
-		INSTANCE.getLoopedEventManager().checkForUpdates();
+			INSTANCE.getLoopedEventManager().checkForUpdates();
 
-		int i = new Random().nextInt(this.status.length);
+			int i = new Random().nextInt(this.status.length);
 
-		INSTANCE.getShardManager().getShards()
-				.forEach(jda -> jda.getPresence().setActivity(Activity.listening(this.status[i])));
+			INSTANCE.getShardManager().getShards()
+					.forEach(jda -> jda.getPresence().setActivity(Activity.listening(this.status[i])));
+		} catch (Exception e) {
+			log.error("An error occurred during LoopThread execution", e);
+		}
 	}
 
-	public void restart() {
-		refreshTask.cancel(true);
+	@SuppressWarnings("unused")
+	public synchronized void restart() {
+		stopLoop();
 		K7Bot.getInstance().getLoopedEventManager().restartAll();
 		start();
 		log.info("restarted");
 	}
 
-	public void stopLoop() {
-		refreshTask.cancel(true);
+	public synchronized void stopLoop() {
+		if (refreshTask != null) {
+			refreshTask.cancel(true);
+		}
+		if (executorService != null) {
+			executorService.shutdownNow();
+			executorService = null;
+		}
 		log.info("interrupted");
 	}
 }

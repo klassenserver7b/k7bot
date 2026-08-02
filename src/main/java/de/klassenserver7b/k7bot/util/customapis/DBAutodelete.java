@@ -1,7 +1,7 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.util.customapis;
 
-import de.klassenserver7b.k7bot.K7Bot;
+import de.klassenserver7b.k7bot.database.dao.MessageLogsDAO;
 import de.klassenserver7b.k7bot.util.InternalStatusCodes;
 import de.klassenserver7b.k7bot.util.customapis.types.LoopedEvent;
 import org.slf4j.Logger;
@@ -26,13 +26,10 @@ public class DBAutodelete implements LoopedEvent {
 
 		Long minDate = System.currentTimeMillis() - 1000 * 60 * 60 * 24 * 2; // 7 days
 
-		int status = K7Bot.getInstance().getDb().update("DELETE FROM messagelogs WHERE timestamp < ?", minDate);
+		new MessageLogsDAO().deleteOlderThan(minDate);
+		log.info("Removed lines from messagelogs older than {}", minDate);
 
-		if (status > 0) {
-			log.info("Removed {} lines from messagelogs", status);
-		}
-
-		return status >= 0 ? InternalStatusCodes.SUCCESS : InternalStatusCodes.SQL_ERROR;
+		return InternalStatusCodes.SUCCESS;
 	}
 
 	@Override
