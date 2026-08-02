@@ -28,7 +28,7 @@ public class ConfigManager {
 	private final TOML toml;
 
 	public ConfigManager() throws InvalidConfigException {
-		this.env = Dotenv.configure().systemProperties().load();
+		this.env = Dotenv.configure().ignoreIfMissing().ignoreIfMalformed().load();
 		String config_loc = env.get("CONFIG_FILE", "resources/k7bot.toml");
 
 		TOML toml;
