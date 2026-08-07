@@ -1,5 +1,5 @@
 /* (C)2026 */
-package de.klassenserver7b.k7bot.audio.commands.slash;
+package de.klassenserver7b.k7bot.commands.slash.audio;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +12,8 @@ import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.audio.AudioLoadOption;
 import de.klassenserver7b.k7bot.audio.GuildAudioManager;
 import de.klassenserver7b.k7bot.audio.LyricsFetcher;
-import de.klassenserver7b.k7bot.audio.commands.common.AudioCommandUtils;
-import de.klassenserver7b.k7bot.audio.commands.common.EQPreset;
+import de.klassenserver7b.k7bot.commands.common.audio.AudioCommandUtils;
+import de.klassenserver7b.k7bot.commands.common.audio.EQPreset;
 import de.klassenserver7b.k7bot.commands.types.GuildSlashCommand;
 import de.klassenserver7b.k7bot.util.CommandUtils;
 import de.klassenserver7b.k7bot.util.EmbedUtils;

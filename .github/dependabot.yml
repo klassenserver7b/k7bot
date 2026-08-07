@@ -13,16 +13,18 @@ updates:
     ignore:
       - dependency-name: org.apache.maven:*
     groups:
-      java-deps:
+      mvn-deps:
         patterns:
           - "*"
         exclude-patterns:
           - "org.apache.maven.plugins:*"
           - "org.codehaus.mojo:versions-maven-plugin"
-      mvn-deps:
+          - "com.diffplug.spotless"
+      mvn-plugins:
         patterns:
           - "org.apache.maven.plugins:*"
           - "org.codehaus.mojo:versions-maven-plugin"
+          - "com.diffplug.spotless"
   - package-ecosystem: "github-actions"
     directory: "/"
     target-branch: "dev"

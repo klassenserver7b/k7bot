@@ -8,7 +8,7 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.klassenserver7b.k7bot.audio.commands.common.AudioServerCommand;
+import de.klassenserver7b.k7bot.commands.common.audio.AudioServerCommand;
 import de.klassenserver7b.k7bot.commands.common.logging.SystemChannelCommand;
 import de.klassenserver7b.k7bot.commands.common.moderation.*;
 import de.klassenserver7b.k7bot.commands.common.uncategorized.TestCommand;
