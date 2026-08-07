@@ -9,6 +9,7 @@ import org.apache.hc.client5.http.impl.async.CloseableHttpAsyncClient;
 import org.apache.hc.client5.http.impl.async.HttpAsyncClients;
 import org.apache.hc.core5.concurrent.FutureCallback;
 import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.io.CloseMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +45,8 @@ public class LyricsFetcher {
 		String uri = baseUri + "/v4/sessions/" + sessionId + "/players/" + guildId
 				+ "/track/lyrics?skipTrackSource=false";
 
-		try (CloseableHttpAsyncClient httpClient = HttpAsyncClients.createDefault()) {
+		try {
+			CloseableHttpAsyncClient httpClient = HttpAsyncClients.createSystem();
 			httpClient.start();
 
 			SimpleHttpRequest request = SimpleHttpRequest.create("GET", uri);
@@ -54,6 +56,7 @@ public class LyricsFetcher {
 				@Override
 				public void completed(SimpleHttpResponse response) {
 					handleResponse(response, guildId, sender);
+					httpClient.close(CloseMode.GRACEFUL);
 				}
 
 				@Override
@@ -61,15 +64,17 @@ public class LyricsFetcher {
 					log.error("Exception fetching lyrics", ex);
 					sender.accept(
 							EmbedUtils.getErrorEmbed("Error fetching lyrics: " + ex.getMessage(), guildId).build());
+					httpClient.close(CloseMode.GRACEFUL);
 				}
 
 				@Override
 				public void cancelled() {
 					log.warn("Lyrics request cancelled");
+					httpClient.close(CloseMode.GRACEFUL);
 				}
 			});
 		} catch (Exception e) {
-			log.error(e.getMessage(), e);
+			log.error("Lyrics request failed {}", e.getMessage(), e);
 		}
 	}
 

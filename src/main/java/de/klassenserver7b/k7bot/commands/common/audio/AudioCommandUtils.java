@@ -1,5 +1,5 @@
 /* (C)2026 */
-package de.klassenserver7b.k7bot.audio.commands.common;
+package de.klassenserver7b.k7bot.commands.common.audio;
 
 import java.awt.*;
 import java.time.Duration;

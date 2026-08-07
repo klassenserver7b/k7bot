@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.klassenserver7b</groupId>
     <artifactId>k7bot</artifactId>
-    <version>2.1.0.1</version>
+    <version>2.1.0.2</version>
     <packaging>jar</packaging>
     <name>k7bot</name>
     <description>My Discord Bot</description>
@@ -159,6 +159,7 @@
                                         <!-- Module descriptors at root and in multi-release paths -->
                                         <exclude>module-info.class</exclude>
                                         <exclude>META-INF/versions/*/module-info.class</exclude>
+                                        <exclude>META-INF/versions/9/OSGI-INF/MANIFEST.MF</exclude>
                                         <!-- Let ManifestResourceTransformer own the manifest -->
                                         <exclude>META-INF/MANIFEST.MF</exclude>
                                         <!-- Plain-text license/notice variants not handled by the transformer -->
