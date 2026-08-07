@@ -10,6 +10,7 @@ import de.klassenserver7b.k7bot.database.entities.CommandLogEntity;
  * Data Access Object for handling CommandLogEntity operations. Provides methods
  * for inserting logs of executed commands.
  */
+@SuppressWarnings({ "unused", "UnusedReturnValue" })
 public class CommandLogDAO {
 
 	/**

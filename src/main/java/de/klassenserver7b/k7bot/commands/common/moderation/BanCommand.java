@@ -73,6 +73,7 @@ public class BanCommand implements ServerCommand {
 		}
 	}
 
+	@SuppressWarnings("DuplicatedCode")
 	public void onBan(Member requester, Member u, GuildMessageChannel channel, String grund) {
 
 		StringBuilder strBuilder = new StringBuilder();

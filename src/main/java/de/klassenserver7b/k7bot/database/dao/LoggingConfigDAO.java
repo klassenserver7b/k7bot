@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.utils.data.DataArray;
  * Data Access Object for handling LoggingConfigEntity operations. Provides
  * methods for managing logging configurations for guilds.
  */
+@SuppressWarnings({ "unused", "UnusedReturnValue" })
 public class LoggingConfigDAO {
 
 	/**

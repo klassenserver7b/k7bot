@@ -1,6 +1,8 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.logging;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,21 +19,18 @@ public abstract class LoggingConfigDBHandler {
 	private static final LoggingConfigDAO dao = new LoggingConfigDAO();
 
 	@SuppressWarnings("unused")
-	public static int insertGuild(long guildId) {
-		dao.insertGuild(guildId);
-		return 1;
+	public static CompletableFuture<Void> insertGuild(long guildId) {
+		return dao.insertGuild(guildId);
 	}
 
 	@SuppressWarnings("UnusedReturnValue")
-	public static int enableOption(LoggingOptions option, long guildId) {
-		dao.enableOption(option.getId(), guildId);
-		return 1;
+	public static CompletableFuture<Void> enableOption(LoggingOptions option, long guildId) {
+		return dao.enableOption(option.getId(), guildId);
 	}
 
 	@SuppressWarnings("UnusedReturnValue")
-	public static int disableOption(LoggingOptions option, long guildId) {
-		dao.disableOption(option.getId(), guildId);
-		return 1;
+	public static CompletableFuture<Void> disableOption(LoggingOptions option, long guildId) {
+		return dao.disableOption(option.getId(), guildId);
 	}
 
 	public static boolean isOptionDisabled(LoggingOptions option, Guild guild) {

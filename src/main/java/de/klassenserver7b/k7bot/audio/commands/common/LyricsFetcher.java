@@ -37,6 +37,7 @@ public class LyricsFetcher {
 		if (baseUri.startsWith("wss://"))
 			baseUri = baseUri.replaceFirst("wss://", "https://");
 		else if (baseUri.startsWith("ws://"))
+			// noinspection HttpUrlsUsage
 			baseUri = baseUri.replaceFirst("ws://", "http://");
 		String uri = baseUri + "/v4/sessions/" + sessionId + "/players/" + guildId
 				+ "/track/lyrics?skipTrackSource=false";
@@ -44,50 +45,54 @@ public class LyricsFetcher {
 		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(uri)).header("Authorization", node.getPassword())
 				.GET().build();
 
-		HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenAccept(response -> {
-			if (response.statusCode() == 404) {
-				sender.accept(EmbedUtils.getErrorEmbed("No track is playing or lyrics not found.", guildId).build());
-			} else if (response.statusCode() == 204) {
-				sender.accept(EmbedUtils.getErrorEmbed("No lyrics found for this track.", guildId).build());
-			} else if (response.statusCode() == 200) {
-				try {
-					JsonObject obj = JsonParser.parseString(response.body()).getAsJsonObject();
-					StringBuilder sb = new StringBuilder();
+		try (HttpClient httpClient = HttpClient.newHttpClient()) {
+			httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenAccept(response -> {
+				if (response.statusCode() == 404) {
+					sender.accept(
+							EmbedUtils.getErrorEmbed("No track is playing or lyrics not found.", guildId).build());
+				} else if (response.statusCode() == 204) {
+					sender.accept(EmbedUtils.getErrorEmbed("No lyrics found for this track.", guildId).build());
+				} else if (response.statusCode() == 200) {
+					try {
+						JsonObject obj = JsonParser.parseString(response.body()).getAsJsonObject();
+						StringBuilder sb = new StringBuilder();
 
-					if (obj.has("text") && !obj.get("text").isJsonNull()) {
-						sb.append(obj.get("text").getAsString());
-					} else if (obj.has("lines")) {
-						obj.getAsJsonArray("lines").forEach(
-								line -> sb.append(line.getAsJsonObject().get("line").getAsString()).append("\n"));
-					}
+						if (obj.has("text") && !obj.get("text").isJsonNull()) {
+							sb.append(obj.get("text").getAsString());
+						} else if (obj.has("lines")) {
+							obj.getAsJsonArray("lines").forEach(
+									line -> sb.append(line.getAsJsonObject().get("line").getAsString()).append("\n"));
+						}
 
-					String lyrics = sb.toString().trim();
-					if (lyrics.isEmpty()) {
-						sender.accept(EmbedUtils.getErrorEmbed("Lyrics are empty.", guildId).build());
-						return;
-					}
+						String lyrics = sb.toString().trim();
+						if (lyrics.isEmpty()) {
+							sender.accept(EmbedUtils.getErrorEmbed("Lyrics are empty.", guildId).build());
+							return;
+						}
 
-					for (int i = 0; i < lyrics.length(); i += 4096) {
-						String chunk = lyrics.substring(i, Math.min(lyrics.length(), i + 4096));
-						sender.accept(EmbedUtils.getDefault(guildId).setTitle("Lyrics").setDescription(chunk).build());
+						for (int i = 0; i < lyrics.length(); i += 4096) {
+							String chunk = lyrics.substring(i, Math.min(lyrics.length(), i + 4096));
+							sender.accept(
+									EmbedUtils.getDefault(guildId).setTitle("Lyrics").setDescription(chunk).build());
+						}
+					} catch (Exception e) {
+						sender.accept(EmbedUtils.getErrorEmbed("Error parsing lyrics.", guildId).build());
 					}
-				} catch (Exception e) {
-					sender.accept(EmbedUtils.getErrorEmbed("Error parsing lyrics.", guildId).build());
-				}
-			} else {
-				String msg = "Error fetching lyrics: HTTP " + response.statusCode();
-				if (response.statusCode() == 500 && response.body().contains("SocketTimeoutException")) {
-					msg = "The lyrics provider (e.g. LRCLib) timed out while" + " searching for this track.";
-					log.warn("Lavalink lyrics search timed out (HTTP 500).");
 				} else {
-					log.warn("Error fetching lyrics: HTTP {}", response.statusCode());
+					String msg = "Error fetching lyrics: HTTP " + response.statusCode();
+					if (response.statusCode() == 500 && response.body().contains("SocketTimeoutException")) {
+						msg = "The lyrics provider (e.g. LRCLib) timed out while" + " searching for this track.";
+						log.warn("Lavalink lyrics search timed out (HTTP 500).");
+					} else {
+						log.warn("Error fetching lyrics: HTTP {}", response.statusCode());
+					}
+					sender.accept(EmbedUtils.getErrorEmbed(msg, guildId).build());
 				}
-				sender.accept(EmbedUtils.getErrorEmbed(msg, guildId).build());
-			}
-		}).exceptionally(e -> {
-			log.error("Exception fetching lyrics", e);
-			sender.accept(EmbedUtils.getErrorEmbed("Error fetching lyrics: " + e.getMessage(), guildId).build());
-			return null;
-		});
+			}).exceptionally(e -> {
+				log.error("Exception fetching lyrics", e);
+				sender.accept(EmbedUtils.getErrorEmbed("Error fetching lyrics: " + e.getMessage(), guildId).build());
+				return null;
+			});
+		}
 	}
 }

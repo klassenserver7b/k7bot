@@ -47,7 +47,7 @@ public class SlashCommandManager {
 		registerSchedule.addAll(AudioSlashCommands.getAllCommands());
 
 		for (JDA shard : K7Bot.getInstance().getShardManager().getShards()) {
-			CommandListUpdateAction commup = shard.updateCommands();
+			CommandListUpdateAction commandListUpdateAction = shard.updateCommands();
 
 			for (TopLevelSlashCommand command : registerSchedule) {
 				SlashCommandData cdata = command.getCommandData();
@@ -57,11 +57,10 @@ public class SlashCommandManager {
 				}
 
 				this.commands.put(cdata.getName(), command);
-				// noinspection ResultOfMethodCallIgnored
-				commup.addCommands(cdata);
+				var _ = commandListUpdateAction.addCommands(cdata);
 			}
 
-			commup.complete();
+			commandListUpdateAction.complete();
 		}
 	}
 

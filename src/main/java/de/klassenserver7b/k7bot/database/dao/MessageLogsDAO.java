@@ -10,6 +10,7 @@ import de.klassenserver7b.k7bot.database.entities.MessageLogsEntity;
  * Data Access Object for handling MessageLogsEntity operations. Provides
  * methods for storing and retrieving logged messages.
  */
+@SuppressWarnings({ "unused", "UnusedReturnValue" })
 public class MessageLogsDAO {
 	/**
 	 * Retrieves a logged message by its ID.

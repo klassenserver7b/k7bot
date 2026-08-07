@@ -10,6 +10,7 @@ import de.klassenserver7b.k7bot.database.entities.MemeChannelsEntity;
  * Data Access Object for handling MemeChannelsEntity operations. Provides
  * methods for managing channels designated for memes.
  */
+@SuppressWarnings({ "unused", "UnusedReturnValue" })
 public class MemeChannelDAO {
 	/**
 	 * Adds a channel to the list of meme channels.

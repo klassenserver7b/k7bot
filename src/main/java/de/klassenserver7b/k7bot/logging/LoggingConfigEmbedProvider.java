@@ -139,7 +139,7 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
 	}
 
 	protected void exit() {
-		try (AutoCloseable ignored = LoggingFilter.getInstance()
+		try (AutoCloseable _ = LoggingFilter.getInstance()
 				.blockEventExecution(hook.retrieveOriginal().complete().getIdLong())) {
 			hook.deleteOriginal().queue();
 		} catch (Exception e) {
@@ -298,7 +298,7 @@ public class LoggingConfigEmbedProvider extends ListenerAdapter {
 		}
 
 		@Override
-		public InternalStatusCodes checkforUpdates() {
+		public InternalStatusCodes checkForUpdates() {
 
 			if (listener.hook.isExpired()) {
 				shutdown();

@@ -12,6 +12,7 @@ import de.klassenserver7b.k7bot.database.entities.UserReactsId;
  * Data Access Object for handling UserReactsEntity operations. Provides methods
  * for tracking user reactions on messages.
  */
+@SuppressWarnings({ "unused", "UnusedReturnValue" })
 public class UserReactsDAO {
 	/**
 	 * Checks if a user has already reacted to a message with a specific emote.

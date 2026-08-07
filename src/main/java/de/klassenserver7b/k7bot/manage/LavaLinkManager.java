@@ -4,10 +4,13 @@ package de.klassenserver7b.k7bot.manage;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.time.Duration;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,10 +21,7 @@ import dev.arbjerg.lavalink.client.Helpers;
 import dev.arbjerg.lavalink.client.LavalinkClient;
 import dev.arbjerg.lavalink.client.LavalinkNode;
 import dev.arbjerg.lavalink.client.NodeOptions;
-import dev.arbjerg.lavalink.client.event.ReadyEvent;
-import dev.arbjerg.lavalink.client.event.StatsEvent;
-import dev.arbjerg.lavalink.client.event.TrackEndEvent;
-import dev.arbjerg.lavalink.client.event.TrackStartEvent;
+import dev.arbjerg.lavalink.client.event.*;
 import dev.arbjerg.lavalink.client.loadbalancing.RegionGroup;
 import dev.arbjerg.lavalink.client.loadbalancing.builtin.VoiceRegionPenaltyProvider;
 
@@ -36,29 +36,35 @@ public class LavaLinkManager {
 		client.getLoadBalancer().addPenaltyProvider(new VoiceRegionPenaltyProvider());
 
 		registerLavalinkListeners(client);
-		registerLavalinkNodes(client);
+		List<NodeOptions> nodeOptions = LavaLinkManager.parseNodesJson();
+
+		if (!(nodeOptions == null || nodeOptions.isEmpty())) {
+			registerLavalinkNodes(client, nodeOptions);
+		}
 
 		return client;
 	}
 
-	private static boolean registerLavalinkNodes(LavalinkClient client) {
-
+	@Nullable
+	private static List<NodeOptions> parseNodesJson() {
 		Gson gson = new GsonBuilder().registerTypeAdapter(NodeOptions.class, new NodeOptionsDeserializer()).create();
 
 		try (FileReader reader = new FileReader("resources/lavalink-nodes.json")) {
 
-			List<NodeOptions> nodeOptions = gson.fromJson(reader, new TypeToken<List<NodeOptions>>() {
+			return gson.fromJson(reader, new TypeToken<List<NodeOptions>>() {
 			}.getType());
-
-			List<LavalinkNode> nodes = nodeOptions.stream().map(client::addNode).toList();
-
-			nodes.forEach((node) -> log.info("registered node: {} - {}", node.getName(), node.getBaseUri()));
-			return true;
-
 		} catch (IOException e) {
 			log.error(e.getMessage(), e);
-			return false;
+			return null;
 		}
+	}
+
+	private static void registerLavalinkNodes(LavalinkClient client, Collection<NodeOptions> nodeOptions) {
+		nodeOptions.forEach(nodeOption -> {
+			LavalinkNode node = client.addNode(nodeOption);
+			node.enableResuming(Duration.ofSeconds(60)).subscribe();
+			log.info("registered node: {} - {}", node.getName(), node.getBaseUri());
+		});
 	}
 
 	private static void registerLavalinkListeners(LavalinkClient client) {
@@ -92,6 +98,13 @@ public class LavaLinkManager {
 			if (gam != null) {
 				gam.getTrackScheduler().onTrackEnd(event.getTrack(), event.getEndReason());
 			}
+		});
+
+		client.on(WebSocketClosedEvent.class).subscribe((event) -> {
+			LavalinkNode node = event.getNode();
+			log.info("WebSocketClosedEvent on node {} for guild {} with reason {} - trying to reconnect in 30s",
+					node.getName(), event.getGuildId(), event.getReason());
+
 		});
 	}
 

@@ -106,8 +106,7 @@ public class TrackScheduler {
 	}
 
 	public void onTrackStart(Track track) {
-		System.out.println("Track started: " + track.getInfo().getTitle());
-
+		log.debug("Track started: {} - {}", track.getInfo().getAuthor(), track.getInfo().getTitle());
 		long channelId = guildMusicManager.getChannelId();
 		if (channelId != -1) {
 			try {

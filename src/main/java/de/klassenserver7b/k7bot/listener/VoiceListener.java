@@ -1,7 +1,6 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.listener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -20,8 +19,6 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class VoiceListener extends ListenerAdapter {
-	public final List<Long> tempchannels = new ArrayList<>();
-
 	private final Logger log;
 
 	public VoiceListener() {
@@ -53,7 +50,7 @@ public class VoiceListener extends ListenerAdapter {
 
 			VoiceChannel vc;
 
-			try (AutoCloseable ignored = LoggingFilter.getInstance().blockEventExecution()) {
+			try (AutoCloseable _ = LoggingFilter.getInstance().blockEventExecution()) {
 
 				if (cat != null) {
 					vc = cat.createVoiceChannel(member.getEffectiveName() + "s Voicechannel").complete();
@@ -82,17 +79,14 @@ public class VoiceListener extends ListenerAdapter {
 
 		if (audioChannel.getMembers().isEmpty()) {
 			try {
-				this.tempchannels.addAll(new CreatedPrivateVcsDAO().getAllChannelIds().join());
+				List<Long> tempChannels = new CreatedPrivateVcsDAO().getAllChannelIds().join();
+				if (tempChannels.contains(audioChannel.getIdLong())) {
 
-				if (this.tempchannels.contains(audioChannel.getIdLong())) {
-
-					try (AutoCloseable ignored = LoggingFilter.getInstance().blockEventExecution()) {
-						LoggingFilter.getInstance().getLoggingBlocker().block(audioChannel.getIdLong());
+					try (AutoCloseable _ = LoggingFilter.getInstance().blockEventExecution(audioChannel.getIdLong())) {
 						audioChannel.delete().queue();
 					}
 
 					new CreatedPrivateVcsDAO().removeChannel(audioChannel.getIdLong()).join();
-					this.tempchannels.clear();
 					K7Bot.getInstance().getMainLogger().info(
 							"Removed custom VoiceChannel with the Name: {} and the" + " following ID: {}",
 							audioChannel.getName(), audioChannel.getIdLong());

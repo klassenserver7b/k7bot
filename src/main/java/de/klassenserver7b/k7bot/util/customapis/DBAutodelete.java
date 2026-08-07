@@ -23,7 +23,7 @@ public class DBAutodelete implements LoopedEvent {
 	}
 
 	@Override
-	public InternalStatusCodes checkforUpdates() {
+	public InternalStatusCodes checkForUpdates() {
 
 		Long minDate = System.currentTimeMillis() - 1000 * 60 * 60 * 24 * 2; // 7 days
 

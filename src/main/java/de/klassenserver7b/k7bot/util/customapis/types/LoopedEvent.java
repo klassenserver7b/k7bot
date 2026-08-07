@@ -13,13 +13,15 @@ public interface LoopedEvent {
 	 *
 	 * @return {@link InternalStatusCodes statuscode} as an int
 	 */
-	InternalStatusCodes checkforUpdates();
+	@SuppressWarnings("SameReturnValue")
+	InternalStatusCodes checkForUpdates();
 
 	/**
 	 * Used to check if event is available again after error
 	 *
 	 * @return is the event is available
 	 */
+	@SuppressWarnings("SameReturnValue")
 	boolean isAvailable();
 
 	/**
@@ -30,6 +32,7 @@ public interface LoopedEvent {
 	/**
 	 * @return if the restart was susccessful
 	 */
+	@SuppressWarnings("UnusedReturnValue")
 	boolean restart();
 
 	/**

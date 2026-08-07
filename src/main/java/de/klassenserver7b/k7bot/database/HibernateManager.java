@@ -4,6 +4,7 @@ package de.klassenserver7b.k7bot.database;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
@@ -16,7 +17,7 @@ public class HibernateManager {
 	// Executor for thread-safe SQLite operations
 	public static final ExecutorService DB_EXECUTOR = Executors.newSingleThreadExecutor();
 
-	public static void init(Configuration configuration) {
+	public static void init(Configuration configuration) throws HibernateException {
 
 		configuration.addAnnotatedClass(ModLogEntity.class);
 		configuration.addAnnotatedClass(BotUtilEntity.class);

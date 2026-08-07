@@ -54,7 +54,7 @@ public class LoopedEventManager {
 
 		for (LoopedEvent activeEvent : activeEvents) {
 
-			if (!activeEvent.checkforUpdates().equals(InternalStatusCodes.SUCCESS)) {
+			if (!activeEvent.checkForUpdates().equals(InternalStatusCodes.SUCCESS)) {
 				log.warn("{} had an error - will be checked next time only", activeEvent.getIdentifier());
 				change.add(activeEvent);
 			}

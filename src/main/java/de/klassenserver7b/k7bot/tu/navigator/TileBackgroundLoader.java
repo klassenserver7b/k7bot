@@ -24,7 +24,7 @@ public class TileBackgroundLoader {
 	public void shutdown() {
 		try {
 			httpClient.close();
-		} catch (IOException ignored) {
+		} catch (IOException _) {
 		}
 	}
 

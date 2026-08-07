@@ -32,7 +32,7 @@ public class Cache {
 
 		try {
 			httpClient.close();
-		} catch (IOException ignored) {
+		} catch (IOException _) {
 		}
 	}
 

@@ -213,7 +213,7 @@ public class TUNavigator {
 		try {
 			if (cacheFile.exists())
 				return ImageIO.read(cacheFile);
-		} catch (IOException ignored) {
+		} catch (IOException _) {
 		}
 
 		double contentWidth = 480.0;
@@ -233,7 +233,7 @@ public class TUNavigator {
 				TILE_QUALITY, TILE_SIZE, TILE_BACKGROUND_PADDING);
 		try {
 			ImageIO.write(image, "png", cacheFile);
-		} catch (IOException ignored) {
+		} catch (IOException _) {
 		}
 
 		return image;
@@ -258,7 +258,7 @@ public class TUNavigator {
 			try {
 				Color color = Color.decode(parts[1]);
 				colors.put(parts[0], color);
-			} catch (NumberFormatException ignored) {
+			} catch (NumberFormatException _) {
 			}
 		}
 

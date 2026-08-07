@@ -10,6 +10,7 @@ import de.klassenserver7b.k7bot.database.entities.SlashCommandLogEntity;
  * Data Access Object for handling SlashCommandLogEntity operations. Provides
  * methods for logging executed slash commands.
  */
+@SuppressWarnings({ "unused", "UnusedReturnValue" })
 public class SlashCommandLogDAO {
 
 	/**

@@ -10,6 +10,7 @@ import de.klassenserver7b.k7bot.database.entities.MusicLogsEntity;
  * Data Access Object for handling MusicLogsEntity operations. Provides methods
  * for logging played music tracks.
  */
+@SuppressWarnings({ "unused", "UnusedReturnValue" })
 public class MusicLogDAO {
 	/**
 	 * Inserts a log entry for a played song.

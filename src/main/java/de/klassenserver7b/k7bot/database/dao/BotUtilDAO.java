@@ -11,7 +11,7 @@ import de.klassenserver7b.k7bot.database.entities.BotUtilEntity;
  * Data Access Object for handling BotUtilEntity operations. Provides methods
  * for retrieving and updating bot configuration.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({ "unused", "UnusedReturnValue" })
 public class BotUtilDAO {
 
 	/**

@@ -11,6 +11,7 @@ import de.klassenserver7b.k7bot.database.entities.CreatedPrivateVcsEntity;
  * Data Access Object for handling CreatedPrivateVcsEntity operations. Provides
  * methods for managing dynamically created private voice channels.
  */
+@SuppressWarnings({ "unused", "UnusedReturnValue" })
 public class CreatedPrivateVcsDAO {
 	/**
 	 * Adds a newly created private voice channel.

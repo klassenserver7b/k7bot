@@ -21,7 +21,7 @@ public class AddReactionCommand implements ServerCommand {
 
 	@Override
 	public String getHelp() {
-		return "Reagiert als Bot auf die ausgewählte Nachricht.\n - z.B. [prefix]react #GuildMessageChannel [messageid] [:emote:] <:emote:> <:emote:> usw.";
+		return "Reagiert als Bot auf die ausgewählte Nachricht.\n - z.B. [prefix]react #GuildMessageChannel [messageId] [:emote:] <:emote:> <:emote:> usw.";
 	}
 
 	@Override

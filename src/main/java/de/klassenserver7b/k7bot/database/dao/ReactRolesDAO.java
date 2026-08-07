@@ -12,6 +12,7 @@ import de.klassenserver7b.k7bot.database.entities.ReactRolesId;
  * Data Access Object for handling ReactRolesEntity operations. Provides methods
  * for managing reaction roles.
  */
+@SuppressWarnings({ "unused", "UnusedReturnValue" })
 public class ReactRolesDAO {
 	/**
 	 * Adds a new reaction role configuration.

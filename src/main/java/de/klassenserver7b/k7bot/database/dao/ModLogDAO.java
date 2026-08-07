@@ -11,6 +11,7 @@ import de.klassenserver7b.k7bot.database.entities.ModLogEntity;
  * Data Access Object for handling ModLogEntity operations. Provides methods for
  * managing moderation logs.
  */
+@SuppressWarnings({ "unused", "UnusedReturnValue" })
 public class ModLogDAO {
 
 	/**

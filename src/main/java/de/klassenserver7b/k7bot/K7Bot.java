@@ -2,14 +2,13 @@
 package de.klassenserver7b.k7bot;
 
 import java.io.File;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import org.hibernate.HibernateException;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +69,7 @@ public class K7Bot {
 
 		try {
 			setupDB();
-		} catch (SQLException | IOException e) {
+		} catch (HibernateException e) {
 			logger.error("Failed to setup database", e);
 			System.exit(InternalStatusCodes.SQL_ERROR.getId());
 		}
@@ -99,8 +98,7 @@ public class K7Bot {
 		return INSTANCE;
 	}
 
-	protected void setupDB() throws SQLException, IOException {
-
+	protected void setupDB() {
 		String sqlitePath = cfgMgr.getToml().getString("global/sqlite_path").orElse("resources/k7bot.db");
 		de.klassenserver7b.k7bot.database.HibernateManager.init(new SqliteConfig(new File(sqlitePath)));
 	}
