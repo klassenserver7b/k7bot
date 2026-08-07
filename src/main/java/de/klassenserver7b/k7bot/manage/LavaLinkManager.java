@@ -62,7 +62,6 @@ public class LavaLinkManager {
 	private static void registerLavalinkNodes(LavalinkClient client, Collection<NodeOptions> nodeOptions) {
 		nodeOptions.forEach(nodeOption -> {
 			LavalinkNode node = client.addNode(nodeOption);
-			node.enableResuming(Duration.ofSeconds(60)).subscribe();
 			log.info("registered node: {} - {}", node.getName(), node.getBaseUri());
 		});
 	}
@@ -71,7 +70,7 @@ public class LavaLinkManager {
 		client.on(ReadyEvent.class).subscribe((event) -> {
 			final LavalinkNode node = event.getNode();
 			SESSION_IDS.put(node.getName(), event.getSessionId());
-
+			node.enableResuming(Duration.ofSeconds(60)).subscribe();
 			log.info("Node {} is ready, session id is {}!", node.getName(), event.getSessionId());
 		});
 
