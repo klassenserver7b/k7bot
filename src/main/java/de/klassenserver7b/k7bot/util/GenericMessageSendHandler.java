@@ -22,13 +22,11 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
  */
 public class GenericMessageSendHandler {
 
-	private final InteractionHook hook;
-	private final MessageChannel channel;
-
-	private final Logger log = LoggerFactory.getLogger(this.getClass());
-
 	private static final int HookId = 1;
 	private static final int ChannelId = 2;
+	private final InteractionHook hook;
+	private final MessageChannel channel;
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
 	private final int selectedid;
 
 	/**
@@ -78,11 +76,6 @@ public class GenericMessageSendHandler {
 	public FluentRestAction<Message, ?> sendMessageEmbeds(@NotNull MessageEmbed embed) {
 		List<MessageEmbed> embedlist = new ArrayList<>();
 		embedlist.add(embed);
-		return sendMessageEmbeds(embedlist);
-	}
-
-	public FluentRestAction<Message, ?> sendMessageEmbeds(@NotNull MessageEmbed... embeds) {
-		List<MessageEmbed> embedlist = Arrays.asList(embeds);
 		return sendMessageEmbeds(embedlist);
 	}
 

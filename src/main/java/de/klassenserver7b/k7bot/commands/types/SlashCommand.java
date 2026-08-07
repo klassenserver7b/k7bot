@@ -1,6 +1,4 @@
-/**
- *
- */
+/* (C)2026 */
 package de.klassenserver7b.k7bot.commands.types;
 
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
@@ -10,5 +8,5 @@ import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
  *
  */
 public interface SlashCommand {
-    void performSlashCommand(SlashCommandInteraction event);
+	void performSlashCommand(SlashCommandInteraction event);
 }

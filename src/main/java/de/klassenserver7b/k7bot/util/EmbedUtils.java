@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.entities.Guild;
 /**
  * @author K7
  */
+@SuppressWarnings("unused")
 public abstract class EmbedUtils {
 
 	public static final String LAVALINK_ERROR_MESSAGE = "Audio playback is currently not possible. Please try again in a few seconds.";

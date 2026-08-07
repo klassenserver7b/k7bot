@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
+@SuppressWarnings("unused")
 public class TableMessage {
 	public static final String EMPTY_CHARACTER = "\u200E";
 

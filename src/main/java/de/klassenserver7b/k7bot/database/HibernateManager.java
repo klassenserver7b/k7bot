@@ -12,10 +12,9 @@ import org.hibernate.cfg.Configuration;
 import de.klassenserver7b.k7bot.database.entities.*;
 
 public class HibernateManager {
-	private static SessionFactory sessionFactory;
-
 	// Executor for thread-safe SQLite operations
 	public static final ExecutorService DB_EXECUTOR = Executors.newSingleThreadExecutor();
+	private static SessionFactory sessionFactory;
 
 	public static void init(Configuration configuration) throws HibernateException {
 

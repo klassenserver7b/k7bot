@@ -309,7 +309,7 @@ public class K7Bot {
 	/**
 	 * @return the CommandManager
 	 */
-	public CommandManager getCmdMan() {
+	public CommandManager getCmdMgr() {
 		return this.cmdMgr;
 	}
 

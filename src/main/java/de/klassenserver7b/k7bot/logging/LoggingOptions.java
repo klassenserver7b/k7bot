@@ -1,6 +1,4 @@
-/**
- *
- */
+/* (C)2026 */
 package de.klassenserver7b.k7bot.logging;
 
 /**
@@ -11,7 +9,7 @@ package de.klassenserver7b.k7bot.logging;
  * @author Klassenserver7b
  */
 public enum LoggingOptions {
-    // @formatter:off
+	// @formatter:off
 	
 	ALL(1),
 	
@@ -117,42 +115,42 @@ public enum LoggingOptions {
 	UNKNOWN(-1);
 	
 	// @formatter:on
-    private final int id;
+	private final int id;
 
-    /**
-     * Constructs a LoggingOptions with the specified ID.
-     *
-     * @param id The identifier for the logging option.
-     */
-    LoggingOptions(int id) {
-        this.id = id;
-    }
+	/**
+	 * Constructs a LoggingOptions with the specified ID.
+	 *
+	 * @param id The identifier for the logging option.
+	 */
+	LoggingOptions(int id) {
+		this.id = id;
+	}
 
-    /**
-     * Gets the ID associated with the logging option.
-     *
-     * @return id The ID of the logging option.
-     */
-    public int getId() {
-        return id;
-    }
+	/**
+	 * Retrieves the LoggingOptions enum constant associated with the given ID.
+	 *
+	 * @param id The ID to look up.
+	 * @return The LoggingOptions enum constant with the specified ID, or UNKNOWN if
+	 *         not found.
+	 */
+	public static LoggingOptions byId(int id) {
+		for (LoggingOptions opt : values()) {
+			if (opt.id == id) {
+				return opt;
+			}
+		}
 
-    /**
-     * Retrieves the LoggingOptions enum constant associated with the given ID.
-     *
-     * @param id The ID to look up.
-     * @return The LoggingOptions enum constant with the specified ID, or UNKNOWN if
-     * not found.
-     */
-    public static LoggingOptions byId(int id) {
-        for (LoggingOptions opt : values()) {
-            if (opt.id == id) {
-                return opt;
-            }
-        }
+		return UNKNOWN;
 
-        return UNKNOWN;
+	}
 
-    }
+	/**
+	 * Gets the ID associated with the logging option.
+	 *
+	 * @return id The ID of the logging option.
+	 */
+	public int getId() {
+		return id;
+	}
 
 }

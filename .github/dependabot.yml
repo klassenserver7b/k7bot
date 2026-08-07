@@ -11,7 +11,7 @@ updates:
     schedule:
       interval: "weekly"
     ignore:
-    - dependency-name: org.apache.maven:*
+      - dependency-name: org.apache.maven:*
     groups:
       java-deps:
         patterns:

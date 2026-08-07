@@ -21,8 +21,6 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 public class ModLogsCommand extends GenericMemberLogsCommand implements ServerCommand {
 
-	private boolean isEnabled;
-
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Override
@@ -101,18 +99,4 @@ public class ModLogsCommand extends GenericMemberLogsCommand implements ServerCo
 		}
 	}
 
-	@Override
-	public boolean isEnabled() {
-		return isEnabled;
-	}
-
-	@Override
-	public void disableCommand() {
-		isEnabled = false;
-	}
-
-	@Override
-	public void enableCommand() {
-		isEnabled = true;
-	}
 }

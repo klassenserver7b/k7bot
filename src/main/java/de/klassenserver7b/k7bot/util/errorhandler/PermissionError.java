@@ -18,6 +18,7 @@ public class PermissionError {
 		PermissionError.onPermissionError(new GenericMessageSendHandler(channel), m);
 	}
 
+	@SuppressWarnings("unused")
 	public static void onPermissionError(InteractionHook hook, Member m) {
 		PermissionError.onPermissionError(new GenericMessageSendHandler(hook), m);
 	}

@@ -17,8 +17,6 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 public class PrefixCommand implements ServerCommand {
 
-	private boolean isEnabled;
-
 	@Override
 	public String getHelp() {
 		return "Ändert das Prefix des Bots auf diesem Server.\n - z.B. [prefix][new prefix]";
@@ -57,18 +55,4 @@ public class PrefixCommand implements ServerCommand {
 		}
 	}
 
-	@Override
-	public boolean isEnabled() {
-		return isEnabled;
-	}
-
-	@Override
-	public void disableCommand() {
-		isEnabled = false;
-	}
-
-	@Override
-	public void enableCommand() {
-		isEnabled = true;
-	}
 }

@@ -22,8 +22,6 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
  */
 public class MemberInfoCommand implements ServerCommand {
 
-	private boolean isEnabled;
-
 	@Override
 	public String getHelp() {
 		return "Zeigt die Informationen zum angegebenen User.\n - z.B. [prefix]memberinfo [@USER]";
@@ -74,18 +72,4 @@ public class MemberInfoCommand implements ServerCommand {
 		channel.sendMessageEmbeds(builder.build()).queue(msg -> msg.delete().queueAfter(20L, TimeUnit.SECONDS));
 	}
 
-	@Override
-	public boolean isEnabled() {
-		return isEnabled;
-	}
-
-	@Override
-	public void disableCommand() {
-		isEnabled = false;
-	}
-
-	@Override
-	public void enableCommand() {
-		isEnabled = true;
-	}
 }

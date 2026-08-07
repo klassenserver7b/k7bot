@@ -1,16 +1,15 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.commands.common.uncategorized;
 
+import org.jspecify.annotations.Nullable;
+
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.util.HelpCategories;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
-import org.jspecify.annotations.Nullable;
 
 public class TestCommand implements ServerCommand {
-
-	private boolean isEnabled;
 
 	@Override
 	public @Nullable String getHelp() {
@@ -30,20 +29,5 @@ public class TestCommand implements ServerCommand {
 	@Override
 	public void performCommand(Member caller, GuildMessageChannel channel, Message message) {
 		// Test command is only used when I have something to test......
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return isEnabled;
-	}
-
-	@Override
-	public void disableCommand() {
-		isEnabled = false;
-	}
-
-	@Override
-	public void enableCommand() {
-		isEnabled = true;
 	}
 }

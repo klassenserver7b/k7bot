@@ -1,6 +1,7 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.audio.commands.common;
 
+@SuppressWarnings("unused")
 public enum EQPreset {
 	OFF(0, "Off", new float[15]),
 	ULTRA_LOW_BASS(1, "Ultra Low Bass",
@@ -31,6 +32,15 @@ public enum EQPreset {
 		this.bands = bands;
 	}
 
+	public static EQPreset byId(int id) {
+		for (EQPreset preset : values()) {
+			if (preset.id == id) {
+				return preset;
+			}
+		}
+		return OFF;
+	}
+
 	public int getId() {
 		return id;
 	}
@@ -41,14 +51,5 @@ public enum EQPreset {
 
 	public float[] getBands() {
 		return bands;
-	}
-
-	public static EQPreset byId(int id) {
-		for (EQPreset preset : values()) {
-			if (preset.id == id) {
-				return preset;
-			}
-		}
-		return OFF;
 	}
 }

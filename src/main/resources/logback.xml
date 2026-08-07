@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="false">
-	<timestamp key="bySecond" datePattern="yyyy_MM_dd-'T'-HH_mm" />
-	<appender name="File" class="ch.qos.logback.core.FileAppender">
-		<file>logs/log-${bySecond}.log</file>
-		<encoder>
-			<pattern>%d{dd.MM.yyyy-HH:mm:ss.SSS} %level	%-34.-34thread %10.10X{jda.shard} %-15.-15logger{0} %msg%n</pattern>
-		</encoder>
-	</appender>
-	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-		<encoder>
-			<pattern>%d{dd.MM.yyyy-HH:mm:ss.SSS} %red(%level) %boldCyan(%-34.-34thread) %10.10X{jda.shard} %yellow(%-15.-15logger{0}) %msg%n</pattern>
-		</encoder>
-	</appender>
-	<root level="info">
-		<appender-ref ref="STDOUT" />
-		<appender-ref ref="File" />
-	</root>
+    <timestamp key="bySecond" datePattern="yyyy_MM_dd-'T'-HH_mm"/>
+    <appender name="File" class="ch.qos.logback.core.FileAppender">
+        <file>logs/log-${bySecond}.log</file>
+        <encoder>
+            <pattern>%d{dd.MM.yyyy-HH:mm:ss.SSS} %level %-34.-34thread %10.10X{jda.shard} %-15.-15logger{0} %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{dd.MM.yyyy-HH:mm:ss.SSS} %red(%level) %boldCyan(%-34.-34thread) %10.10X{jda.shard}
+                %yellow(%-15.-15logger{0}) %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="File"/>
+    </root>
 </configuration>

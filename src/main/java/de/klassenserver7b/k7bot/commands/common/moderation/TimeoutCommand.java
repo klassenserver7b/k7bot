@@ -23,8 +23,6 @@ import net.dv8tion.jda.api.exceptions.HierarchyException;
 
 public class TimeoutCommand implements ServerCommand {
 
-	private boolean isEnabled;
-
 	@Override
 	public String getHelp() {
 
@@ -122,20 +120,5 @@ public class TimeoutCommand implements ServerCommand {
 
 			SyntaxError.onCmdSyntaxError(channel, requester, "timeout [time (in minutes)] [reason] @user");
 		}
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return isEnabled;
-	}
-
-	@Override
-	public void disableCommand() {
-		isEnabled = false;
-	}
-
-	@Override
-	public void enableCommand() {
-		isEnabled = true;
 	}
 }

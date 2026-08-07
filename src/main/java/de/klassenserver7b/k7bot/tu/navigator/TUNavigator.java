@@ -85,7 +85,7 @@ public class TUNavigator {
 									.map(room -> room.get("name").getAsString())))
 					.collect(Collectors.toSet());
 		} catch (Exception e) {
-			logger.error("could not parse floors json for building " + building, e);
+			logger.error("could not parse floors json for building {}", building, e);
 			return new HashSet<>();
 		}
 	}
@@ -134,7 +134,7 @@ public class TUNavigator {
 					.map(JsonElement::getAsJsonObject).filter(b -> floor.equals(b.get("etage").getAsString()))
 					.findFirst().orElse(null);
 		} catch (Exception e) {
-			logger.error("could not parse floors json for building " + building, e);
+			logger.error("could not parse floors json for building {}", building, e);
 			return null;
 		}
 	}
@@ -155,7 +155,7 @@ public class TUNavigator {
 							.anyMatch(room::equals))
 					.findFirst().map(f -> f.getAsJsonObject().get("etage").getAsString()).orElse(null);
 		} catch (Exception e) {
-			logger.error("could not parse floors json for building " + building, e);
+			logger.error("could not parse floors json for building {}", building, e);
 			return null;
 		}
 	}
@@ -175,7 +175,7 @@ public class TUNavigator {
 					.filter(r -> r.has("name")).filter(r -> room.equals(r.get("name").getAsString())).findFirst()
 					.map(f -> f.getAsJsonObject().get("id").getAsString().substring(0, 4)).orElse(null);
 		} catch (Exception e) {
-			logger.error("could not parse floors json for building " + building, e);
+			logger.error("could not parse floors json for building {}", building, e);
 			return null;
 		}
 	}
@@ -195,7 +195,7 @@ public class TUNavigator {
 					.filter(r -> roomId.equals(r.get("id").getAsString())).findFirst()
 					.map(r -> r.getAsJsonObject().get("name").getAsString()).orElse(null);
 		} catch (Exception e) {
-			logger.error("could not parse floors json for building " + building, e);
+			logger.error("could not parse floors json for building {}", building, e);
 			return null;
 		}
 	}
@@ -225,7 +225,7 @@ public class TUNavigator {
 				contentWidth = floorInfo.getAsJsonObject().get("maxX").getAsDouble();
 				contentHeight = floorInfo.getAsJsonObject().get("maxY").getAsDouble();
 			} catch (Exception e) {
-				logger.error("could not parse floors json for building " + building, e);
+				logger.error("could not parse floors json for building {}", building, e);
 			}
 		}
 

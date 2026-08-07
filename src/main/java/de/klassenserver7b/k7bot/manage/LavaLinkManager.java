@@ -27,8 +27,8 @@ import dev.arbjerg.lavalink.client.loadbalancing.builtin.VoiceRegionPenaltyProvi
 
 public class LavaLinkManager {
 
-	private static final Logger log = LoggerFactory.getLogger(LavaLinkManager.class);
 	public static final Map<String, String> SESSION_IDS = new ConcurrentHashMap<>();
+	private static final Logger log = LoggerFactory.getLogger(LavaLinkManager.class);
 
 	public static LavalinkClient initialize(String token) {
 

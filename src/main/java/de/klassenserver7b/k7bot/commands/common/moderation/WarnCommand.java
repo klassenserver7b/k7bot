@@ -23,8 +23,6 @@ import net.dv8tion.jda.api.exceptions.HierarchyException;
 
 public class WarnCommand implements ServerCommand {
 
-	private boolean isEnabled;
-
 	@Override
 	public String getHelp() {
 
@@ -116,20 +114,5 @@ public class WarnCommand implements ServerCommand {
 		} catch (HierarchyException e) {
 			PermissionError.onPermissionError(channel, requester);
 		}
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return isEnabled;
-	}
-
-	@Override
-	public void disableCommand() {
-		isEnabled = false;
-	}
-
-	@Override
-	public void enableCommand() {
-		isEnabled = true;
 	}
 }

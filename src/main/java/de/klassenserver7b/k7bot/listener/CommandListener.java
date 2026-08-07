@@ -72,7 +72,7 @@ public class CommandListener extends ListenerAdapter {
 
 		switch (messstr) {
 			case "-help" -> {
-				K7Bot.getInstance().getCmdMan().perform("help", event.getMember(), channel, event.getMessage());
+				K7Bot.getInstance().getCmdMgr().perform("help", event.getMember(), channel, event.getMessage());
 
 				inserttoLog("help", LocalDateTime.now(), event.getGuild(), event.getAuthor().getIdLong());
 			}
@@ -94,7 +94,7 @@ public class CommandListener extends ListenerAdapter {
 					return;
 				}
 
-				int status = K7Bot.getInstance().getCmdMan().perform(args[0], event.getMember(), channel,
+				int status = K7Bot.getInstance().getCmdMgr().perform(args[0], event.getMember(), channel,
 						event.getMessage());
 
 				switch (status) {
@@ -123,17 +123,23 @@ public class CommandListener extends ListenerAdapter {
 
 	private void sendUnknownCommand(GuildMessageChannel chan, String command) {
 
-		String nearestComm = K7Bot.getInstance().getCmdMan().getNearestCommand(command);
+		String nearestComm = K7Bot.getInstance().getCmdMgr().getNearestCommand(command);
 
-		String shortcommand = command;
-
-		if (shortcommand.length() >= 100) {
-			shortcommand = shortcommand.substring(0, 99);
-			shortcommand += "...";
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append("`");
+		stringBuilder.append("Unbekannter Command: ");
+		stringBuilder.append("'");
+		stringBuilder.append(command, 0, Math.max(command.length(), 99));
+		stringBuilder.append("'`");
+		if (nearestComm != null) {
+			stringBuilder.append(" -> ");
+			stringBuilder.append("Meintest du: ");
+			stringBuilder.append("`");
+			stringBuilder.append(nearestComm);
+			stringBuilder.append("`?");
 		}
 
-		chan.sendMessage("`Unbekannter Command - '" + shortcommand + "'` -> Meintest du `" + nearestComm + "`?")
-				.complete().delete().queueAfter(15L, TimeUnit.SECONDS);
+		chan.sendMessage(stringBuilder.toString()).complete().delete().queueAfter(15L, TimeUnit.SECONDS);
 	}
 
 	private void inserttoLog(String command, LocalDateTime time, Guild guild, Long userid) {

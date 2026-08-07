@@ -26,8 +26,6 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 public class HelpCommand implements ServerCommand {
 
-	private boolean isEnabled;
-
 	@Override
 	public String getHelp() {
 		return "Shows the Help for the Bot!";
@@ -45,13 +43,7 @@ public class HelpCommand implements ServerCommand {
 
 	@Override
 	public void performCommand(Member m, GuildMessageChannel channel, Message mess) {
-		String[] args = mess.getContentDisplay().split(" ");
-
-		if (args.length > 1) {
-			sendEmbedPrivate(generateHelpforCategory(args[1], channel.getGuild()), m, channel);
-		} else {
-			sendEmbedPrivate(generateHelpOverview(channel.getGuild()), m, channel);
-		}
+		performCommand(m, channel, mess.getContentDisplay());
 	}
 
 	public void performCommand(Member m, GuildMessageChannel channel, String mess) {
@@ -132,7 +124,7 @@ public class HelpCommand implements ServerCommand {
 	 */
 	public MessageEmbed generateHelpforCategory(String catstr, Guild guild) {
 
-		ArrayList<ServerCommand> commands = (K7Bot.getInstance().getCmdMan()).getCommands();
+		ArrayList<ServerCommand> commands = (K7Bot.getInstance().getCmdMgr()).getCommands();
 		List<ServerCommand> searchresults = new ArrayList<>();
 
 		int limitmultiplicator = 1;
@@ -235,57 +227,36 @@ public class HelpCommand implements ServerCommand {
 	 * {@link net.dv8tion.jda.api.entities.User User} using {@link PrivateChannel
 	 * PrivateChannels}
 	 *
-	 * @param embed The HelpEmbed to be sent to the user
-	 * @param m     The {@link Member} wich is used to get the
-	 *              {@link net.dv8tion.jda.api.entities.User User}
-	 * @param tc    The {@link GuildMessageChannel} in which the reference to the DM
-	 *              and the error messages are to be sent.
+	 * @param embed               The HelpEmbed to be sent to the user
+	 * @param m                   The {@link Member} wich is used to get the
+	 *                            {@link net.dv8tion.jda.api.entities.User User}
+	 * @param guildMessageChannel The {@link GuildMessageChannel} in which the
+	 *                            reference to the DM and the error messages are to
+	 *                            be sent.
 	 */
-	private void sendEmbedPrivate(MessageEmbed embed, Member m, GuildMessageChannel tc) {
+	private void sendEmbedPrivate(MessageEmbed embed, Member m, GuildMessageChannel guildMessageChannel) {
 
-		PrivateChannel ch = m.getUser().openPrivateChannel().complete();
+		PrivateChannel privateChannel = m.getUser().openPrivateChannel().complete();
 
-		if (ch != null) {
-
-			ch.sendMessageEmbeds(embed).queue();
-
-			if (tc != null) {
-				tc.sendMessage("** look into your DM's **" + m.getAsMention()).complete().delete().queueAfter(10L,
-						TimeUnit.SECONDS);
+		if (privateChannel != null) {
+			sendEmbedPrivate(embed, privateChannel);
+			if (guildMessageChannel != null) {
+				guildMessageChannel.sendMessage("** look into your DM's **" + m.getAsMention()).complete().delete()
+						.queueAfter(10L, TimeUnit.SECONDS);
 			}
-
 		} else {
-
 			MessageEmbed errorembed = EmbedUtils.getErrorEmbed(
 					"Couldn't send you a DM - please check if you have the option `get DM's from server members` in the `Privacy & Safety` settings enabled!")
 					.build();
-
-			if (tc != null) {
-				tc.sendMessageEmbeds(errorembed).complete().delete().queueAfter(20, TimeUnit.SECONDS);
+			if (guildMessageChannel != null) {
+				guildMessageChannel.sendMessageEmbeds(errorembed).complete().delete().queueAfter(20, TimeUnit.SECONDS);
 			}
-
 		}
 
 	}
 
 	private void sendEmbedPrivate(MessageEmbed embed, @NotNull PrivateChannel ch) {
 		ch.sendMessageEmbeds(embed).queue();
-
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return isEnabled;
-	}
-
-	@Override
-	public void disableCommand() {
-		isEnabled = false;
-	}
-
-	@Override
-	public void enableCommand() {
-		isEnabled = true;
 	}
 
 }

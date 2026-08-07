@@ -3,6 +3,7 @@ package de.klassenserver7b.k7bot.audio;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+@SuppressWarnings("unused")
 public class AudioManager {
 
 	private final ConcurrentHashMap<Long, GuildAudioManager> guildAudioManagers;

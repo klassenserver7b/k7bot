@@ -1,11 +1,10 @@
 /* (C)2026 */
 package de.klassenserver7b.k7bot.manage;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import org.apache.commons.text.similarity.LevenshteinDistance;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +62,6 @@ public class CommandManager {
 		this.commands.add(new AudioServerCommand());
 
 		commands.forEach(command -> {
-			command.enableCommand();
 			for (String s : command.getCommandStrings()) {
 				mappedCommands.put(s, command);
 			}
@@ -82,10 +80,6 @@ public class CommandManager {
 		ServerCommand cmd;
 		if ((cmd = this.mappedCommands.get(command.toLowerCase())) != null) {
 
-			if (!cmd.isEnabled()) {
-				return 0;
-			}
-
 			message.delete().queue();
 
 			commandlog.info("see next lines:\n\nMember: {} | \nGuild: {} | \nChannel: {} | \nMessage: {}\n",
@@ -97,34 +91,6 @@ public class CommandManager {
 		}
 
 		return -1;
-	}
-
-	public boolean disableCommand(String command) {
-
-		return disableCommand(mappedCommands.get(command));
-	}
-
-	public boolean disableCommand(ServerCommand command) {
-		if (command == null || !command.isEnabled()) {
-			return false;
-		}
-
-		command.disableCommand();
-		return true;
-	}
-
-	public boolean enableCommand(String command) {
-		return enableCommand(mappedCommands.get(command));
-	}
-
-	public boolean enableCommand(ServerCommand command) {
-
-		if (command == null || command.isEnabled()) {
-			return false;
-		}
-
-		command.enableCommand();
-		return true;
 	}
 
 	@SuppressWarnings("unused")
@@ -142,24 +108,11 @@ public class CommandManager {
 		return add;
 	}
 
-	public String getNearestCommand(String str) {
-
+	public @Nullable String getNearestCommand(String str) {
 		LevenshteinDistance dist = LevenshteinDistance.getDefaultInstance();
-		String comm = "";
-		int l = Integer.MAX_VALUE;
-
-		for (String s : mappedCommands.keySet()) {
-
-			Integer distance = dist.apply(s, str);
-
-			if (distance < l) {
-
-				l = distance;
-				comm = s;
-			}
-		}
-
-		return comm;
+		Optional<String> nearestCommand = mappedCommands.keySet().stream()
+				.min(Comparator.comparingInt(s -> dist.apply(str, s)));
+		return nearestCommand.orElse(null);
 	}
 
 	public ArrayList<ServerCommand> getCommands() {

@@ -55,68 +55,68 @@ public class ModLogEntity {
 		return id;
 	}
 
-	public Long getGuildId() {
-		return guildId;
-	}
-
-	public Long getMemberId() {
-		return memberId;
-	}
-
-	public Long getRequesterId() {
-		return requesterId;
-	}
-
-	public String getMemberName() {
-		return memberName;
-	}
-
-	public String getRequesterName() {
-		return requesterName;
-	}
-
-	public String getAction() {
-		return action;
-	}
-
-	public String getReason() {
-		return reason;
-	}
-
-	public String getDate() {
-		return date;
-	}
-
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getGuildId() {
+		return guildId;
 	}
 
 	public void setGuildId(Long guildId) {
 		this.guildId = guildId;
 	}
 
+	public Long getMemberId() {
+		return memberId;
+	}
+
 	public void setMemberId(Long memberId) {
 		this.memberId = memberId;
+	}
+
+	public Long getRequesterId() {
+		return requesterId;
 	}
 
 	public void setRequesterId(Long requesterId) {
 		this.requesterId = requesterId;
 	}
 
+	public String getMemberName() {
+		return memberName;
+	}
+
 	public void setMemberName(String memberName) {
 		this.memberName = memberName;
+	}
+
+	public String getRequesterName() {
+		return requesterName;
 	}
 
 	public void setRequesterName(String requesterName) {
 		this.requesterName = requesterName;
 	}
 
+	public String getAction() {
+		return action;
+	}
+
 	public void setAction(String action) {
 		this.action = action;
 	}
 
+	public String getReason() {
+		return reason;
+	}
+
 	public void setReason(String reason) {
 		this.reason = reason;
+	}
+
+	public String getDate() {
+		return date;
 	}
 
 	public void setDate(String date) {

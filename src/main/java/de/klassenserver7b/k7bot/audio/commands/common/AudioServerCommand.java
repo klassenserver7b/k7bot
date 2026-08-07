@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.audio.AudioLoadOption;
 import de.klassenserver7b.k7bot.audio.GuildAudioManager;
+import de.klassenserver7b.k7bot.audio.LyricsFetcher;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.HelpCategories;
@@ -18,8 +19,6 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 public class AudioServerCommand implements ServerCommand {
-
-	private boolean isEnabled = true;
 
 	@Override
 	public String getHelp() {
@@ -320,20 +319,5 @@ public class AudioServerCommand implements ServerCommand {
 	private void handleLyrics(GuildMessageChannel channel, Link link) {
 		long guildId = channel.getGuild().getIdLong();
 		LyricsFetcher.fetchAndSendLyrics(link.getNode(), guildId, embed -> channel.sendMessageEmbeds(embed).queue());
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return isEnabled;
-	}
-
-	@Override
-	public void disableCommand() {
-		this.isEnabled = false;
-	}
-
-	@Override
-	public void enableCommand() {
-		this.isEnabled = true;
 	}
 }

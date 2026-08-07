@@ -5,6 +5,7 @@ package de.klassenserver7b.k7bot.util;
  * @author K7
  *
  */
+@SuppressWarnings("unused")
 public enum InternalStatusCodes {
 	ERROR(-1), FAILURE(1), SUCCESS(0), INVALID_CONFIG(5), SQL_ERROR(10);
 

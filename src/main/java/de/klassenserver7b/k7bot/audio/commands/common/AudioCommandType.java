@@ -17,10 +17,6 @@ public enum AudioCommandType {
 		this.aliases = aliases;
 	}
 
-	public String[] getAliases() {
-		return aliases;
-	}
-
 	public static @Nullable AudioCommandType fromString(String commandStr) {
 		for (AudioCommandType type : values()) {
 			for (String alias : type.aliases) {
@@ -30,5 +26,9 @@ public enum AudioCommandType {
 			}
 		}
 		return null;
+	}
+
+	public String[] getAliases() {
+		return aliases;
 	}
 }

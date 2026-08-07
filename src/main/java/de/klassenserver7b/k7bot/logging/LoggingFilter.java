@@ -30,9 +30,8 @@ public class LoggingFilter extends ListenerAdapter {
 	private final LoggingBlocker loggingBlocker;
 
 	private final List<EventListener> listeners = new LinkedList<>();
-
-	private int queueEnableCount = 0;
 	private final Queue<GenericEvent> eventQueue = new ConcurrentLinkedQueue<>();
+	private int queueEnableCount = 0;
 
 	/**
 	 *
@@ -41,6 +40,13 @@ public class LoggingFilter extends ListenerAdapter {
 		super();
 		loggingBlocker = new LoggingBlocker();
 		initDefault();
+	}
+
+	public static LoggingFilter getInstance() {
+		if (instance == null) {
+			instance = new LoggingFilter();
+		}
+		return instance;
 	}
 
 	protected void initDefault() {
@@ -153,13 +159,6 @@ public class LoggingFilter extends ListenerAdapter {
 				propagateEvent(event);
 			}
 		}
-	}
-
-	public static LoggingFilter getInstance() {
-		if (instance == null) {
-			instance = new LoggingFilter();
-		}
-		return instance;
 	}
 
 	public LoggingBlocker getLoggingBlocker() {

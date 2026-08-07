@@ -21,12 +21,12 @@ public class GuildAudioManager {
 		return guildId;
 	}
 
-	public void setChannelId(long channelId) {
-		this.channelId = channelId;
-	}
-
 	public long getChannelId() {
 		return channelId;
+	}
+
+	public void setChannelId(long channelId) {
+		this.channelId = channelId;
 	}
 
 	public void stop() {

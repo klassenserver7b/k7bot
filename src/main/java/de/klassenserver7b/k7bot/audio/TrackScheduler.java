@@ -21,9 +21,9 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 
 public class TrackScheduler {
+	public final Deque<Track> queue = new LinkedList<>();
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 	private final GuildAudioManager guildMusicManager;
-	public final Deque<Track> queue = new LinkedList<>();
 	private boolean repeating = false;
 	private FilterBuilder filterBuilder = new FilterBuilder();
 	private double speed = 1.0;
@@ -267,12 +267,12 @@ public class TrackScheduler {
 		this.queue.addAll(list);
 	}
 
-	public void setRepeating(boolean repeating) {
-		this.repeating = repeating;
-	}
-
 	public boolean isRepeating() {
 		return repeating;
+	}
+
+	public void setRepeating(boolean repeating) {
+		this.repeating = repeating;
 	}
 
 	public void forward(long positionMs) {

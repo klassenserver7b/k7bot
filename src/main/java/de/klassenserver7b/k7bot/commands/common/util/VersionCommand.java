@@ -40,28 +40,4 @@ public class VersionCommand implements ServerCommand {
 	public void performCommand(Member caller, GuildMessageChannel channel, Message message) {
 		channel.sendMessageFormat("K7bot version %s", K7Bot.class.getPackage().getImplementationVersion()).queue();
 	}
-
-	/**
-	 *
-	 */
-	@Override
-	public boolean isEnabled() {
-		return true;
-	}
-
-	/**
-	 *
-	 */
-	@Override
-	public void disableCommand() {
-		// No action needed, this command is always enabled
-	}
-
-	/**
-	 *
-	 */
-	@Override
-	public void enableCommand() {
-		// No action needed, this command is always enabled
-	}
 }
