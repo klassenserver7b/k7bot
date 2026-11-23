@@ -40,9 +40,6 @@ This is my Discord Bot written in Java with the Java-Discord-API ([JDA](https://
 
 - This [GitHub-Repo](https://github.com/klassenserver7b/Klassenserver7bBot/) and
   my [GitHub Account](https://github.com/klassenserver7b/)
-- Discord: "Klassenserver7b"
-- [Discord Server](https://discord.gg/EdKD5FE)
-- E-Mail: "klassenserver7bwin10@gmail.com"
 
 ### For those who want to develop themselves
 
