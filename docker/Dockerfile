@@ -1,4 +1,4 @@
-FROM azul-zulu:25-jre-headless-alpine
+FROM azul-zulu:25-jre-alpine
 WORKDIR /opt/k7bot
 
 RUN apk add --no-cache fontconfig freetype font-dejavu gcompat opus libsodium libstdc++ libgcc
@@ -9,5 +9,6 @@ VOLUME ["/opt/k7bot/logs", "/opt/k7bot/resources", "/tmp", "/media"]
 COPY --chown=k7bot:k7bot Bot.jar ./Bot.jar
 
 USER k7bot
+ENV JAVA_TOOL_OPTIONS="-Djava.awt.headless=true"
 
 CMD ["java", "-jar", "./Bot.jar"]
