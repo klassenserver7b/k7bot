@@ -38,6 +38,8 @@ public class TileBackgroundLoader {
 		BufferedImage image = new BufferedImage((int) (contentWidth * quality) + 2 * padding,
 				(int) (contentHeight * quality) + 2 * padding, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D gfx = image.createGraphics();
+		gfx.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		gfx.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {

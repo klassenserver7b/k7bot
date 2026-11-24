@@ -60,6 +60,8 @@ public class TUNavigateSlashCommand implements TopLevelSlashCommand {
 				BufferedImage.TYPE_INT_ARGB);
 
 		Graphics2D gfx = outputImage.createGraphics();
+		gfx.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		gfx.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		gfx.setColor(Color.WHITE);
 		gfx.fillRect(0, 0, backgroundImage.getWidth(), backgroundImage.getHeight());
 		K7Bot.getInstance().getTuNavigator().renderFloor(target.building(), target.floor(), target.room(), gfx);
