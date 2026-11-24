@@ -32,7 +32,7 @@ public class InviteLoggingListener extends ListenerAdapter {
 		GuildMessageChannel system = getSystemChannel(event);
 		Invite inv = event.getInvite();
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 
 		embbuild.setTitle("Invite created for " + event.getChannel().getName());
 		embbuild.setColor(Color.green);
@@ -55,7 +55,7 @@ public class InviteLoggingListener extends ListenerAdapter {
 
 		GuildMessageChannel system = getSystemChannel(event);
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 
 		embbuild.setTitle("Invite deleted for " + event.getChannel().getName());
 		embbuild.setColor(Color.red);

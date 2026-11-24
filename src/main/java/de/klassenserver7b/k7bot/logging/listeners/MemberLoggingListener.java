@@ -39,7 +39,7 @@ public class MemberLoggingListener extends ListenerAdapter {
 		GuildMessageChannel system = getSystemChannel(event);
 		Member memb = event.getMember();
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 		embbuild.setColor(Color.green);
 
 		embbuild.setTitle("@" + memb.getEffectiveName() + " joined :thumbsup:");
@@ -60,7 +60,7 @@ public class MemberLoggingListener extends ListenerAdapter {
 
 		User usr = event.getUser();
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 		embbuild.setColor(Color.red);
 
 		embbuild.setTitle("@" + usr.getName() + " left :sob:");

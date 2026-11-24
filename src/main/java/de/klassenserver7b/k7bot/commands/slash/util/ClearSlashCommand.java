@@ -2,6 +2,7 @@
 package de.klassenserver7b.k7bot.commands.slash.util;
 
 import java.awt.*;
+import java.util.function.Predicate;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -10,12 +11,12 @@ import de.klassenserver7b.k7bot.commands.types.GuildSlashCommand;
 import de.klassenserver7b.k7bot.util.CommandUtils;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
-import de.klassenserver7b.k7bot.util.MessageClearUtil;
 import de.klassenserver7b.k7bot.util.errorhandler.PermissionError;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -47,7 +48,8 @@ public class ClearSlashCommand implements GuildSlashCommand {
 				return;
 			}
 
-			MessageClearUtil.onclear(amount - 1, event.getChannel().asGuildMessageChannel());
+			event.getChannel().getIterableHistory().stream().filter(Predicate.not(Message::isPinned)).limit(amount)
+					.forEach(delMessage -> delMessage.delete().queue());
 
 			hook.sendMessage(amount + " messages deleted.").queue();
 

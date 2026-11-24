@@ -4,20 +4,24 @@ package de.klassenserver7b.k7bot.util;
 import java.awt.*;
 import java.time.OffsetDateTime;
 
-import org.jetbrains.annotations.Nullable;
-
 import de.klassenserver7b.k7bot.K7Bot;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 
 /**
  * @author K7
  */
 @SuppressWarnings("unused")
-public abstract class EmbedUtils {
+public final class EmbedUtils {
+
+	private EmbedUtils() {
+	}
 
 	public static final String LAVALINK_ERROR_MESSAGE = "Audio playback is currently not possible. Please try again in a few seconds.";
+	public static Color errorColor = new Color(0xe74c3c);
+	public static Color successColor = new Color(0x2ecc71);
+	public static Color warningColor = new Color(0xe74c71);
+	public static Color infoColor = new Color(0x3498db);
 
 	public static java.util.function.Consumer<Throwable> getLavalinkErrorHandler(
 			net.dv8tion.jda.api.entities.channel.middleman.MessageChannel channel, Long guildId) {
@@ -30,91 +34,71 @@ public abstract class EmbedUtils {
 	}
 
 	public static EmbedBuilder getErrorEmbed(CharSequence description) {
-		return getErrorEmbed(description, (Long) null);
+		return getBuilderOf(errorColor, description);
 	}
 
-	public static EmbedBuilder getErrorEmbed(CharSequence description, @Nullable Long guildId) {
-		return getBuilderOf(Color.decode("#e74c3c"), description, guildId);
+	public static EmbedBuilder getErrorEmbed(CharSequence description, long guildId) {
+		return getBuilderOf(errorColor, description, guildId);
 	}
 
-	public static EmbedBuilder getErrorEmbed(CharSequence description, @Nullable Guild guild) {
-		Long guildId = guild == null ? null : guild.getIdLong();
-		return getBuilderOf(Color.decode("#e74c3c"), description, guildId);
-	}
-
-	public static EmbedBuilder getErrorEmbed(CharSequence description, @Nullable Long guildId, long userId) {
-		return setUserFooter(getBuilderOf(Color.decode("#e74c3c"), description, guildId), userId);
+	public static EmbedBuilder getErrorEmbed(CharSequence description, long guildId, long userId) {
+		return setUserFooter(getBuilderOf(errorColor, description, guildId), userId);
 	}
 
 	@SuppressWarnings("unused")
 	public static EmbedBuilder getSuccessEmbed(CharSequence description) {
-		return getSuccessEmbed(description, null);
+		return getBuilderOf(successColor, description);
 	}
 
-	public static EmbedBuilder getSuccessEmbed(CharSequence description, @Nullable Long guildId) {
-		return getBuilderOf(Color.decode("#2ecc71"), description, guildId);
+	public static EmbedBuilder getSuccessEmbed(CharSequence description, long guildId) {
+		return getBuilderOf(successColor, description, guildId);
 	}
 
 	@SuppressWarnings("unused")
 	public static EmbedBuilder getInfoEmbed(CharSequence description) {
-		return getInfoEmbed(description, null);
+		return getBuilderOf(infoColor, description);
 	}
 
 	@SuppressWarnings("unused")
-	public static EmbedBuilder getInfoEmbed(CharSequence description, @Nullable Long guildId, long userId) {
+	public static EmbedBuilder getInfoEmbed(CharSequence description, long guildId, long userId) {
 		return setUserFooter(getInfoEmbed(description, guildId), userId);
 	}
 
-	public static EmbedBuilder getInfoEmbed(CharSequence description, @Nullable Long guildId) {
-		return getBuilderOf(Color.decode("#3498db"), description, guildId);
+	public static EmbedBuilder getInfoEmbed(CharSequence description, long guildId) {
+		return getBuilderOf(infoColor, description, guildId);
+	}
+
+	public static EmbedBuilder getBuilderOf(CharSequence description) {
+		return getDefault().appendDescription(description);
+	}
+
+	public static EmbedBuilder getBuilderOf(CharSequence description, long guildId) {
+		return getDefault(guildId).appendDescription(description);
 	}
 
 	public static EmbedBuilder getBuilderOf(Color c) {
 		return getDefault().setColor(c);
 	}
 
-	public static EmbedBuilder getBuilderOf(CharSequence description) {
-		return getBuilderOf(description, (Long) null);
-	}
-
-	public static EmbedBuilder getBuilderOf(Color c, @Nullable Long guildId) {
+	public static EmbedBuilder getBuilderOf(Color c, long guildId) {
 		return getDefault(guildId).setColor(c);
-	}
-
-	public static EmbedBuilder getBuilderOf(CharSequence description, @Nullable Long guildId) {
-		return getDefault(guildId).appendDescription(description);
-	}
-
-	public static EmbedBuilder getBuilderOf(CharSequence description, @Nullable Guild guild) {
-		Long guildId = guild == null ? null : guild.getIdLong();
-		return getDefault(guildId).appendDescription(description);
 	}
 
 	public static EmbedBuilder getBuilderOf(Color c, CharSequence description) {
 		return getBuilderOf(c).appendDescription(description);
 	}
 
-	public static EmbedBuilder getBuilderOf(Color c, CharSequence description, @Nullable Long guildId) {
-		return getBuilderOf(c, guildId).appendDescription(description);
-	}
-
-	public static EmbedBuilder getBuilderOf(Color c, CharSequence description, @Nullable Guild guild) {
-		Long guildId = guild == null ? null : guild.getIdLong();
+	public static EmbedBuilder getBuilderOf(Color c, CharSequence description, long guildId) {
 		return getBuilderOf(c, guildId).appendDescription(description);
 	}
 
 	public static EmbedBuilder getDefault() {
-		return getDefault((Long) null);
+		return getDefault(0);
 	}
 
-	public static EmbedBuilder getDefault(@Nullable Long guildId) {
+	public static EmbedBuilder getDefault(long guildId) {
 		return new EmbedBuilder().setTimestamp(OffsetDateTime.now())
 				.setFooter("@" + K7Bot.getInstance().getSelfName(guildId));
-	}
-
-	public static EmbedBuilder getDefault(@Nullable Guild guild) {
-		Long guildId = guild == null ? null : guild.getIdLong();
-		return getDefault(guildId);
 	}
 
 	public static EmbedBuilder setUserFooter(EmbedBuilder builder, long userId) {

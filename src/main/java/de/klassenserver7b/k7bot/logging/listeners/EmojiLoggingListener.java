@@ -30,7 +30,8 @@ public class EmojiLoggingListener extends ListenerAdapter {
 			return;
 		}
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		event.getGuild();
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 		embbuild.setTitle("Emoji added");
 		embbuild.setColor(Color.green);
 		embbuild.setDescription("**Emoji: **" + event.getEmoji().getAsMention() + "\n**Owner: **"
@@ -47,7 +48,7 @@ public class EmojiLoggingListener extends ListenerAdapter {
 			return;
 		}
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 		embbuild.setTitle("Emoji removed");
 		embbuild.setColor(Color.red);
 		embbuild.setDescription("**Emoji: **" + event.getEmoji().getAsMention() + "\n**Owner: **"
@@ -64,7 +65,7 @@ public class EmojiLoggingListener extends ListenerAdapter {
 			return;
 		}
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 		embbuild.setTitle("Sticker added");
 		embbuild.setColor(Color.green);
 		embbuild.setDescription("**Name: **" + event.getSticker().getName() + "\n**Description: **"
@@ -82,7 +83,7 @@ public class EmojiLoggingListener extends ListenerAdapter {
 			return;
 		}
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 		embbuild.setTitle("Sticker removed");
 		embbuild.setColor(Color.red);
 		embbuild.setDescription("**Name: **" + event.getSticker().getName() + "\n**Description: **"

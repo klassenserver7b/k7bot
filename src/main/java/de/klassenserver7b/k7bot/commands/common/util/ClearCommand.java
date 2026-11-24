@@ -3,13 +3,13 @@ package de.klassenserver7b.k7bot.commands.common.util;
 
 import java.awt.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 
 import de.klassenserver7b.k7bot.K7Bot;
 import de.klassenserver7b.k7bot.commands.types.ServerCommand;
 import de.klassenserver7b.k7bot.util.EmbedUtils;
 import de.klassenserver7b.k7bot.util.GenericMessageSendHandler;
 import de.klassenserver7b.k7bot.util.HelpCategories;
-import de.klassenserver7b.k7bot.util.MessageClearUtil;
 import de.klassenserver7b.k7bot.util.errorhandler.PermissionError;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -45,7 +45,8 @@ public class ClearCommand implements ServerCommand {
 
 				int amount = Integer.parseInt(args[1]);
 
-				MessageClearUtil.onclear(amount, channel);
+				channel.getIterableHistory().stream().filter(Predicate.not(Message::isPinned)).limit(amount)
+						.forEach(delMessage -> delMessage.delete().queue());
 
 				GuildMessageChannel system = K7Bot.getInstance().getSysChannelMgr().getSysChannel(channel.getGuild());
 

@@ -47,7 +47,7 @@ public class MessageLoggingListener extends ListenerAdapter {
 
 		GuildMessageChannel system = getSystemChannel(event.getGuild());
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 
 		embbuild.setColor(Color.yellow);
 		embbuild.setTitle("Message edited in " + event.getChannel().getAsMention());
@@ -65,7 +65,7 @@ public class MessageLoggingListener extends ListenerAdapter {
 		}
 		GuildMessageChannel system = getSystemChannel(event.getGuild());
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 
 		embbuild.setColor(Color.red);
 		embbuild.setTitle("Message deleted in " + event.getChannel().getAsMention());
@@ -83,7 +83,7 @@ public class MessageLoggingListener extends ListenerAdapter {
 
 		GuildMessageChannel system = getSystemChannel(event.getGuild());
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 
 		embbuild.setColor(Color.red);
 		embbuild.setTitle("Messages deleted in " + event.getChannel().getAsMention());

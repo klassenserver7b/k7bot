@@ -78,7 +78,7 @@ public class ModerationLoggingListener extends ListenerAdapter {
 		GuildMessageChannel system = getSystemChannel(event);
 		Member memb = event.getMember();
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 		embbuild.setColor(Color.yellow);
 
 		StringBuilder sb = new StringBuilder();
@@ -117,7 +117,7 @@ public class ModerationLoggingListener extends ListenerAdapter {
 
 		AuditLogEntry entry = event.getEntry();
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 		embbuild.setTitle("Auditlog entry created");
 		embbuild.setDescription("**Type: **" + entry.getType() + "\n**User: **"
 				+ event.getGuild().retrieveMemberById(entry.getUserIdLong()).complete().getAsMention()
@@ -135,7 +135,7 @@ public class ModerationLoggingListener extends ListenerAdapter {
 
 		GuildMessageChannel system = getSystemChannel(event.getGuild());
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 
 		GuildMessageChannel channel = event.getChannel();
 
@@ -156,7 +156,7 @@ public class ModerationLoggingListener extends ListenerAdapter {
 		}
 
 		GuildMessageChannel system = getSystemChannel(event.getRule().getGuild());
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getRule().getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getRule().getGuild().getIdLong());
 		embbuild.setColor(Color.green);
 		embbuild.setTitle("AutomodRule created");
 		embbuild.setDescription("**Name: **"
@@ -174,7 +174,7 @@ public class ModerationLoggingListener extends ListenerAdapter {
 		}
 
 		GuildMessageChannel system = getSystemChannel(event.getRule().getGuild());
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getRule().getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getRule().getGuild().getIdLong());
 
 		embbuild.setColor(Color.red);
 		embbuild.setTitle("AutomodRule deleted");
@@ -194,7 +194,7 @@ public class ModerationLoggingListener extends ListenerAdapter {
 		}
 
 		GuildMessageChannel system = getSystemChannel(event.getRule().getGuild());
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getRule().getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getRule().getGuild().getIdLong());
 
 		embbuild.setColor(Color.yellow);
 		embbuild.setTitle("AutomodRule updated");

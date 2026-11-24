@@ -59,7 +59,7 @@ public class VoiceLoggingListener extends ListenerAdapter {
 			return;
 		}
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 
 		embbuild.setColor(Color.red);
 		embbuild.setTitle("Member server-muted");
@@ -75,7 +75,7 @@ public class VoiceLoggingListener extends ListenerAdapter {
 			return;
 		}
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 
 		embbuild.setColor(Color.red);
 		embbuild.setTitle("Member server-deafed");
@@ -112,7 +112,7 @@ public class VoiceLoggingListener extends ListenerAdapter {
 			return;
 		}
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 
 		embbuild.setColor(Color.green);
 		embbuild.setTitle("Member started camera");
@@ -136,7 +136,7 @@ public class VoiceLoggingListener extends ListenerAdapter {
 			return;
 		}
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 
 		embbuild.setColor(Color.red);
 		embbuild.setTitle("Member stopped camera");
@@ -160,7 +160,7 @@ public class VoiceLoggingListener extends ListenerAdapter {
 			return;
 		}
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 
 		embbuild.setColor(Color.green);
 		embbuild.setTitle("Member started streaming");
@@ -184,7 +184,7 @@ public class VoiceLoggingListener extends ListenerAdapter {
 			return;
 		}
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 
 		embbuild.setColor(Color.red);
 		embbuild.setTitle("Member stopped streaming");
@@ -209,7 +209,7 @@ public class VoiceLoggingListener extends ListenerAdapter {
 			return;
 		}
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 
 		embbuild.setColor(Color.green);
 		embbuild.setTitle("Member joined voice channel");
@@ -226,7 +226,7 @@ public class VoiceLoggingListener extends ListenerAdapter {
 			return;
 		}
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 
 		embbuild.setColor(Color.red);
 		embbuild.setTitle("Member left voice channel");
@@ -243,7 +243,7 @@ public class VoiceLoggingListener extends ListenerAdapter {
 			return;
 		}
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 
 		embbuild.setColor(Color.yellow);
 		embbuild.setTitle("Member moved in voice channel");

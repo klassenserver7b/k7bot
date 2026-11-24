@@ -34,7 +34,7 @@ public class EventLoggingListener extends ListenerAdapter {
 			return;
 		}
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 		embbuild.setTitle("Event created");
 		embbuild.setColor(Color.green);
 		embbuild.setDescription(createScheduledEventMessage(event.getScheduledEvent()));
@@ -50,7 +50,7 @@ public class EventLoggingListener extends ListenerAdapter {
 			return;
 		}
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 		embbuild.setTitle("Event removed");
 		embbuild.setColor(Color.red);
 		embbuild.setDescription(createScheduledEventMessage(event.getScheduledEvent()));
@@ -66,7 +66,7 @@ public class EventLoggingListener extends ListenerAdapter {
 			return;
 		}
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 		embbuild.setTitle("Event status updated");
 		embbuild.setColor(Color.yellow);
 		embbuild.setDescription("**Event: **" + event.getScheduledEvent().getName() + "\n**Old status: **"
@@ -83,7 +83,7 @@ public class EventLoggingListener extends ListenerAdapter {
 			return;
 		}
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 		embbuild.setTitle("Event name updated");
 		embbuild.setColor(Color.yellow);
 		embbuild.setDescription("**New name: **" + event.getNewName() + "\n**Old name: **" + event.getOldName());
@@ -99,7 +99,7 @@ public class EventLoggingListener extends ListenerAdapter {
 			return;
 		}
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 		embbuild.setTitle("Event StartTime updated");
 		embbuild.setColor(Color.yellow);
 		embbuild.setDescription("**New time: **<t:" + event.getNewStartTime().toEpochSecond() + ">" + "\n**Old time: **"
@@ -116,7 +116,7 @@ public class EventLoggingListener extends ListenerAdapter {
 			return;
 		}
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 		embbuild.setTitle("Event StartTime updated");
 		embbuild.setColor(Color.yellow);
 
@@ -142,7 +142,7 @@ public class EventLoggingListener extends ListenerAdapter {
 			return;
 		}
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 		embbuild.setTitle("Event location updated");
 		embbuild.setColor(Color.yellow);
 		embbuild.setDescription(
@@ -159,7 +159,7 @@ public class EventLoggingListener extends ListenerAdapter {
 			return;
 		}
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 		embbuild.setTitle("Member joined event");
 		embbuild.setColor(Color.green);
 		embbuild.setDescription("**Event: **" + event.getScheduledEvent().getName() + "\n**Member: **"
@@ -176,7 +176,7 @@ public class EventLoggingListener extends ListenerAdapter {
 			return;
 		}
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 		embbuild.setTitle("Member left event");
 		embbuild.setColor(Color.red);
 		embbuild.setDescription("**Event: **" + event.getScheduledEvent().getName() + "\n**Member: **"

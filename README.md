@@ -25,7 +25,7 @@ This is my Discord Bot written in Java with the Java-Discord-API ([JDA](https://
 ### Prerequires
 
 - Download/Use [Java JDK 25](https://www.azul.com/downloads/?version=java-25-lts&package=jdk)
-- Download/Use [Maven 3.6+](https://maven.apache.org/download.cgi) (Tested on Maven 3.9.6)
+- Download/Use [Maven 3.9+](https://maven.apache.org/download.cgi) (Tested on Maven 3.911)
 
 ### Compile and package
 

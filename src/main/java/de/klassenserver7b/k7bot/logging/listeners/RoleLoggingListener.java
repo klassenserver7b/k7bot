@@ -45,7 +45,7 @@ public class RoleLoggingListener extends ListenerAdapter {
 			gen.append(perm.getName()).append(", ");
 		}
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 
 		embbuild.setColor(Color.green);
 		embbuild.setTitle("Role created: " + role.getName());
@@ -64,7 +64,7 @@ public class RoleLoggingListener extends ListenerAdapter {
 		GuildMessageChannel system = getSystemChannel(event.getGuild());
 		Role role = event.getRole();
 
-		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild());
+		EmbedBuilder embbuild = EmbedUtils.getDefault(event.getGuild().getIdLong());
 
 		embbuild.setColor(Color.red);
 		embbuild.setTitle("Role deleted: " + role.getName());

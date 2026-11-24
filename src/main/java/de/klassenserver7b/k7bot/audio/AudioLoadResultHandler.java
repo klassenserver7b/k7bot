@@ -40,8 +40,8 @@ public class AudioLoadResultHandler extends AbstractAudioLoadResultHandler {
 		MessageChannel channel = this.guildAudioManager.getChannel();
 		if (channel != null) {
 			channel.sendMessageEmbeds(EmbedUtils.getInfoEmbed(
-					"Loaded track " + track.getInfo().getTitle() + " " + this.getQueueModificationMessage(), null,
-					userId).build()).queue();
+					"Loaded track " + track.getInfo().getTitle() + " " + this.getQueueModificationMessage(), 0, userId)
+					.build()).queue();
 		}
 
 	}
@@ -58,7 +58,7 @@ public class AudioLoadResultHandler extends AbstractAudioLoadResultHandler {
 		if (channel != null) {
 			channel.sendMessageEmbeds(EmbedUtils.getInfoEmbed(
 					"Loaded playlist " + playlistLoaded.getInfo().getName() + " " + this.getQueueModificationMessage(),
-					null, userId).build()).queue();
+					0, userId).build()).queue();
 		}
 	}
 
@@ -76,8 +76,8 @@ public class AudioLoadResultHandler extends AbstractAudioLoadResultHandler {
 		MessageChannel channel = this.guildAudioManager.getChannel();
 		if (channel != null) {
 			channel.sendMessageEmbeds(EmbedUtils.getInfoEmbed(
-					"Loaded track " + track.getInfo().getTitle() + " " + this.getQueueModificationMessage(), null,
-					userId).build()).queue();
+					"Loaded track " + track.getInfo().getTitle() + " " + this.getQueueModificationMessage(), 0, userId)
+					.build()).queue();
 		}
 	}
 
@@ -86,7 +86,7 @@ public class AudioLoadResultHandler extends AbstractAudioLoadResultHandler {
 		MessageChannel channel = this.guildAudioManager.getChannel();
 		if (channel != null) {
 			channel.sendMessageEmbeds(
-					EmbedUtils.getInfoEmbed("No matches found for query: " + this.query, null, userId).build()).queue();
+					EmbedUtils.getInfoEmbed("No matches found for query: " + this.query, 0, userId).build()).queue();
 		}
 		log.warn("No matches found for audio load request by user {}", userId);
 	}
@@ -96,7 +96,7 @@ public class AudioLoadResultHandler extends AbstractAudioLoadResultHandler {
 		MessageChannel channel = this.guildAudioManager.getChannel();
 		if (channel != null) {
 			channel.sendMessageEmbeds(EmbedUtils
-					.getErrorEmbed("Failed while retrieving matches for query: " + this.query, null, userId).build())
+					.getErrorEmbed("Failed while retrieving matches for query: " + this.query, 0, userId).build())
 					.queue();
 		}
 
